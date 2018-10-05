@@ -73,20 +73,19 @@ discriminant_categories = { # support regex (allow to avoid ambiguities if many 
         #'yields': get_hist_regex('yields(?!(_sf|_df))'),
         }
         
-discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name above dictionary)
+discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name above dictionary). Make sure the discriminantID ends with '_categoryName (for plot step)
     "DNN_Hct_b2j3" : [(1, 'DNN_Hct_b2j3')],
-    #"DNN_Hct_b2j4" : [(1, 'DNN_Hct_b2j4')],
-    #"DNN_Hct_b3j3" : [(1, 'DNN_Hct_b3j3')],
-    #"DNN_Hct_b3j4" : [(1, 'DNN_Hct_b3j4')],
-    #"DNN_Hct_b4j4" : [(1, 'DNN_Hct_b4j4')],
-    #"DNN_Hct_allJetCategories" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b3j4'), (5, 'DNN_Hct_b4j4')],
+    "DNN_Hct_b2j4" : [(1, 'DNN_Hct_b2j4')],
+    "DNN_Hct_b3j3" : [(1, 'DNN_Hct_b3j3')],
+    "DNN_Hct_b3j4" : [(1, 'DNN_Hct_b3j4')],
+    "DNN_Hct_b4j4" : [(1, 'DNN_Hct_b4j4')],
+    "DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b3j4'), (5, 'DNN_Hct_b4j4')],
     "DNN_Hut_b2j3" : [(1, 'DNN_Hut_b2j3')],
-    #"DNN_Hut_b2j4" : [(1, 'DNN_Hut_b2j4')],
-    #"DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
-    #"DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
-    #"DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
-    #"DNN_Hut_allJetCategories" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
-    #"ATan_DY_TT" : [(1, 'ATan_DY_TT')]
+    "DNN_Hut_b2j4" : [(1, 'DNN_Hut_b2j4')],
+    "DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
+    "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
+    "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
+    "DNN_Hut_allJetCategories" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
     }
 
 processes_mapping = { # Dict with {key = human friendly name of your choice : value = regex to find rootfile} be carefull not to match too many files with the regex!
@@ -367,8 +366,8 @@ fi
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected -v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected -v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected #-v +2
 #combine -H ProfileLikelihood -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected
 #combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.5 
 #combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.84 
