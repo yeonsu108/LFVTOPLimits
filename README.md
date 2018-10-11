@@ -21,3 +21,15 @@ You can check that the above recipe is up to date by following the links
 https://cms-hcomb.gitbooks.io/combine/content/part1/#for-end-users-that-dont-need-to-commit-or-do-any-development
 and
 http://cms-analysis.github.io/CombineHarvester/index.html#getting-started
+
+# Run the limits
+First extract envelope of the systematics for which it is necessary
+`python makeEnvelope.py -p /path/to/your/rootfiles`
+Write the datacards and rootfiles suitable for combine
+`python prepareShapesAndCards.py -p /path/to/your/rootfiles`
+Run combine to extract the limits
+`python run_all_limits.py`
+Plot the limits
+`python plotLimitsPerCategory.py`
+
+All these python scripts are easily configurable, check what you can do with the `--help` option
