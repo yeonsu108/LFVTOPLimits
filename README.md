@@ -24,12 +24,19 @@ http://cms-analysis.github.io/CombineHarvester/index.html#getting-started
 
 # Run the limits
 First extract envelope of the systematics for which it is necessary
+
 `python makeEnvelope.py -p /path/to/your/rootfiles`
+
 Write the datacards and rootfiles suitable for combine
+
 `python prepareShapesAndCards.py -p /path/to/your/rootfiles`
+
 Run combine to extract the limits
+
 `python run_all_limits.py`
+
 Plot the limits
+
 `python plotLimitsPerCategory.py`
 
 All these python scripts are easily configurable, check what you can do with the `--help` option
