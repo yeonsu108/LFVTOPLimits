@@ -1,8 +1,10 @@
-import os
+import os, sys
 from subprocess import call
 
+print "Usage: python run_all_limits.py datacard_folder"
+
 current_dir = os.getcwd()
-datacard_path = './datacards'
+datacard_path = sys.argv[1]
 
 signal_folders = [folder for folder in os.listdir(datacard_path) if os.path.isdir(os.path.join(datacard_path, folder))]
 if not signal_folders:

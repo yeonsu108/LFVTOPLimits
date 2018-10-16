@@ -5,8 +5,8 @@ parser = argparse.ArgumentParser(description='Store limits inside a json file an
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
 parser.add_argument('-verbose', dest='verbose', type=bool, default=False, help='Dump limits to stdout or not.')
 parser.add_argument('-doPlot', dest='doPlot', type=bool, default=True, help='Do the limit plot or not.')
-parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b4j4', 'allJetCategories'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: higgsCombine*_b3j3*.root.')
-parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b4j4', 'all'], help='Bin labels, must be same order and length then -category_order argument.')
+parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b4j4', 'all'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: e.g. higgsCombine*_b3j3*.root.')
+parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
 parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
 
 options = parser.parse_args()
@@ -167,7 +167,7 @@ for signal_folder in signal_folders:
                 limits = getLimitsFromFile(limit_rootfile_path)
                 dict_cat_limits[category] = limits
         if not found_category:
-            print "Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path)
+            print "Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form e.g. higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path)
     json_limit_filepath = os.path.join(signal_folder_path, signal_folder + '_limits.json')
     if options.verbose:
         print json.dumps(dict_cat_limits, indent=4)

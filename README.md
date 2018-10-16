@@ -23,11 +23,11 @@ and
 http://cms-analysis.github.io/CombineHarvester/index.html#getting-started
 
 # Run the limits
-First extract envelope of the systematics for which it is necessary
+First extract envelope of the systematics for which it is necessary (not needed anymore)
 
 `python makeEnvelope.py -p /path/to/your/rootfiles`
 
-Write the datacards and rootfiles suitable for combine
+Write the datacards and rootfiles suitable for combine (be careful that cross sections and sum of event weights are taken from `xsec.yml` and that for signal cross section is different than the one used in `plotIt`!)
 
 `python prepareShapesAndCards.py -p /path/to/your/rootfiles`
 

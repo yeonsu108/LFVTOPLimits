@@ -319,15 +319,23 @@
 'hist_STTH1L3BHct.root':
   type: signal
   pretty-name: 'STTH1L3BHct'
-  cross-section: 0.076
+  cross-section: 0.0417
   generated-events: 3934412
   line-color: '#006666'
   legend: 'STHct'
 
+#'hist_TTTH1L3BHct.root':
+#  type: signal
+#  pretty-name: 'TTTH1L3BaTLepHct'
+#  cross-section: 0.9583
+#  generated-events: 2010844
+#  line-color: '#cccc00'
+#  legend: 'TTHut'
+
 'hist_STTH1L3BHut.root':
   type: signal
   pretty-name: 'STTH1L3BHut'
-  cross-section: 0.55
+  cross-section: 0.3061
   generated-events: 3934660
   line-color: '#666600'
   legend: 'STHut'
@@ -335,8 +343,7 @@
 'hist_TTTH1L3BHut.root':
   type: signal
   pretty-name: 'TTTH1L3BaTLepHut'
-  cross-section: 2.126
+  cross-section: 0.6939
   generated-events: 2010844
   line-color: '#cccc00'
   legend: 'TTHut'
-

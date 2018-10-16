@@ -16,10 +16,15 @@ ROOT.gROOT.SetBatch()
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 sys.argv = tmpargv
 
+hadNegBinForProcess = {}
 def setNegativeBinsToZero(h, process):
+    if not process in hadNegBinForProcess:
+        hadNegBinForProcess[process] = False
     for i in range(1, h.GetNbinsX() + 1):
         if h.GetBinContent(i) < 0.:
-            print 'Remove negative bin in TH1 %s for process %s'%(h.GetTitle(), process)
+            if not hadNegBinForProcess[process]:
+                print 'Remove negative bin in TH1 %s for process %s'%(h.GetTitle(), process)
+            hadNegBinForProcess[process] = True
             h.SetBinContent(i, 0.)
     
 def get_hist_regex(r):
@@ -37,7 +42,9 @@ parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, def
 parser.add_argument('--reweight', action='store_true', dest='reweight', help='Apply a preliminary reweighting. Not implemented yet.')
 parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
-parser.add_argument('--nosys', action='store', dest='nosys', default=True, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
+parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
+parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', help='Set it to exclude some of the systematics')
+# Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--bbb', action='store', dest='bbb', default=False, help='Consider or not bin by bin MC stat systematic uncertainties')
 
 options = parser.parse_args()
@@ -59,7 +66,7 @@ selection_mapping = {
 DNN_Hct_hist_name = 'h_LepPt'
 DNN_Hut_hist_name = 'h_LepPt'
 channel = options.channel 
-discriminant_categories = { # support regex (allow to avoid ambiguities if many histogram conatins same patterns)
+individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
         'DNN_Hct_b2j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b2j3'])),
         'DNN_Hct_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
         'DNN_Hct_b3j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b3j3'])),
@@ -73,7 +80,7 @@ discriminant_categories = { # support regex (allow to avoid ambiguities if many 
         #'yields': get_hist_regex('yields(?!(_sf|_df))'),
         }
         
-discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name above dictionary). Make sure the discriminantID ends with '_categoryName (for plot step)
+discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
     "DNN_Hct_b2j3" : [(1, 'DNN_Hct_b2j3')],
     "DNN_Hct_b2j4" : [(1, 'DNN_Hct_b2j4')],
     "DNN_Hct_b3j3" : [(1, 'DNN_Hct_b3j3')],
@@ -85,14 +92,30 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
     "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
-    "DNN_Hut_allJetCategories" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
+    "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
     }
 
-processes_mapping = { # Dict with {key = human friendly name of your choice : value = regex to find rootfile} be carefull not to match too many files with the regex!
-                      # Data !Must! contain 'data_%channels' in the name and MC must not data
+processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
+                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
         # Background
+        ## TT Semileptonic 
+        'ttother': ['hist_TTpowhegttother.root'],
+        'ttlf': ['hist_TTpowhegttlf.root'],
+        'ttcc': ['hist_TTpowhegttcc.root'],
+        'ttbj' : ['hist_TTpowhegttbj.root'],
         'ttbb': ['TTpowhegttbb'],
+        ## Other Top
+        'tthad': ['hist_TTHadpowheg.root'],
+        'ttfullLep': ['hist_TTLLpowheg.root'],
         'SingleTop': ['.*SingleT.*'],
+        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
+        ## V + jets
+        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
+        'DYjets': ['hist_DYJets.*'],
+        ## VV
+        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
+        ## Higgs
+        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
         # Signal
         'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
         #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
@@ -103,6 +126,9 @@ processes_mapping = { # Dict with {key = human friendly name of your choice : va
         'data_all' : ['Single.*Run2017']
         }
 processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
+processes_mapping.pop('data_el')
+processes_mapping.pop('data_mu')
+processes_mapping.pop('data_all')
 
 if options.fake_data:
   print "Fake data mode not implemented yet! Exitting..."
@@ -118,13 +144,8 @@ if options.applyxsec:
     
 def main():
     """Main function"""
-    #global options
-
-    # get the options
-    #options = get_options()
-
     signals = ['Hut', 'Hct']
-    backgrounds = ['ttbb', 'SingleTop']
+    backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
 
     for signal in signals:
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
@@ -153,7 +174,7 @@ def merge_histograms(process, histogram, destination):
     #    return
 
     # Rescale histogram to luminosity, if it's not data
-    if process != 'data_obs':
+    if not 'data' in process:
         histogram.Scale(options.luminosity)
 
     d = destination
@@ -179,7 +200,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
 
     import re
 
-    print("Preparing ROOT file for combine...")
+    print("Preparing ROOT file for %s..."%discriminant)
 
     output_filename = os.path.join(options.output, 'shapes_%s.root' % (discriminant))
     if not os.path.exists(os.path.dirname(output_filename)):
@@ -206,11 +227,18 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     # The key is the category name, and the value is a list of histogram. The list will always
     # contain at least one histogram (the nominal histogram), and possibly more, two per systematic (up & down variation)
     histogram_names = {}
-    for category, histogram_name in categories_map.items():
-        r = re.compile(histogram_name, re.IGNORECASE)
+    for discriminant_tuple in categories_map[discriminant]:
+        discriminant_name = discriminant_tuple[1]
+        r = re.compile(individual_discriminants[discriminant_name], re.IGNORECASE)
         f = ROOT.TFile.Open(processes_files.values()[0][0])
-        histogram_names[category] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
+        histogram_names[discriminant_name] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
         f.Close()
+
+    #for category, histogram_name in categories_map.items():
+    #    r = re.compile(histogram_name, re.IGNORECASE)
+    #    f = ROOT.TFile.Open(processes_files.values()[0][0])
+    #    histogram_names[category] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
+    #    f.Close()
 
     # Extract list of systematics from the list of histograms derived above
     # This code assumes that *all* categories contains the same systematics (as it should)
@@ -232,6 +260,11 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     if histograms[category] != nominal_name:
                         raise Exception("The regular expression used for category %r matches more than one histogram: %r and %r" % (category, nominal_name, histograms[category]))
                 histograms[category] = nominal_name
+    print "Found the following systematics in rootfiles: ", systematics
+    if options.sysToAvoid:
+        for sysToAvoid in options.sysToAvoid:
+            systematics.discard(sysToAvoid)
+        print "After ignoring the one mentioned with sysToAvoid option: ", systematics
 
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
 
@@ -258,17 +291,24 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     TH1.Scale(xsec/float(nevt))
                 if options.reweight :
                     print 'Reweighting on the flight not implemented yet! Exitting...'
+                    # if you implement it, don't forget also to scale TH1 for systematics
                     sys.exit(1)
                     if "DY" in process_file :
                         if not ('DYJetsToLL_M-10to50') in process_file:
                             print "Reweight ", process_file, " by 0.75950" 
                             TH1.Scale(0.75950)
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
-                if not process == "data_obs" : 
+                if not "data" in process: 
                     for systematic in systematics:
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
-                            shapes[category][process][key] = merge_histograms(process, f.Get(original_histogram_name + '__' + systematic + variation), dict_get(shapes[category][process], key))
+                            TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
+                            if options.applyxsec and not 'data' in process:
+                                process_file_basename = os.path.basename(process_file)
+                                xsec = xsec_data[process_file_basename]['cross-section']
+                                nevt = xsec_data[process_file_basename]['generated-events']
+                                TH1_syst.Scale(xsec/float(nevt))
+                            shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
 
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
@@ -301,15 +341,17 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
 
 def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     # Backgrounds is a list of string of the considered backgrounds corresponding to entries in processes_mapping 
+    # Signals is a list of string of the considered signals corresponding to entries in processes_mapping 
+    # discriminant is the corresponding entry in the dictionary discriminants 
 
     import CombineHarvester.CombineTools.ch as ch
     root_path = options.root_path
 
-    file, systematics = prepareFile(processes_mapping, discriminant_categories, root_path, discriminantName)
+    file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
     
     for signal in signals :
         cb = ch.CombineHarvester()
-        cb.AddObservations(['*'], [''], ['13TeV'], [''], discriminant)
+        cb.AddObservations(['*'], [''], ['13TeV_2017'], [''], discriminant)
         cb.AddProcesses(['*'], [''], ['13TeV_2017'], [''], backgrounds, discriminant, False)
         cb.AddProcesses(['*'], [''], ['13TeV_2017'], [''], [signal], discriminant, True)
 
@@ -366,7 +408,7 @@ fi
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected #-v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 300 --run expected #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected #-v +2
 #combine -H ProfileLikelihood -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected
 #combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.5 
