@@ -33,9 +33,9 @@ def get_hist_regex(r):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/work/b/brfranco/public/kTupleMaker/rootfiles/th1_with_syst_for_plotit/legacy/STFCNC01/', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/kTupleMaker/limits/rootfiles_for_limits/DNN_181022_Train04/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41500, help='Integrated luminosity (default is 41500 /pb)')
-parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards', help='Output directory')
+parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_XsecUnc_SMttSys', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec.yml', help='YAML config file path with Xsec and Nevt.')
@@ -44,6 +44,7 @@ parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', help='Set it to exclude some of the systematics')
+parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics affecting only SM tt.')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--bbb', action='store', dest='bbb', default=False, help='Consider or not bin by bin MC stat systematic uncertainties')
 
@@ -63,20 +64,35 @@ selection_mapping = {
     'b4j4' : 'S11'
     }
 
-DNN_Hct_hist_name = 'h_LepPt'
-DNN_Hut_hist_name = 'h_LepPt'
+#Hct_j4_h_DNN_b2_Ch2__TuneCP5up
+DNN_Hct_hist_name = 'Hct'
+DNN_Hut_hist_name = 'Hct'
 channel = options.channel 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
-        'DNN_Hct_b2j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b2j3'])),
-        'DNN_Hct_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
-        'DNN_Hct_b3j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b3j3'])),
-        'DNN_Hct_b3j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b3j4'])),
-        'DNN_Hct_b4j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b4j4'])),
-        'DNN_Hut_b2j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b2j3'])),
-        'DNN_Hut_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
-        'DNN_Hut_b3j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b3j3'])),
-        'DNN_Hut_b3j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b3j4'])),
-        'DNN_Hut_b4j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b4j4'])),
+        'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+
+        'DNN_Hct_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+
+        'DNN_Hut_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+
+        'DNN_Hut_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+
+        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
+        #'DNN_Hct_b3j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b3j3'])),
+        #'DNN_Hct_b3j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b3j4'])),
+        #'DNN_Hct_b4j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b4j4'])),
+        #'DNN_Hut_b2j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b2j3'])),
+        #'DNN_Hut_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
+        #'DNN_Hut_b3j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b3j3'])),
+        #'DNN_Hut_b3j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b3j4'])),
+        #'DNN_Hut_b4j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b4j4'])),
         #'yields': get_hist_regex('yields(?!(_sf|_df))'),
         }
         
@@ -111,15 +127,15 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
         ## V + jets
         'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
-        'DYjets': ['hist_DYJets.*'],
+        'DYjets': ['hist_DYJetsv2.*'],
         ## VV
         'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
         ## Higgs
         'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
         # Signal
         'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
-        #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
-        'Hct': ['STTH1L3BHct'],
+        'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
+        #'Hct': ['STTH1L3BHct'],
         # Data
         'data_el' : ['SingleElectronRun2017'],
         'data_mu' : ['SingleMuonRun2017'],
@@ -129,6 +145,8 @@ processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
 processes_mapping.pop('data_el')
 processes_mapping.pop('data_mu')
 processes_mapping.pop('data_all')
+
+smTTlist = ['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'] # for systematics affecting only SM tt
 
 if options.fake_data:
   print "Fake data mode not implemented yet! Exitting..."
@@ -284,6 +302,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             for process_file in process_files:
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
+                if not TH1:
+                    print "No histo named %s in %s. Exitting..."%(original_histogram_name, process_file)
+                    sys.exit()
                 if options.applyxsec and not 'data' in process:
                     process_file_basename = os.path.basename(process_file)
                     xsec = xsec_data[process_file_basename]['cross-section']
@@ -303,6 +324,13 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
+                            if systematic in options.sysForSMtt and not process in smTTlist:
+                                # Copy nominal TH1 in non SMtt processes for systematics affecting only SMtt
+                                shapes[category][process][key] = merge_histograms(process, TH1, dict_get(shapes[category][process], key))
+                                continue
+                            if not TH1_syst:
+                                print "No histo named %s in %s"%(original_histogram_name + '__' + systematic + variation, process_file_basename)
+                                sys.exit()
                             if options.applyxsec and not 'data' in process:
                                 process_file_basename = os.path.basename(process_file)
                                 xsec = xsec_data[process_file_basename]['cross-section']
@@ -358,11 +386,24 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         # Systematics
         if not options.nosys:
             for systematic in systematics:
-                cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
-            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['13TeV_2017'], 1.027))
-            #cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
-            #        (['ttbb'], 1.055842)
-            #        )
+                if not systematic in options.sysForSMtt:
+                    cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
+                else:
+                    #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
+                    cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
+            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['13TeV_2017'], 1.023))
+            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
+                    (['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.055)
+                    )
+            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
+                    (['ttbb'], 1.3)
+                    )
+            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
+                    (['ttcc'], 1.5)
+                    )
+            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
+                    (['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
+                    )
         if options.SF :
             print "Background renormalization not finalized yet! Exitting..."
             sys.exit(1)
@@ -408,8 +449,8 @@ fi
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 300 --run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected #-v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
 #combine -H ProfileLikelihood -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected
 #combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.5 
 #combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.84 
@@ -425,26 +466,27 @@ combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 3
 def CMSNamingConvention(syst):
     # Taken from https://twiki.cern.ch/twiki/bin/view/CMS/HiggsWG/HiggsCombinationConventions
     # systlist = ['jec', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
-    if syst == 'jec':
-        return 'CMS_scale_j'
-    elif syst == 'jer': 
-        return 'CMS_res_j'
-    elif syst == 'elidiso': 
-        return 'CMS_eff_e'
-    elif syst == 'muidiso': 
-        return 'CMS_eff_mu'
-    elif any(x in syst for x in ['lf', 'hf', 'lfstats1', 'lfstats2', 'hfstats1', 'hfstats2', 'cferr1', 'cferr2']): 
-        return 'CMS_btag_%s'%syst
-    elif syst == 'pu': 
-        return 'CMS_pu'
-    elif syst == 'trigeff': 
-        return 'CMS_eff_trigger'
-    elif syst == 'pdf':
-        return 'pdf'
-    elif syst == 'scale':
-        return 'QCDscale'
-    else:
-        return syst
+    return syst
+    #if syst == 'jec':
+    #    return 'CMS_scale_j'
+    #elif syst == 'jer': 
+    #    return 'CMS_res_j'
+    #elif syst == 'elidiso': 
+    #    return 'CMS_eff_e'
+    #elif syst == 'muidiso': 
+    #    return 'CMS_eff_mu'
+    #elif any(x in syst for x in ['lf', 'hf', 'lfstats1', 'lfstats2', 'hfstats1', 'hfstats2', 'cferr1', 'cferr2']): 
+    #    return 'CMS_btag_%s'%syst
+    #elif syst == 'pu': 
+    #    return 'CMS_pu'
+    #elif syst == 'trigeff': 
+    #    return 'CMS_eff_trigger'
+    #elif syst == 'pdf':
+    #    return 'pdf'
+    #elif syst == 'scale':
+    #    return 'QCDscale'
+    #else:
+    #    return syst
 #
 # main
 #

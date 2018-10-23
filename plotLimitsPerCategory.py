@@ -5,8 +5,8 @@ parser = argparse.ArgumentParser(description='Store limits inside a json file an
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
 parser.add_argument('-verbose', dest='verbose', type=bool, default=False, help='Dump limits to stdout or not.')
 parser.add_argument('-doPlot', dest='doPlot', type=bool, default=True, help='Do the limit plot or not.')
-parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b4j4', 'all'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: e.g. higgsCombine*_b3j3*.root.')
-parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
+parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: e.g. higgsCombine*_b3j3*.root.')
+parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
 parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
 
 options = parser.parse_args()
@@ -80,7 +80,7 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     xAxis.SetLabelFont(42)
     xAxis.SetTitleFont(42)
     yAxis = th1_for_canvas_layout.GetYaxis()
-    yAxis.SetNdivisions(010)
+    #yAxis.SetNdivisions(010)
     yAxis.SetTitle("95% CL upper limit on #sigma #times BR [pb]")
     yAxis.SetLabelFont(42)
     yAxis.SetTitleFont(42)
@@ -116,13 +116,15 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
             one_sigma_rectangles[category] = ROOT.TPolyLine(4, array('d', [xlow, xup, xup, xlow]), array('d',[one_sigma_down, one_sigma_down, one_sigma_up, one_sigma_up] ))
             one_sigma_rectangles[category].SetFillColor(3)
             one_sigma_rectangles[category].SetLineColor(3)
+            #one_sigma_rectangles[category].SetFillStyle(3001)
             two_sigma_rectangles[category] = ROOT.TPolyLine(4, array('d', [xlow, xup, xup, xlow]), array('d',[two_sigma_down, two_sigma_down, two_sigma_up, two_sigma_up] ))
             two_sigma_rectangles[category].SetFillColor(5)
             two_sigma_rectangles[category].SetLineColor(5)
-            two_sigma_rectangles[category].Draw('f same')
-            one_sigma_rectangles[category].Draw('f same')
-            expected_lines[category].Draw('same')
-            observed_lines[category].Draw('same')
+            #two_sigma_rectangles[category].SetFillStyle(3001)
+            two_sigma_rectangles[category].Draw('f sameaxis')
+            one_sigma_rectangles[category].Draw('f sameaxis')
+            expected_lines[category].Draw('sameaxis')
+            observed_lines[category].Draw('sameaxis')
     # Legend
     legend = ROOT.TLegend(legend_position[0], legend_position[1], legend_position[2], legend_position[3], "95% CL upper limits")
     legend.SetTextFont(42)
@@ -136,6 +138,8 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     legend.AddEntry(observed_lines[limit_dict.keys()[0]], 'Observed', 'l')
     legend.Draw('same')
     add_labels(canvas, signal_name)
+    #th1_for_canvas_layout.Draw('same')#reprint ticks on top of rectangles
+    canvas.RedrawAxis('G')
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.pdf'))
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.png'))
     canvas.SetLogy()
@@ -168,7 +172,7 @@ for signal_folder in signal_folders:
                 dict_cat_limits[category] = limits
         if not found_category:
             print "Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form e.g. higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path)
-    json_limit_filepath = os.path.join(signal_folder_path, signal_folder + '_limits.json')
+    json_limit_filepath = os.path.join(options.limitfolder, signal_folder + '_limits.json')
     if options.verbose:
         print json.dumps(dict_cat_limits, indent=4)
     with open(json_limit_filepath, 'w') as limit_json:
