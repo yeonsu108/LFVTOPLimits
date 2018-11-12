@@ -79,6 +79,7 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     xAxis.SetLabelSize(0.07)
     xAxis.SetLabelFont(42)
     xAxis.SetTitleFont(42)
+    xAxis.SetTitleFont(42)
     yAxis = th1_for_canvas_layout.GetYaxis()
     #yAxis.SetNdivisions(010)
     yAxis.SetTitle("95% CL upper limit on #sigma #times BR [pb]")
@@ -95,6 +96,7 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
             categ_limits = limit_dict[category]
             xAxis.SetBinLabel(category_binNumber+1, options.category_labels[category_binNumber])
             th1_for_canvas_layout.SetBinContent(category_binNumber+1, categ_limits['two_sigma'][1]*1.5)
+    th1_for_canvas_layout.SetMinimum(0)
     th1_for_canvas_layout.Draw()
     for category_binNumber in range(len(options.category_order)):
         category = options.category_order[category_binNumber]
@@ -121,10 +123,10 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
             two_sigma_rectangles[category].SetFillColor(5)
             two_sigma_rectangles[category].SetLineColor(5)
             #two_sigma_rectangles[category].SetFillStyle(3001)
-            two_sigma_rectangles[category].Draw('f sameaxis')
-            one_sigma_rectangles[category].Draw('f sameaxis')
-            expected_lines[category].Draw('sameaxis')
-            observed_lines[category].Draw('sameaxis')
+            two_sigma_rectangles[category].Draw('f same')
+            one_sigma_rectangles[category].Draw('f same')
+            expected_lines[category].Draw('same')
+            observed_lines[category].Draw('same')
     # Legend
     legend = ROOT.TLegend(legend_position[0], legend_position[1], legend_position[2], legend_position[3], "95% CL upper limits")
     legend.SetTextFont(42)
@@ -138,8 +140,7 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     legend.AddEntry(observed_lines[limit_dict.keys()[0]], 'Observed', 'l')
     legend.Draw('same')
     add_labels(canvas, signal_name)
-    #th1_for_canvas_layout.Draw('same')#reprint ticks on top of rectangles
-    canvas.RedrawAxis('G')
+    th1_for_canvas_layout.Draw('sameaxis')#reprint ticks on top of rectangles
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.pdf'))
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.png'))
     canvas.SetLogy()

@@ -34,8 +34,9 @@ def get_hist_regex(r):
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
 parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/kTupleMaker/limits/rootfiles_for_limits/DNN_181022_Train04/', help='Directory containing rootfiles with the TH1 used for limit settings')
+#parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/kTupleMaker/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41500, help='Integrated luminosity (default is 41500 /pb)')
-parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_XsecUnc_SMttSys', help='Output directory')
+parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_DNN_181022_Train04_allSys', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec.yml', help='YAML config file path with Xsec and Nevt.')
@@ -46,7 +47,7 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', help='Set it to exclude some of the systematics')
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics affecting only SM tt.')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
-parser.add_argument('--bbb', action='store', dest='bbb', default=False, help='Consider or not bin by bin MC stat systematic uncertainties')
+parser.add_argument('--bbb', action='store', dest='bbb', default=True, help='Consider or not bin by bin MC stat systematic uncertainties')
 
 options = parser.parse_args()
 
@@ -66,7 +67,7 @@ selection_mapping = {
 
 #Hct_j4_h_DNN_b2_Ch2__TuneCP5up
 DNN_Hct_hist_name = 'Hct'
-DNN_Hut_hist_name = 'Hct'
+DNN_Hut_hist_name = 'Hut'
 channel = options.channel 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
         'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
@@ -82,6 +83,9 @@ individual_discriminants = { # support regex (allow to avoid ambiguities if many
         'DNN_Hut_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         'DNN_Hut_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         'DNN_Hut_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+
+        #'BDT_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
 
         #'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
         #'DNN_Hct_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
@@ -109,6 +113,8 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
     "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
     "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
+    # tests
+    #"BDT_Hct_b2j3" : [(1, 'BDT_Hct_b2j3')],
     }
 
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
@@ -146,7 +152,7 @@ processes_mapping.pop('data_el')
 processes_mapping.pop('data_mu')
 processes_mapping.pop('data_all')
 
-smTTlist = ['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'] # for systematics affecting only SM tt
+smTTlist = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep'] # for systematics affecting only SM tt
 
 if options.fake_data:
   print "Fake data mode not implemented yet! Exitting..."
