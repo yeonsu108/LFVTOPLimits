@@ -33,10 +33,10 @@ def get_hist_regex(r):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/kTupleMaker/limits/rootfiles_for_limits/DNN_181022_Train04/', help='Directory containing rootfiles with the TH1 used for limit settings')
-#parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/kTupleMaker/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
-parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41500, help='Integrated luminosity (default is 41500 /pb)')
-parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_DNN_181022_Train04_allSys', help='Output directory')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/BDT_181120/', help='Directory containing rootfiles with the TH1 used for limit settings')
+#parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
+parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_BDT_181120_allSys_sameBkgDefThanKirill', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec.yml', help='YAML config file path with Xsec and Nevt.')
@@ -47,7 +47,7 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', help='Set it to exclude some of the systematics')
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics affecting only SM tt.')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
-parser.add_argument('--bbb', action='store', dest='bbb', default=True, help='Consider or not bin by bin MC stat systematic uncertainties')
+parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
 
 options = parser.parse_args()
 
@@ -70,19 +70,34 @@ DNN_Hct_hist_name = 'Hct'
 DNN_Hut_hist_name = 'Hut'
 channel = options.channel 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
-        'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
 
-        'DNN_Hct_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
 
-        'DNN_Hut_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
 
-        'DNN_Hut_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        ##########################################################################################################
+        'DNN_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+
+        'DNN_Hct_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+
+        'DNN_Hut_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+
+        'DNN_Hut_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        ##########################################################################################################
 
         #'BDT_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
         #'DNN_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
@@ -113,31 +128,68 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
     "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
     "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
+
     # tests
     #"BDT_Hct_b2j3" : [(1, 'BDT_Hct_b2j3')],
     }
+
+#processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
+#                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
+#        # Background
+#        ## TT Semileptonic 
+#        'ttother': ['hist_TTpowhegttother.root'],
+#        'ttlf': ['hist_TTpowhegttlf.root'],
+#        'ttcc': ['hist_TTpowhegttcc.root'],
+#        'ttbj' : ['hist_TTpowhegttbj.root'],
+#        'ttbb': ['TTpowhegttbb'],
+#        ## Other Top
+#        'tthad': ['hist_TTHadpowheg.root'],
+#        'ttfullLep': ['hist_TTLLpowheg.root'],
+#        'SingleTop': ['.*SingleT.*'],
+#        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
+#        ## V + jets
+#        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
+#        'DYjets': ['hist_DYJetsv2.*'],
+#        ## VV
+#        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
+#        ## Higgs
+#        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+#        # Signal
+#        'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
+#        'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
+#        #'Hct': ['STTH1L3BHct'],
+#        # Data
+#        'data_el' : ['SingleElectronRun2017'],
+#        'data_mu' : ['SingleMuonRun2017'],
+#        'data_all' : ['Single.*Run2017']
+#        }
+#processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
+#processes_mapping.pop('data_el')
+#processes_mapping.pop('data_mu')
+#processes_mapping.pop('data_all')
+#
+#smTTlist = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep'] # for systematics affecting only SM tt
 
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
                       # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
         # Background
         ## TT Semileptonic 
-        'ttother': ['hist_TTpowhegttother.root'],
-        'ttlf': ['hist_TTpowhegttlf.root'],
+        'ttbb': ['hist_TTpowhegttbb.root'],
         'ttcc': ['hist_TTpowhegttcc.root'],
-        'ttbj' : ['hist_TTpowhegttbj.root'],
-        'ttbb': ['TTpowhegttbb'],
-        ## Other Top
-        'tthad': ['hist_TTHadpowheg.root'],
-        'ttfullLep': ['hist_TTLLpowheg.root'],
-        'SingleTop': ['.*SingleT.*'],
-        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
-        ## V + jets
-        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
-        'DYjets': ['hist_DYJetsv2.*'],
-        ## VV
-        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
-        ## Higgs
-        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+        'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTpowhegttother.root', 'hist_TTpowhegttbj.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
+        ## Other Bkg
+        'other' : ['.*SingleT.*', 'hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJetsv2.*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+#        'tthad': ['hist_TTHadpowheg.root'],
+#        'ttfullLep': ['hist_TTLLpowheg.root'],
+#        'SingleTop': ['.*SingleT.*'],
+#        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
+#        ## V + jets
+#        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
+#        'DYjets': ['hist_DYJetsv2.*'],
+#        ## VV
+#        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
+#        ## Higgs
+#        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
         # Signal
         'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
         'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
@@ -152,7 +204,7 @@ processes_mapping.pop('data_el')
 processes_mapping.pop('data_mu')
 processes_mapping.pop('data_all')
 
-smTTlist = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep'] # for systematics affecting only SM tt
+smTTlist = ['ttlf', 'ttcc', 'ttbb'] # for systematics affecting only SM tt
 
 if options.fake_data:
   print "Fake data mode not implemented yet! Exitting..."
@@ -169,7 +221,8 @@ if options.applyxsec:
 def main():
     """Main function"""
     signals = ['Hut', 'Hct']
-    backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
+    #backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
+    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other']
 
     for signal in signals:
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
@@ -199,6 +252,7 @@ def merge_histograms(process, histogram, destination):
 
     # Rescale histogram to luminosity, if it's not data
     if not 'data' in process:
+        #print "Rescaleing %s to lumi: "%process, options.luminosity
         histogram.Scale(options.luminosity)
 
     d = destination
@@ -206,7 +260,6 @@ def merge_histograms(process, histogram, destination):
         d = histogram.Clone()
         d.SetDirectory(ROOT.nullptr)
     else:
-        d = destination
         d.Add(histogram)
     setNegativeBinsToZero(d, process)
 
@@ -245,6 +298,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
         if len(process_files) == 0:
           print 'Warning: no file found for %s'%process
         processes_files[process] = process_files
+        print "Files found for %s: "%(process), [os.path.basename(filename) for filename in process_files]
 
     # Create the list of histograms (nominal + systematics) for each category
     # we are interested in.
@@ -308,13 +362,14 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             for process_file in process_files:
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
+                process_file_basename = os.path.basename(process_file)
                 if not TH1:
                     print "No histo named %s in %s. Exitting..."%(original_histogram_name, process_file)
                     sys.exit()
                 if options.applyxsec and not 'data' in process:
-                    process_file_basename = os.path.basename(process_file)
                     xsec = xsec_data[process_file_basename]['cross-section']
                     nevt = xsec_data[process_file_basename]['generated-events']
+                    #print "Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt, " --> ", xsec/float(nevt)
                     TH1.Scale(xsec/float(nevt))
                 if options.reweight :
                     print 'Reweighting on the flight not implemented yet! Exitting...'
@@ -338,9 +393,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                                 print "No histo named %s in %s"%(original_histogram_name + '__' + systematic + variation, process_file_basename)
                                 sys.exit()
                             if options.applyxsec and not 'data' in process:
-                                process_file_basename = os.path.basename(process_file)
-                                xsec = xsec_data[process_file_basename]['cross-section']
-                                nevt = xsec_data[process_file_basename]['generated-events']
+                                #process_file_basename = os.path.basename(process_file)
+                                #xsec = xsec_data[process_file_basename]['cross-section']
+                                #nevt = xsec_data[process_file_basename]['generated-events']
                                 TH1_syst.Scale(xsec/float(nevt))
                             shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
@@ -422,7 +477,8 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         cb.cp().signals().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
 
         # Bin by bin uncertainties
-        if options.bbb:
+        if not options.nobbb:
+            print "Treating bbb"
             bbb = ch.BinByBinFactory()
             bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
             bbb.MergeBinErrors(cb.cp().backgrounds())
@@ -448,21 +504,34 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         workspace_file = os.path.basename(os.path.join(output_dir, output_prefix + '_combine_workspace.root'))
         script = """#! /bin/bash
 
-# If workspace does not exist, create it once
-if [ ! -f {workspace_root} ]; then
-    text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
-fi
+text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
 echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
-#combine -H ProfileLikelihood -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --rMax 30000 --run expected
-#combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.5 
-#combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.84 
-#combine -H ProfileLikelihood -M HybridNew -n {name} {workspace_root} -S {systematics} --testStat LHC --expectedFromGrid 0.16 
+#combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
+        with open(script_file, 'w') as f:
+            f.write(script)
+        
+        st = os.stat(script_file)
+        os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+
+
+        # Write small script for datacard checks
+        script = """#! /bin/bash
+
+# Run checks
+echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly
+echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
+combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly 
+python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
+combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig 
+python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+        script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
         with open(script_file, 'w') as f:
             f.write(script)
         

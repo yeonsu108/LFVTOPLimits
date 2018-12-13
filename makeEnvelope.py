@@ -7,7 +7,7 @@ import os
 
 parser = argparse.ArgumentParser(description='Create scale variation systematics histograms.')
 
-parser.add_argument('-d', '--directory', type=str, dest='directory', default='/afs/cern.ch/work/b/brfranco/public/kTupleMaker/rootfiles/th1_with_syst_for_plotit/legacy/STFCNC01/', help='The directory with ROOT input file containing histograms')
+parser.add_argument('-d', '--directory', type=str, dest='directory', default='/afs/cern.ch/work/b/brfranco/public/FCNC/rootfiles/th1_with_syst_for_plotit/legacy/STFCNC01/', help='The directory with ROOT input file containing histograms')
 parser.add_argument('-s', '--syst', metavar='scale', nargs='+', default=['scale'], help='Name of the systematics of which the envelope is needed')
 
 args = parser.parse_args()
