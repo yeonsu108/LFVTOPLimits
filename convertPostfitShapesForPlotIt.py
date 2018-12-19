@@ -74,7 +74,7 @@ for process in processs:
         nominal_postfit.SetName(channel)
         nominal_postfit.Write()
 
-        if process != 'data_obs' and not process.startswith('Hct') and not process.startswith('Hut'):
+        if process != 'data_obs':# and not process.startswith('Hct') and not process.startswith('Hut'):
             nominal_postfit_up = nominal_postfit.Clone()
             nominal_postfit_up.SetName(channel + '__postfitup')
             shift_hist(nominal_postfit_up, 1)
