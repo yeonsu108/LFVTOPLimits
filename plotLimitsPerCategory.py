@@ -13,6 +13,8 @@ options = parser.parse_args()
 
 ROOT.gROOT.SetBatch()
 
+signal_Xsec_couplingOne = {"Hut": 59.7825, "Hct": 47.68} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
+
 def getLimitsFromFile(input_file):
     """
     Extract observed, expected, and 1/2 sigma limits from combine output rootfile
@@ -143,9 +145,11 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     th1_for_canvas_layout.Draw('sameaxis')#reprint ticks on top of rectangles
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.pdf'))
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.png'))
-    canvas.SetLogy()
-    canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.pdf'))
-    canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
+    #canvas.SetLogy()
+    #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.pdf'))
+    #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
+    print "Limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['expected'])
+    print "Limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOne[signal_name]*1.32158))
 
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
