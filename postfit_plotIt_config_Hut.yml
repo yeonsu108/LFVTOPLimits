@@ -30,6 +30,6 @@ plots:
   include: ['histos_postfit_Hut.yml']
 
 legend:
-  position: [0.18, 0.75, 0.82, 0.89]
+  position: [0.18, 0.72, 0.88, 0.86]
 #  position: [0.18, 0.73, 0.92, 0.89] #For DNN
   columns: 4

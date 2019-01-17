@@ -33,10 +33,10 @@ def get_hist_regex(r):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/BDT_181120/', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/histos_suitable_for_limits_190107/', help='Directory containing rootfiles with the TH1 used for limit settings')
 #parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
-parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_BDT_181120_allSys_sameBkgDefThanKirill', help='Output directory')
+parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_190107_betterSys_sameBkgDefThanKiril_XsecSysOnOther', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec.yml', help='YAML config file path with Xsec and Nevt.')
@@ -137,7 +137,7 @@ if options.test:
     discriminants = { "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
             #"DNN_Hct_b3j3" : [(1, 'DNN_Hct_b3j3')] 
             }
-
+# Our definition of Bkg
 #processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
 #                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
 #        # Background
@@ -154,7 +154,7 @@ if options.test:
 #        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
 #        ## V + jets
 #        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
-#        'DYjets': ['hist_DYJetsv2.*'],
+#        'DYjets': ['hist_DYJets.*'],
 #        ## VV
 #        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
 #        ## Higgs
@@ -175,15 +175,22 @@ if options.test:
 #
 #smTTlist = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep'] # for systematics affecting only SM tt
 
+# IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
+
+# ~Kirill definition of Bkg
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
                       # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
         # Background
         ## TT Semileptonic 
-        'ttbb': ['hist_TTpowhegttbb.root'],
+        'ttlf': ['hist_TTpowhegttlf.root'],
         'ttcc': ['hist_TTpowhegttcc.root'],
-        'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTpowhegttother.root', 'hist_TTpowhegttbj.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
+        'ttbj' : ['hist_TTpowhegttbj.root'],
+        'ttbb': ['TTpowhegttbb'],
+        ## Other Top
+        'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
         ## Other Bkg
-        'other' : ['.*SingleT.*', 'hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJetsv2.*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+        'SingleTop': ['.*SingleT.*'],
+        'other' : ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets.*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
 #        'tthad': ['hist_TTHadpowheg.root'],
 #        'ttfullLep': ['hist_TTLLpowheg.root'],
 #        'SingleTop': ['.*SingleT.*'],
@@ -209,7 +216,7 @@ processes_mapping.pop('data_el')
 processes_mapping.pop('data_mu')
 processes_mapping.pop('data_all')
 
-smTTlist = ['ttlf', 'ttcc', 'ttbb'] # for systematics affecting only SM tt
+smTTlist = ['ttlf', 'ttcc', 'ttbj', 'ttbb', 'ttother'] # for systematics affecting only SM tt
 
 if options.fake_data:
   print "Fake data mode not implemented yet! Exitting..."
@@ -227,7 +234,8 @@ def main():
     """Main function"""
     signals = ['Hut', 'Hct']
     #backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
-    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other']
+    backgrounds = ['ttlf', 'ttcc', 'ttbj', 'ttbb', 'ttother', 'other', 'SingleTop']
+    print "Background considered: ", backgrounds
 
     for signal in signals:
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
@@ -458,17 +466,18 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
             cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['13TeV_2017'], 1.023))
-            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
-                    (['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.055)
+            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
+                    (['ttbb', 'ttcc', 'ttother', 'ttlf', 'ttbj'], 1.055)
                     )
-            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
+            cb.cp().AddSyst(cb, '$PROCESS_$BIN_norm', 'lnN', ch.SystMap('process')
                     (['ttbb'], 1.3)
                     )
-            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
+            cb.cp().AddSyst(cb, '$PROCESS_$BIN_norm', 'lnN', ch.SystMap('process')
                     (['ttcc'], 1.5)
                     )
-            cb.cp().AddSyst(cb, '$PROCESS_xsec', 'lnN', ch.SystMap('process')
-                    (['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
+            cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')
+                    #(['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
+                    (['SingleTop', 'other'], 1.1)
                     )
         if options.SF :
             print "Background renormalization not finalized yet! Exitting..."
@@ -533,10 +542,28 @@ echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnos
 echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
 combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly 
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
+python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
 combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig 
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root
+python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
+        with open(script_file, 'w') as f:
+            f.write(script)
+        
+        st = os.stat(script_file)
+        os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+
+        # Write small script for impacts
+        script = """#! /bin/bash
+
+# Run impacts
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --parallel 10
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json
+plotImpacts.py -i {name}_impacts.json -o {name}_impacts
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+        script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
             f.write(script)
         
@@ -546,7 +573,7 @@ python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagn
         # Write small script for postfit shapes
         script = """#! /bin/bash
 
-# Run checks
+# Run postfit
 echo combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0
 combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 
 PostFitShapes -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
