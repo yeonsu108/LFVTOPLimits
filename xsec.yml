@@ -20,7 +20,7 @@
   type: signal
   pretty-name: 'STTH1L3BHut'
   cross-section: 0.3061
-  generated-events: 3394376 #3951842
+  generated-events: 3394376 #3951842  DAS says 3951842
   line-color: '#666600'
   legend: 'STHut'
   order: 3
@@ -29,7 +29,7 @@
   type: signal
   pretty-name: 'TTTH1L3BaTLepHut'
   cross-section: 0.6939
-  generated-events: 1605475 #1935178
+  generated-events: 1605475 #1935178    #DAS says 1007834 for TtoHj 927344 for aTtoHj == 1 935 178
   line-color: '#cccc00'
   legend: 'TTHut'
   order: 4
