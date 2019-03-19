@@ -33,13 +33,13 @@ def get_hist_regex(r):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/histos_suitable_for_limits_190107/', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/histos_suitable_for_limits_190121_TTsigSplit/', help='Directory containing rootfiles with the TH1 used for limit settings')
 #parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
-parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_190107_betterSys_sameBkgDefThanKiril_XsecSysOnOther', help='Output directory')
+parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_rebinned_190121_play', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
-parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec.yml', help='YAML config file path with Xsec and Nevt.')
+parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_sig1pb.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--reweight', action='store_true', dest='reweight', help='Apply a preliminary reweighting. Not implemented yet.')
 parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
@@ -49,6 +49,7 @@ parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+'
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics affecting only SM tt.')
 parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
+parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 
 options = parser.parse_args()
 
@@ -203,8 +204,10 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
 #        ## Higgs
 #        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
         # Signal
-        'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
-        'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
+        #'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
+        #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
+        'Hut': ['TTTH1L3BaTLepHut', 'TTTH1L3BTLepHut', 'STTH1L3BHut'],
+        'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
         #'Hct': ['STTH1L3BHct'],
         # Data
         'data_el' : ['SingleElectronRun2017'],
@@ -267,6 +270,8 @@ def merge_histograms(process, histogram, destination):
     if not 'data' in process:
         #print "Rescaleing %s to lumi: "%process, options.luminosity
         histogram.Scale(options.luminosity)
+    #print process, " ", histogram.GetTitle(), " ", destination, " ", histogram.GetNbinsX()
+    histogram.Rebin(options.rebinning)
 
     d = destination
     if not d:
@@ -357,6 +362,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             systematics.discard(sysToAvoid)
         print "After ignoring the one mentioned with sysToAvoid option: ", systematics
 
+    print systematics
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
 
     def dict_get(dict, name):
@@ -395,13 +401,16 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
+                        if systematic in options.sysForSMtt and not process in smTTlist:
+                            continue
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
+                            #print "Key: ", key
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
-                            if systematic in options.sysForSMtt and not process in smTTlist:
-                                # Copy nominal TH1 in non SMtt processes for systematics affecting only SMtt
-                                shapes[category][process][key] = merge_histograms(process, TH1, dict_get(shapes[category][process], key))
-                                continue
+                            #if systematic in options.sysForSMtt and not process in smTTlist:
+                            #    # Copy nominal TH1 in non SMtt processes for systematics affecting only SMtt (already scaled)
+                            #    shapes[category][process][key] = merge_histograms(process, TH1, dict_get(shapes[category][process], key))
+                            #    continue
                             if not TH1_syst:
                                 print "No histo named %s in %s"%(original_histogram_name + '__' + systematic + variation, process_file_basename)
                                 sys.exit()
@@ -469,10 +478,10 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
                     (['ttbb', 'ttcc', 'ttother', 'ttlf', 'ttbj'], 1.055)
                     )
-            cb.cp().AddSyst(cb, '$PROCESS_$BIN_norm', 'lnN', ch.SystMap('process')
+            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
                     (['ttbb'], 1.3)
                     )
-            cb.cp().AddSyst(cb, '$PROCESS_$BIN_norm', 'lnN', ch.SystMap('process')
+            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
                     (['ttcc'], 1.5)
                     )
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')
@@ -480,7 +489,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     (['SingleTop', 'other'], 1.1)
                     )
         if options.SF :
-            print "Background renormalization not finalized yet! Exitting..."
+            print "Background renormalization is deprecated! Exitting..."
             sys.exit(1)
             cb.cp().AddSyst(cb, 'SF_$PROCESS', 'rateParam', ch.SystMap('process')
                     (['ttbb'], 1.)
@@ -494,12 +503,12 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         if not options.nobbb:
             print "Treating bbb"
             bbb = ch.BinByBinFactory()
-            bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
-            bbb.MergeBinErrors(cb.cp().backgrounds())
+            #bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
+            bbb.SetAddThreshold(0.1)
             bbb.AddBinByBin(cb.cp().backgrounds(), cb)
             bbb.AddBinByBin(cb.cp().signals(), cb)
 
-        if options.nosys and not options.bbb : 
+        if options.nosys and options.nobbb : 
             cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['13TeV_2017'], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
 
         output_prefix = 'FCNC_%s_Discriminant_%s' % (signal, discriminantName)

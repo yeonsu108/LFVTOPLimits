@@ -13,7 +13,9 @@ options = parser.parse_args()
 
 ROOT.gROOT.SetBatch()
 
-signal_Xsec_couplingOne = {"Hut": 59.7825, "Hct": 47.68} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
+
+signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
 
 def getLimitsFromFile(input_file):
     """
@@ -149,7 +151,7 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.pdf'))
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
     print "Limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['expected'])
-    print "Limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOne[signal_name]*1.32158))
+    print "Limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
 
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
@@ -174,6 +176,12 @@ for signal_folder in signal_folders:
                     sys.exit(1)
                 found_category = True
                 limits = getLimitsFromFile(limit_rootfile_path)
+                for number_type in limits:
+                    if isinstance(limits[number_type], list):
+                        limits[number_type][0] = limits[number_type][0]*signal_Xsec_couplingOne[signal_folder]
+                        limits[number_type][1] = limits[number_type][1]*signal_Xsec_couplingOne[signal_folder]
+                    else:
+                        limits[number_type] = limits[number_type]*signal_Xsec_couplingOne[signal_folder]
                 dict_cat_limits[category] = limits
         if not found_category:
             print "Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form e.g. higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path)

@@ -2,26 +2,32 @@ import json, sys, os
 
 limitfolder = sys.argv[1]
 
+#Hct_cross_sec = 48.4
+#Hut_cross_sec = 60.34
+
+Hct_cross_sec = 1
+Hut_cross_sec = 1
+
 Hut_limits = json.loads(open(os.path.join(limitfolder, 'Hut_limits.json')).read())
 for key in Hut_limits:
     for number_type in Hut_limits[key]:
         if isinstance(Hut_limits[key][number_type], list):
-            Hut_limits[key][number_type][0] = round(Hut_limits[key][number_type][0], 2)
-            Hut_limits[key][number_type][1] = round(Hut_limits[key][number_type][1], 2)
+            Hut_limits[key][number_type][0] = round(Hut_limits[key][number_type][0]*Hut_cross_sec, 2)
+            Hut_limits[key][number_type][1] = round(Hut_limits[key][number_type][1]*Hut_cross_sec, 2)
         else:
-            Hut_limits[key][number_type] = round(Hut_limits[key][number_type], 2)
+            Hut_limits[key][number_type] = round(Hut_limits[key][number_type]*Hut_cross_sec, 2)
         if number_type == 'observed':
-            Hut_limits[key][number_type] = 'X'
+            Hut_limits[key][number_type] = 'X'#*Hut_cross_sec
 
 Hut_table = """
     \\begin{{tabular}}{{|l|c|c|c|c|c|c|}}
       \hline
       Category & $\sigma_{{exp}} - 2\sigma$ & $\sigma_{{exp}} - 1\sigma$ & $\sigma_{{exp}}$ & $\sigma_{{obs}}$ & $\sigma_{{exp}} + 1\sigma$ & $\sigma_{{exp}} + 2\sigma$ \\\\ \hline
-      $j3b2$ & {j3b2M2sig} & {j3b2M1sig} & {j3b2Exp} & {j3b2Obs} & {j3b2P1sig} & {j3b2P2sig} \\\\
-      $j3b3$ & {j3b3M2sig} & {j3b3M1sig} & {j3b3Exp} & {j3b3Obs} & {j3b3P1sig} & {j3b3P2sig} \\\\
-      $j4b2$ & {j4b2M2sig} & {j4b2M1sig} & {j4b2Exp} & {j4b2Obs} & {j4b2P1sig} & {j4b2P2sig} \\\\
-      $j4b3$ & {j4b3M2sig} & {j4b3M1sig} & {j4b3Exp} & {j4b3Obs} & {j4b3P1sig} & {j4b3P2sig} \\\\
-      $j4b4$ & {j4b4M2sig} & {j4b4M1sig} & {j4b4Exp} & {j4b4Obs} & {j4b4P1sig} & {j4b4P2sig} \\\\ \hline
+      $b2j3$ & {j3b2M2sig} & {j3b2M1sig} & {j3b2Exp} & {j3b2Obs} & {j3b2P1sig} & {j3b2P2sig} \\\\
+      $b3j3$ & {j3b3M2sig} & {j3b3M1sig} & {j3b3Exp} & {j3b3Obs} & {j3b3P1sig} & {j3b3P2sig} \\\\
+      $b2j4$ & {j4b2M2sig} & {j4b2M1sig} & {j4b2Exp} & {j4b2Obs} & {j4b2P1sig} & {j4b2P2sig} \\\\
+      $b3j4$ & {j4b3M2sig} & {j4b3M1sig} & {j4b3Exp} & {j4b3Obs} & {j4b3P1sig} & {j4b3P2sig} \\\\
+      $b4j4$ & {j4b4M2sig} & {j4b4M1sig} & {j4b4Exp} & {j4b4Obs} & {j4b4P1sig} & {j4b4P2sig} \\\\ \hline
       all & {allM2sig} & {allM1sig} & {allExp} & {allObs} & {allP1sig} & {allP2sig} \\\\ \hline
    \end{{tabular}}
 """.format(
@@ -35,28 +41,29 @@ Hut_table = """
 Hut_table_filename = os.path.join(limitfolder, "Hut_limits_table.tex")
 with open(Hut_table_filename, 'w') as table_file:
     table_file.write(Hut_table)
+print "Hut:"
 print Hut_table
 
 Hct_limits = json.loads(open(os.path.join(limitfolder, 'Hct_limits.json')).read())
 for key in Hct_limits:
     for number_type in Hct_limits[key]:
         if isinstance(Hct_limits[key][number_type], list):
-            Hct_limits[key][number_type][0] = round(Hct_limits[key][number_type][0], 2)
-            Hct_limits[key][number_type][1] = round(Hct_limits[key][number_type][1], 2)
+            Hct_limits[key][number_type][0] = round(Hct_limits[key][number_type][0]*Hct_cross_sec, 2)
+            Hct_limits[key][number_type][1] = round(Hct_limits[key][number_type][1]*Hct_cross_sec, 2)
         else:
-            Hct_limits[key][number_type] = round(Hct_limits[key][number_type], 2)
+            Hct_limits[key][number_type] = round(Hct_limits[key][number_type]*Hct_cross_sec, 2)
         if number_type == 'observed':
-            Hct_limits[key][number_type] = 'X'
+            Hct_limits[key][number_type] = 'X'#*Hct_cross_sec
 
 Hct_table = """
     \\begin{{tabular}}{{|l|c|c|c|c|c|c|}}
       \hline
       Category & $\sigma_{{exp}} - 2\sigma$ & $\sigma_{{exp}} - 1\sigma$ & $\sigma_{{exp}}$ & $\sigma_{{obs}}$ & $\sigma_{{exp}} + 1\sigma$ & $\sigma_{{exp}} + 2\sigma$ \\\\ \hline
-      $j3b2$ & {j3b2M2sig} & {j3b2M1sig} & {j3b2Exp} & {j3b2Obs} & {j3b2P1sig} & {j3b2P2sig} \\\\
-      $j3b3$ & {j3b3M2sig} & {j3b3M1sig} & {j3b3Exp} & {j3b3Obs} & {j3b3P1sig} & {j3b3P2sig} \\\\
-      $j4b2$ & {j4b2M2sig} & {j4b2M1sig} & {j4b2Exp} & {j4b2Obs} & {j4b2P1sig} & {j4b2P2sig} \\\\
-      $j4b3$ & {j4b3M2sig} & {j4b3M1sig} & {j4b3Exp} & {j4b3Obs} & {j4b3P1sig} & {j4b3P2sig} \\\\
-      $j4b4$ & {j4b4M2sig} & {j4b4M1sig} & {j4b4Exp} & {j4b4Obs} & {j4b4P1sig} & {j4b4P2sig} \\\\ \hline
+      $b2j3$ & {j3b2M2sig} & {j3b2M1sig} & {j3b2Exp} & {j3b2Obs} & {j3b2P1sig} & {j3b2P2sig} \\\\
+      $b3j3$ & {j3b3M2sig} & {j3b3M1sig} & {j3b3Exp} & {j3b3Obs} & {j3b3P1sig} & {j3b3P2sig} \\\\
+      $b2j4$ & {j4b2M2sig} & {j4b2M1sig} & {j4b2Exp} & {j4b2Obs} & {j4b2P1sig} & {j4b2P2sig} \\\\
+      $b3j4$ & {j4b3M2sig} & {j4b3M1sig} & {j4b3Exp} & {j4b3Obs} & {j4b3P1sig} & {j4b3P2sig} \\\\
+      $b4j4$ & {j4b4M2sig} & {j4b4M1sig} & {j4b4Exp} & {j4b4Obs} & {j4b4P1sig} & {j4b4P2sig} \\\\ \hline
       all & {allM2sig} & {allM1sig} & {allExp} & {allObs} & {allP1sig} & {allP2sig} \\\\ \hline
    \end{{tabular}}
 """.format(
@@ -70,4 +77,6 @@ Hct_table = """
 Hct_table_filename = os.path.join(limitfolder, "Hct_limits_table.tex")
 with open(Hct_table_filename, 'w') as table_file:
     table_file.write(Hct_table)
+
+print 'Hct:'
 print Hct_table
