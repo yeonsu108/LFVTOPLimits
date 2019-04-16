@@ -33,13 +33,15 @@ def get_hist_regex(r):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/histos_suitable_for_limits_190121_TTsigSplit/', help='Directory containing rootfiles with the TH1 used for limit settings')
-#parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
-parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
-parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_rebinned_190121_play', help='Output directory')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='../../../../rootfiles_for_limits/histos_suitable_for_limits_190410_2018/', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=59741, help='Integrated luminosity (default is 59741 /pb)')
+parser.add_argument('-le', '--luminosityError', action='store', type=float, dest='luminosityError', default=1.023, help='Error on the integrated luminosity (default is 1.023 /pb)')
+#parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
+parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_rebinned_4_190410_2018', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
-parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_sig1pb.yml', help='YAML config file path with Xsec and Nevt.')
+#parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_sig1pb.yml', help='YAML config file path with Xsec and Nevt.')
+parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_2018_190410.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--reweight', action='store_true', dest='reweight', help='Apply a preliminary reweighting. Not implemented yet.')
 parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
@@ -47,9 +49,11 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', help='Set it to exclude some of the systematics')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics affecting only SM tt.')
+parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
+parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2018', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
 
 options = parser.parse_args()
 
@@ -60,7 +64,7 @@ channel_mapping = {
     }
 
 selection_mapping = {
-    'b2j3' : 'S2',
+   'b2j3' : 'S2',
     'b2j4' : 'S6',
     'b3j3' : 'S3',
     'b3j4' : 'S7',
@@ -186,7 +190,7 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         'ttlf': ['hist_TTpowhegttlf.root'],
         'ttcc': ['hist_TTpowhegttcc.root'],
         'ttbj' : ['hist_TTpowhegttbj.root'],
-        'ttbb': ['TTpowhegttbb'],
+        'ttbb': ['hist_TTpowhegttbb.root'],
         ## Other Top
         'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
         ## Other Bkg
@@ -208,11 +212,10 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
         'Hut': ['TTTH1L3BaTLepHut', 'TTTH1L3BTLepHut', 'STTH1L3BHut'],
         'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
-        #'Hct': ['STTH1L3BHct'],
         # Data
-        'data_el' : ['SingleElectronRun2017'],
-        'data_mu' : ['SingleMuonRun2017'],
-        'data_all' : ['Single.*Run2017']
+        'data_el' : ['SingleElectronRun%s'%options.dataYear],
+        'data_mu' : ['SingleMuonRun%s'%options.dataYear],
+        'data_all' : ['Single.*Run%s'%options.dataYear]
         }
 processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
 processes_mapping.pop('data_el')
@@ -362,7 +365,6 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             systematics.discard(sysToAvoid)
         print "After ignoring the one mentioned with sysToAvoid option: ", systematics
 
-    print systematics
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
 
     def dict_get(dict, name):
@@ -462,19 +464,23 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     
     for signal in signals :
         cb = ch.CombineHarvester()
-        cb.AddObservations(['*'], [''], ['13TeV_2017'], [''], discriminant)
-        cb.AddProcesses(['*'], [''], ['13TeV_2017'], [''], backgrounds, discriminant, False)
-        cb.AddProcesses(['*'], [''], ['13TeV_2017'], [''], [signal], discriminant, True)
+        cb.AddObservations(['*'], [''], ['_%s'%options.dataYear], [''], discriminant)
+        cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
+        cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], [signal], discriminant, True)
 
         # Systematics
         if not options.nosys:
             for systematic in systematics:
-                if not systematic in options.sysForSMtt:
+                systematic_only_for_SMtt = False
+                for systSMtt in options.sysForSMtt:
+                    if CMSNamingConvention(systSMtt) == systematic:
+                        systematic_only_for_SMtt = True
+                if not systematic_only_for_SMtt:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
                 else:
                     #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
-            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['13TeV_2017'], 1.023))
+            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
                     (['ttbb', 'ttcc', 'ttother', 'ttlf', 'ttbj'], 1.055)
                     )
@@ -509,7 +515,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             bbb.AddBinByBin(cb.cp().signals(), cb)
 
         if options.nosys and options.nobbb : 
-            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['13TeV_2017'], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
+            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
 
         output_prefix = 'FCNC_%s_Discriminant_%s' % (signal, discriminantName)
 
@@ -587,8 +593,8 @@ echo combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizati
 combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 
 PostFitShapes -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
-./../../../HEPToolsFCNC/analysis_2017/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}.yml -y
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("Hut" if "Hut" in output_prefix else "Hct"))
+./../../../HEPToolsFCNC/analysis_2017/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("Hut" if "Hut" in output_prefix else "Hct"), year=options.dataYear)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
             f.write(script)
@@ -599,7 +605,11 @@ python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
 def CMSNamingConvention(syst):
     # Taken from https://twiki.cern.ch/twiki/bin/view/CMS/HiggsWG/HiggsCombinationConventions
     # systlist = ['jec', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
-    return syst
+
+    if syst not in options.correlatedSys:
+        return syst+'_%s'%options.dataYear
+    else:
+        return syst
     #if syst == 'jec':
     #    return 'CMS_scale_j'
     #elif syst == 'jer': 
