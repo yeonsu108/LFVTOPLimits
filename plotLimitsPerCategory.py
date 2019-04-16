@@ -8,6 +8,7 @@ parser.add_argument('-doPlot', dest='doPlot', type=bool, default=True, help='Do 
 parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: e.g. higgsCombine*_b3j3*.root.')
 parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
 parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
+parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
 
 options = parser.parse_args()
 
@@ -56,7 +57,7 @@ def getLimitsFromFile(input_file):
 
     return data
 
-def add_labels(canvas, additional_label='', lumi='41.5', energy='13', cms='Work in progress'):
+def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms='Work in progress'):
     latexLabel = ROOT.TLatex()
     latexLabel.SetTextSize(0.75 * canvas.GetTopMargin())
     latexLabel.SetNDC()
