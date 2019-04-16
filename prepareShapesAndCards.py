@@ -592,7 +592,7 @@ echo combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizati
 combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 
 PostFitShapes -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
-./../../../HEPToolsFCNC/analysis_2017/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
+$CMSSW_BASE/src/UserCode/HEPToolsFCNC/HEPToolsFCNC/analysis_2017/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("Hut" if "Hut" in output_prefix else "Hct"), year=options.dataYear)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
