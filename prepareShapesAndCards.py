@@ -480,7 +480,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 else:
                     #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
-            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
+            cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
                     (['ttbb', 'ttcc', 'ttlf'], 1.055)
                     )
@@ -515,7 +515,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             bbb.AddBinByBin(cb.cp().signals(), cb)
 
         if options.nosys and options.nobbb : 
-            cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
+            cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
 
         output_prefix = 'FCNC_%s_Discriminant_%s' % (signal, discriminantName)
 
@@ -607,7 +607,7 @@ def CMSNamingConvention(syst):
     # systlist = ['jec', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
 
     if syst not in options.correlatedSys:
-        return syst+'_%s'%options.dataYear
+        return '%s_'%options.dataYear+syst
     else:
         return syst
     #if syst == 'jec':
