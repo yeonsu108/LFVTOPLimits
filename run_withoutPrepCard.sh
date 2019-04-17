@@ -1,5 +1,4 @@
 datacardFolder=$1 
-python prepareShapesAndCards.py -o $datacardFolder
 python run_all_limits.py $datacardFolder
 python plotLimitsPerCategory.py -limitdatacardFolder $datacardFolder
 python printLimitLatexTable.py $datacardFolder
