@@ -5,6 +5,7 @@ import os, sys, stat, argparse, getpass, json
 from datetime import datetime
 from math import sqrt
 import yaml
+from collections import OrderedDict
 
 # to prevent pyroot to hijack argparse we need to go around
 tmpargv = sys.argv[:] 
@@ -33,7 +34,7 @@ def get_hist_regex(r):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='../../../../rootfiles_for_limits/histos_suitable_for_limits_190121_TTsigSplit/', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/home/minerva1993/CMSSW_8_1_0/src/UserCode/FCNCLimits/histos_suitable_for_limits_190407_2018/', help='Directory containing rootfiles with the TH1 used for limit settings')
 #parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
 parser.add_argument('-le', '--luminosityError', action='store', type=float, dest='luminosityError', default=1.023, help='Error on the integrated luminosity (default is 1.023 /pb)')
@@ -47,8 +48,8 @@ parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards 
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
-parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics affecting only SM tt.')
-parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'scale', 'TuneCP5', 'ps', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
+parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
@@ -186,15 +187,14 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
                       # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
         # Background
         ## TT Semileptonic 
-        'ttlf': ['hist_TTpowhegttlf.root'],
-        'ttcc': ['hist_TTpowhegttcc.root'],
-        'ttbj' : ['hist_TTpowhegttbj.root'],
-        'ttbb': ['hist_TTpowhegttbb.root'],
+        'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTLLpowhegttlf.root', 'hist_TTHadpowhegttlf.root'],
+        'ttcc': ['hist_TTpowhegttcc.root', 'hist_TTLLpowhegttcc.root', 'hist_TTHadpowhegttcc.root'],
+        'ttbb': ['hist_TTpowhegttbb.root', 'hist_TTLLpowhegttbb.root', 'hist_TTHadpowhegttbb.root'],
         ## Other Top
-        'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
+        #'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
         ## Other Bkg
         'SingleTop': ['.*SingleT.*'],
-        'other' : ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets.*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+        'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
 #        'tthad': ['hist_TTHadpowheg.root'],
 #        'ttfullLep': ['hist_TTLLpowheg.root'],
 #        'SingleTop': ['.*SingleT.*'],
@@ -214,14 +214,14 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         # Data
         'data_el' : ['SingleElectronRun%s'%options.dataYear],
         'data_mu' : ['SingleMuonRun%s'%options.dataYear],
-        'data_all' : ['Single.*Run%s'%options.dataYear]
+        'data_all' : ['Single.*Run%s'%options.dataYear],
         }
 processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
 processes_mapping.pop('data_el')
 processes_mapping.pop('data_mu')
 processes_mapping.pop('data_all')
 
-smTTlist = ['ttlf', 'ttcc', 'ttbj', 'ttbb', 'ttother'] # for systematics affecting only SM tt
+smTTlist = ['ttlf', 'ttcc', 'ttbb'] # for systematics affecting only SM tt
 
 if options.fake_data:
   print "Fake data mode not implemented yet! Exitting..."
@@ -239,7 +239,7 @@ def main():
     """Main function"""
     signals = ['Hut', 'Hct']
     #backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
-    backgrounds = ['ttlf', 'ttcc', 'ttbj', 'ttbb', 'ttother', 'other', 'SingleTop']
+    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other', 'SingleTop']
     print "Background considered: ", backgrounds
 
     for signal in signals:
@@ -328,7 +328,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     for discriminant_tuple in categories_map[discriminant]:
         discriminant_name = discriminant_tuple[1]
         r = re.compile(individual_discriminants[discriminant_name], re.IGNORECASE)
-        f = ROOT.TFile.Open(processes_files.values()[0][0])
+        #f = ROOT.TFile.Open(processes_files.values()[0][0])
+        f = ROOT.TFile.Open(processes_files['ttlf'][0])
         histogram_names[discriminant_name] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
         f.Close()
 
@@ -481,16 +482,13 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
             cb.cp().AddSyst(cb, 'lumi_$ERA', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
-                    (['ttbb', 'ttcc', 'ttother', 'ttlf', 'ttbj'], 1.055)
+                    (['ttbb', 'ttcc', 'ttlf'], 1.055)
                     )
             cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
                     (['ttbb'], 1.3)
                     )
             cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
                     (['ttcc'], 1.5)
-                    )
-            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
-                    (['ttbj'], 1.3)
                     )
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')
                     #(['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
@@ -595,7 +593,7 @@ echo combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizati
 combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 
 PostFitShapes -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
-$CMSSW_BASE/src/UserCode/HEPToolsFCNC/HEPToolsFCNC/analysis_2017/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
+$CMSSW_BASE/src/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("Hut" if "Hut" in output_prefix else "Hct"), year=options.dataYear)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
