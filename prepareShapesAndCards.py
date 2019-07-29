@@ -193,8 +193,7 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         ## Other Top
         #'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
         ## Other Bkg
-        'SingleTop': ['.*SingleT.*'],
-        'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+        'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root', '.*SingleT.*'],
 #        'tthad': ['hist_TTHadpowheg.root'],
 #        'ttfullLep': ['hist_TTLLpowheg.root'],
 #        'SingleTop': ['.*SingleT.*'],
@@ -239,7 +238,7 @@ def main():
     """Main function"""
     signals = ['Hut', 'Hct']
     #backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
-    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other', 'SingleTop']
+    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other']
     print "Background considered: ", backgrounds
 
     for signal in signals:
@@ -492,7 +491,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     )
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')
                     #(['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
-                    (['SingleTop', 'other'], 1.1)
+                    (['other'], 1.1)
                     )
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
