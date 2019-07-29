@@ -14,6 +14,9 @@ options = parser.parse_args()
 
 ROOT.gROOT.SetBatch()
 
+#limit on branching ratio: Excluded limit --> excluded coupling: sigXsecDivK2 = 47.68, sigXsecDivK2 * Khqt^2 <  XsecEcl --> Khqt^2 < XsecExcl/sigXsecDivK2
+#    Excluded couping ---> ExcBr: BR(t --> Hq) = Width(t --> Hq)* Khqt^2/TotalWidth = 0.19*Khqt^2/1.32158
+#    <--> BR(t --> Hq) < XsecExcl*0.19/(sigXsecDivK2 * 1.32158)
 
 signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
@@ -153,6 +156,8 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
     print "Limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['expected'])
     print "Limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+    print "Limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+    print "Limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
 
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
