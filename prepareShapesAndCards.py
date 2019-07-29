@@ -183,42 +183,75 @@ if options.test:
 # IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
 
 # ~Kirill definition of Bkg
-processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
-                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
-        # Background
-        ## TT Semileptonic 
-        'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTLLpowhegttlf.root', 'hist_TTHadpowhegttlf.root'],
-        'ttcc': ['hist_TTpowhegttcc.root', 'hist_TTLLpowhegttcc.root', 'hist_TTHadpowhegttcc.root'],
-        'ttbb': ['hist_TTpowhegttbb.root', 'hist_TTLLpowhegttbb.root', 'hist_TTHadpowhegttbb.root'],
-        ## Other Top
-        #'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
-        ## Other Bkg
-        'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root', '.*SingleT.*'],
-#        'tthad': ['hist_TTHadpowheg.root'],
-#        'ttfullLep': ['hist_TTLLpowheg.root'],
-#        'SingleTop': ['.*SingleT.*'],
-#        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
-#        ## V + jets
-#        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
-#        'DYjets': ['hist_DYJetsv2.*'],
-#        ## VV
-#        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
-#        ## Higgs
-#        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
-        # Signal
-        #'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
-        #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
-        'Hut': ['TTTH1L3BaTLepHut', 'TTTH1L3BTLepHut', 'STTH1L3BHut'],
-        'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
-        # Data
-        'data_el' : ['SingleElectronRun%s'%options.dataYear],
-        'data_mu' : ['SingleMuonRun%s'%options.dataYear],
-        'data_all' : ['Single.*Run%s'%options.dataYear],
-        }
-processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
-processes_mapping.pop('data_el')
-processes_mapping.pop('data_mu')
-processes_mapping.pop('data_all')
+if options.dataYear != '2016':
+    processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
+                          # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
+            # Background
+            ## TT Semileptonic 
+            'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTLLpowhegttlf.root', 'hist_TTHadpowhegttlf.root'],
+            'ttcc': ['hist_TTpowhegttcc.root', 'hist_TTLLpowhegttcc.root', 'hist_TTHadpowhegttcc.root'],
+            'ttbb': ['hist_TTpowhegttbb.root', 'hist_TTLLpowhegttbb.root', 'hist_TTHadpowhegttbb.root'],
+            ## Other Top
+            #'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
+            ## Other Bkg
+            'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root', '.*SingleT.*'],
+    #        'tthad': ['hist_TTHadpowheg.root'],
+    #        'ttfullLep': ['hist_TTLLpowheg.root'],
+    #        'SingleTop': ['.*SingleT.*'],
+    #        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
+    #        ## V + jets
+    #        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
+    #        'DYjets': ['hist_DYJetsv2.*'],
+    #        ## VV
+    #        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
+    #        ## Higgs
+    #        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+            # Signal
+            #'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
+            #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
+            'Hut': ['TTTH1L3BaTLepHut', 'TTTH1L3BTLepHut', 'STTH1L3BHut'],
+            'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
+            # Data
+            'data_el' : ['SingleElectronRun%s'%options.dataYear],
+            'data_mu' : ['SingleMuonRun%s'%options.dataYear],
+            'data_all' : ['Single.*Run%s'%options.dataYear],
+            }
+    processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
+    processes_mapping.pop('data_el')
+    processes_mapping.pop('data_mu')
+    processes_mapping.pop('data_all')
+else:
+    processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
+                          # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
+            # Background
+            ## TT Semileptonic 
+            'ttlf': ['ttlf.root'],
+            'ttcc': ['ttcc.root'],
+            'ttbb': ['ttbb.root'],
+            ## Other Top
+            #'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
+            ## Other Bkg
+            'other' : ['other.root'],
+    #        'tthad': ['hist_TTHadpowheg.root'],
+    #        'ttfullLep': ['hist_TTLLpowheg.root'],
+    #        'SingleTop': ['.*SingleT.*'],
+    #        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
+    #        ## V + jets
+    #        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
+    #        'DYjets': ['hist_DYJetsv2.*'],
+    #        ## VV
+    #        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
+    #        ## Higgs
+    #        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
+            # Signal
+            #'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
+            #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
+            'Hut': ['sig_stop_Hut.root', 'sig_ttbar_Hut.root'],
+            'Hct': ['sig_stop_Hct.root', 'sig_ttbar_Hct.root'],
+            # Data
+            'data_obs' : ['data_obs.root'],
+            }
+
 
 smTTlist = ['ttlf', 'ttcc', 'ttbb'] # for systematics affecting only SM tt
 
