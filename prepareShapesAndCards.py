@@ -554,10 +554,10 @@ combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run ex
 # Run checks
 echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly
 echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly 
+combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly --rMin -20 --rMax 20
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
 python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig 
+combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig --rMin -20 --rMax 20
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root
 python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
@@ -604,11 +604,10 @@ $CMSSW_BASE/src/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_p
 def CMSNamingConvention(syst):
     # Taken from https://twiki.cern.ch/twiki/bin/view/CMS/HiggsWG/HiggsCombinationConventions
     # systlist = ['jec', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
-
     if syst not in options.correlatedSys:
-        return '%s_'%options.dataYear+syst
+        return 'CMS_' + options.dataYear + '_' + syst
     else:
-        return syst
+        return 'CMS_' + syst
     #if syst == 'jec':
     #    return 'CMS_scale_j'
     #elif syst == 'jer': 
