@@ -49,3 +49,51 @@ You can also print limits in form of latex table with `printLimitLatexTable.py`
 
 The signal cross section you use in 'xsec.yml' has to be propagated to `plotLimitsPerCategory.py` and to `printLimitLatexTable.py`. Note that `plotLimitsPerCategory.py` also needs the real, physical, expected signal cross section (for coupling one) to derive the limit on branching ratio.
 
+# Script documentation
+
+Script by script explanation (some might be slightly outdated or need minor modifications to adapt to different data taking year)
+
+`2016_compute_limit.sh` derives limits using out of the box 2016 datacards
+
+`2016_get_real_exclLim_and_br.py` transforms the limit obtained from out of the box 2016 datacards into physical limits (taking into account the normalization used to obtain signal yields in these datacards)
+
+`2016_preprocess_files.py` in view of combination of 2017+2018 analyses with existing 2016, some homogenization is required (align the systematics name, the background definitions, the signal cross sections used and the rootfile format). This script just re-process the 2016 rootfile to make them compliant for `prepareShapesAndCards.py`. Not validated yet.
+
+`convertPostfitShapesForPlotIt.py` makes the output of `combine` suitable for plotIt when deriving post-fit plots
+
+`gather_th1_for_limits.py` pre-process 2017 and 2018 TH1 to make them suitable for `prepareShapesAndCards.py` (e.g. gather jec TH1 which are in separatred rootfiles into the same rootfile than other systematics)
+
+`histos_postfit_Hc(u)t.yml` plotIt yml histogram configuration file for Hc(u)t post-fit plot
+
+`list_histo.py` script for debugging, useful e.g. to check the presence (or absence) of a given TH1 inside a rootfile containing hundreads of them
+
+`makeEnvelope.py` for systematics with more than just up/down variation (e.g. scale or pdf), one has to derive to envelope to have well defined up/down shape. This script computes this envelope and store it in the rootfile.
+
+`plotLimitsPerCategory.py` stores limit values inside a json file and makes the plot with limits on signal cross section per jet category and with all jet categories combined
+
+`postfit_file_Hc(u)t.yml` plotIt yml process configuration file for Hc(u)t post-fit plot
+
+`postfit_plotIt_config_Hc(u)t_2017(8).yml` plotIt yml global configuration file for Hc(u)t post-fit plot in 2017(8)
+
+`prepareShapesAndCards.py` based on the TH1 obtained from `gather_th1_for_limits.py`, writes datacards and rootfiles to feed combine (taking care of systematics, rescaling to lumi*Xsec/Nevent, etc). This code also writes several bash script to derive the limits with combine, perform the pre-approval checks (pulls and impact of systematics), post-fit shapes, ...
+
+`printLimitLatexTable.py` print a latex pre-formatted table with limits taken from the json file produced by `plotLimitsPerCategory.py`
+
+`printPulls.py` when you run the closure checks (e.g. from the bash script written by `prepareShapesAndCards.py`) information about pulls is stored in a rootfile by combine, this script just prints the pull plot in png format
+
+`run_all_closureChecks.py`, `run_all_impacts.py`, `run_all_limits.py`, `run_all_postfits.py` scripts used to automatize the full chain. It launches the various combine commands in the bash scripts written by `prepareShapesAndCards.py`
+
+`run_everything_for2016/7/8.sh` **THE** script launching everything you need: writing datacards, producing limits on signal cross section, plot them, print a latex table with them, run closure checks of the pulls. derive impact plot and postfit plots
+
+`run_withoutPrepCard.sh` same then `run_everything_for2016/7/8.sh` but without the datacard writing part
+
+`setTDRStyle.C` used to be compliant with CMS style guidelines (used in `plotLimitsPerCategory.py`)
+
+All the `xsec.yml` contain the cross section and number of generated events used by `prepareShapesAndCards.py` to apply proper normalization before limit setting
+
+`update_an.sh` script used to automatize the update of the AN after generating new limits (writes the latex table with limits in the AN, change the limits and psotfit plots, etc). It has to be updated to whatever format will be decided for AN combining 2017 and 2018.
+
+
+
+
+
