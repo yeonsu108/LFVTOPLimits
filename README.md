@@ -67,7 +67,7 @@ Script by script explanation (some might be slightly outdated or need minor modi
 
 `list_histo.py` script for debugging, useful e.g. to check the presence (or absence) of a given TH1 inside a rootfile containing hundreads of them
 
-`makeEnvelope.py` for systematics with more than just up/down variation (e.g. scale or pdf), one has to derive to envelope to have well defined up/down shape. This script computes this envelope and store it in the rootfile.
+`makeEnvelope.py` for systematics with more than just up/down variation (e.g. scale or pdf), one has to derive to envelope to have well defined up/down shape. This script computes this envelope and store it in the rootfile. Currently not needed anymore because this step is done earlier in the chain.
 
 `plotLimitsPerCategory.py` stores limit values inside a json file and makes the plot with limits on signal cross section per jet category and with all jet categories combined
 
