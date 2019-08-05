@@ -53,7 +53,7 @@ The signal cross section you use in 'xsec.yml' has to be propagated to `plotLimi
 
 Script by script explanation (some might be slightly outdated or need minor modifications to adapt to different data taking year)
 
-`2016_compute_limit.sh` derives limits using out of the box 2016 datacards
+`2016_compute_limit.sh` derives limits using out of the box 2016 datacards. Make sure you wrote right path for root files
 
 `2016_get_real_exclLim_and_br.py` transforms the limit obtained from out of the box 2016 datacards into physical limits (taking into account the normalization used to obtain signal yields in these datacards)
 
