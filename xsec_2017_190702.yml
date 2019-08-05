@@ -70,17 +70,17 @@
   legend: 'TTHut'
   order: 4
 
-'hist_SingleMuonRun2017.root':
-  type: data
-  legend: 'Data'
-  pretty-name: 'Data'
-  group: GData
-
-'hist_SingleElectronRun2017.root':
-  type: data
-  legend: 'Data'
-  pretty-name: 'Data'
-  group: GData
+#'hist_SingleMuonRun2017.root':
+#  type: data
+#  legend: 'Data'
+#  pretty-name: 'Data'
+#  group: GData
+#
+#'hist_SingleElectronRun2017.root':
+#  type: data
+#  legend: 'Data'
+#  pretty-name: 'Data'
+#  group: GData
 
 'hist_TTpowhegttbb.root':
   type: mc
