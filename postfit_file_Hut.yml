@@ -34,24 +34,6 @@
   legend: "ttbb"
   order: 0
 
-'ttbj_postfit_histos.root':
-  type: mc
-  pretty-name: 'TTpowhegttbb'
-  cross-section: 1
-  generated-events: 1
-  fill-color: '#660000'
-  legend: "ttbj"
-  order: 1
-
-'ttother_postfit_histos.root':
-  type: mc
-  pretty-name: 'TTpowhegttbb'
-  cross-section: 1
-  generated-events: 1
-  fill-color: '#ff6666'
-  legend: "Other tt"
-  order: 4
-
 'other_postfit_histos.root':
   type: mc
   pretty-name: 'Other'
@@ -60,15 +42,6 @@
   fill-color: '#ff9933'
   legend: 'Other Bkg'
   order: 15
-
-'SingleTop_postfit_histos.root':
-  type: mc
-  pretty-name: 'Other'
-  cross-section: 1
-  generated-events: 1
-  fill-color: '#990099'
-  legend: 'Single top'
-  order: 13
 
 'data_obs_postfit_histos.root':
   type: data

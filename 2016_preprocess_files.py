@@ -2,8 +2,11 @@ import ROOT, os
 # script that runs over the rootfile used for 2016 analysis and translate them to our format. It also removes the cross section (and factor 0.1) scaling applied to signals (this way the normalization for 2016 signal will also be 1 pb as we have for 2017 and 2018)
 # NB: lumi rescaling is already applied to the 2016 TH1, it has to be set to 1 in prepareShapesAndCards
 
-rootfile_path = '/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/CMSSW_8_1_0/src/UserCode/tHFCNC/Limit/FinalFits/merged/'
-rescaled_rootfile_path = '/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/CMSSW_8_1_0/src/UserCode/tHFCNC/Limit/FinalFits/suitable_for_prepareShapeAndCards/' # for the output rootfiles
+cmssw_base = os.environ['CMSSW_BASE']
+rootfile_path = cmssw_base + '/src/UserCode/tHFCNC/Limit/FinalFits/merged/'
+rescaled_rootfile_path = cmssw_base + '/src/UserCode/tHFCNC/Limit/FinalFits/suitable_for_prepareShapeAndCards/' # for the output rootfiles
+if not os.path.exists(cmssw_base + '/src/UserCode/tHFCNC/Limit/FinalFits/suitable_for_prepareShapeAndCards/'):
+  os.makedirs(cmssw_base + '/src/UserCode/tHFCNC/Limit/FinalFits/suitable_for_prepareShapeAndCards/')
 # input_MVAHutComb_b4j4_hut.root
 Xsec_2016 = {'Hut': {"ST":13.8, "TT": 37.0}, 'Hct': {"ST":1.90, "TT":37.0}}
 extra_factor_2016 = 10  #No need to un-apply the extra factor 1.36 since we use here the signal TH1 splitted for ST and TT while this 1.36 was only applied to the TH1 corresponding to their sum ('sig')
