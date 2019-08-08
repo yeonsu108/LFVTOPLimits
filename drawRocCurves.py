@@ -48,7 +48,7 @@ for coupling in couplings:
 
         th1_rootFileName_2016 = os.path.join(pathToTh1_2016, 'shapes_' + partial_name + '.root')
         rocCurve_2016 = getRocCurve(partial_name, th1_rootFileName_2016, coupling)
-        rocCurve_2016.SetTitle("ROC Curve")
+        rocCurve_2016.SetTitle("ROC Curve: " + coupling + " " + jetBin)
         rocCurve_2016.GetXaxis().SetTitle("Background efficiency")
         rocCurve_2016.GetYaxis().SetTitle("Signal efficiency")
         rocCurve_2016.SetMarkerColor(ROOT.kBlue)
