@@ -103,7 +103,7 @@ individual_discriminants = { # support regex (allow to avoid ambiguities if many
 
         'DNN_Hut_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         'DNN_Hut_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+#        'DNN_Hut_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         ##########################################################################################################
 
         #'BDT_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
@@ -133,8 +133,9 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hut_b2j4" : [(1, 'DNN_Hut_b2j4')],
     "DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
-    "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
-    "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
+#    "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
+#    "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
+    "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4')],
 
     # tests
     #"BDT_Hct_b2j3" : [(1, 'BDT_Hct_b2j3')],
