@@ -9,10 +9,9 @@ parser.add_argument('-category_order', dest='category_order', nargs='+', default
 parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
 parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
 parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
+parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=bool, default=True, help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
-
-removeHutb4j4 = True
 
 ROOT.gROOT.SetBatch()
 
@@ -80,7 +79,7 @@ def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms=
 def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     cat_order = options.category_order[:] #copy by value not to modify original options
     cat_label = options.category_labels[:]
-    if removeHutb4j4 and signal_name == 'Hut':
+    if options.removeHutb4j4 and signal_name == 'Hut':
       cat_order.remove('b4j4')
       cat_label.remove('b4j4')
     nBins = len(limit_dict)
@@ -180,7 +179,7 @@ for signal_folder in signal_folders:
     dict_cat_limits = {}
     for category in options.category_order:
         found_category = False
-        if removeHutb4j4 and 'Hut/' in signal_folder_path and category == 'b4j4': continue
+        if options.removeHutb4j4 and 'Hut/' in signal_folder_path and category == 'b4j4': continue
         for limit_rootfile in limit_rootfiles:
             limit_rootfile_path = os.path.join(signal_folder_path, limit_rootfile)
             category_tmp = limit_rootfile.split('.')[0].split('_')[-1]
@@ -210,9 +209,3 @@ for signal_folder in signal_folders:
         from array import array
         ROOT.gROOT.ProcessLine(".x setTDRStyle.C")
         plot_limits(signal_folder, dict_cat_limits)
-
-
-
-
-
-
