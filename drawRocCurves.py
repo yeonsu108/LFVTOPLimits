@@ -36,7 +36,7 @@ if not os.path.exists(rocCurveOutputFolder):
     os.mkdir(rocCurveOutputFolder)
 
 couplings = ['Hct', 'Hut']
-jetBins = ['b2j3', 'b3j3', 'b3j4', 'b3j4', 'b4j4']
+jetBins = ['b2j3', 'b3j3', 'b2j4', 'b3j4', 'b4j4']
 
 for coupling in couplings:
     for jetBin in jetBins:

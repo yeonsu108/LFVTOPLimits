@@ -47,7 +47,7 @@ parser.add_argument('--reweight', action='store_true', dest='reweight', help='Ap
 parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
-parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['prefire'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
+parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
