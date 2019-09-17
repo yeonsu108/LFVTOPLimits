@@ -33,6 +33,14 @@ def get_hist_regex(r):
 
 cmssw_base = os.environ['CMSSW_BASE']
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0', 'False'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
 parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_190702_2017/training_01', help='Directory containing rootfiles with the TH1 used for limit settings')
@@ -55,9 +63,11 @@ parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
-parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=bool, default=True, help='Remove Hut b4j4 from plots')
+parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="True", help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
+
+print options.removeHutb4j4
 
 channel_mapping = {
     "mu" : 'Ch0',

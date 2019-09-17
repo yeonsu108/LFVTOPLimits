@@ -1,6 +1,14 @@
 import os, sys, argparse, json
 import ROOT
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0', 'False'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 parser = argparse.ArgumentParser(description='Store limits inside a json file and plot them if required (one bin per category).')
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
 parser.add_argument('-verbose', dest='verbose', type=bool, default=False, help='Dump limits to stdout or not.')
@@ -9,7 +17,7 @@ parser.add_argument('-category_order', dest='category_order', nargs='+', default
 parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
 parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
 parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
-parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=bool, default=True, help='Remove Hut b4j4 from plots')
+parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="True", help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
 
