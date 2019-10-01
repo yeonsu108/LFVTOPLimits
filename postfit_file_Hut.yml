@@ -1,50 +1,44 @@
+'data_obs_postfit_histos.root':
+  type: data
+  pretty-name: 'Data'
+  group: GData
+
 'Hut_postfit_histos.root':
   type: signal
   pretty-name: 'Hut'
   cross-section: 1
   generated-events: 1
-  line-color: '#666600'
-  legend: 'Hut'
+  group: GHut
   order: 3
-
-'ttlf_postfit_histos.root':
-  type: mc
-  pretty-name: 'TTpowhegttlf'
-  cross-section: 1
-  generated-events: 1
-  fill-color: '#cc0000'
-  legend: 'ttLF'
-  order: 3
-
-'ttcc_postfit_histos.root':
-  type: mc
-  pretty-name: 'TTpowhegttcc'
-  cross-section: 1
-  generated-events: 1
-  fill-color: '#990000'
-  legend: 'ttcc'
-  order: 2
 
 'ttbb_postfit_histos.root':
   type: mc
   pretty-name: 'TTpowhegttbb'
   cross-section: 1
   generated-events: 1
-  fill-color: "#330000"
-  legend: "ttbb"
-  order: 0
+  group: Gttbb
+  order: 1
+
+'ttcc_postfit_histos.root':
+  type: mc
+  pretty-name: 'TTpowhegttcc'
+  cross-section: 1
+  generated-events: 1
+  group: Gttcc
+  order: 2
+
+'ttlf_postfit_histos.root':
+  type: mc
+  pretty-name: 'TTpowhegttlf'
+  cross-section: 1
+  generated-events: 1
+  group: Gttlf
+  order: 3
 
 'other_postfit_histos.root':
   type: mc
   pretty-name: 'Other'
   cross-section: 1
   generated-events: 1
-  fill-color: '#ff9933'
-  legend: 'Other Bkg'
-  order: 15
-
-'data_obs_postfit_histos.root':
-  type: data
-  legend: 'Data'
-  pretty-name: 'Data'
-  marker-size: 0.6
+  group: Gother
+  order: 4
