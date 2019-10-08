@@ -1,14 +1,23 @@
 import os, sys, argparse, json
 import ROOT
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0', 'False'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 parser = argparse.ArgumentParser(description='Store limits inside a json file and plot them if required (one bin per category).')
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
 parser.add_argument('-verbose', dest='verbose', type=bool, default=False, help='Dump limits to stdout or not.')
-parser.add_argument('-doPlot', dest='doPlot', type=bool, default=True, help='Do the limit plot or not.')
+parser.add_argument('-doPlot', dest='doPlot', type=str2bool, default="True", help='Do the limit plot or not.')
 parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: e.g. higgsCombine*_b3j3*.root.')
 parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
 parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
 parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
+parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="True", help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
 
@@ -76,6 +85,11 @@ def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms=
 
 
 def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
+    cat_order = options.category_order[:] #copy by value not to modify original options
+    cat_label = options.category_labels[:]
+    if options.removeHutb4j4 and signal_name == 'Hut':
+      cat_order.remove('b4j4')
+      cat_label.remove('b4j4')
     nBins = len(limit_dict)
     bin_low_edges = array('d', range(nBins+1))
     #canvas = ROOT.TCanvas(signal_name + "_limits_per_category", signal_name + "_limits_per_category", 600, 450)
@@ -98,16 +112,16 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     observed_lines = {}
     one_sigma_rectangles = {}
     two_sigma_rectangles = {}
-    for category_binNumber in range(len(options.category_order)):
-        category = options.category_order[category_binNumber]
+    for category_binNumber in range(len(cat_order)):
+        category = cat_order[category_binNumber]
         if category in limit_dict.keys():
             categ_limits = limit_dict[category]
-            xAxis.SetBinLabel(category_binNumber+1, options.category_labels[category_binNumber])
+            xAxis.SetBinLabel(category_binNumber+1, cat_label[category_binNumber])
             th1_for_canvas_layout.SetBinContent(category_binNumber+1, categ_limits['two_sigma'][1]*1.5)
     th1_for_canvas_layout.SetMinimum(0)
     th1_for_canvas_layout.Draw()
-    for category_binNumber in range(len(options.category_order)):
-        category = options.category_order[category_binNumber]
+    for category_binNumber in range(len(cat_order)):
+        category = cat_order[category_binNumber]
         if category in limit_dict.keys():
             categ_limits = limit_dict[category]
             xlow = xAxis.GetBinLowEdge(category_binNumber+1)
@@ -173,6 +187,7 @@ for signal_folder in signal_folders:
     dict_cat_limits = {}
     for category in options.category_order:
         found_category = False
+        if options.removeHutb4j4 and 'Hut/' in signal_folder_path and category == 'b4j4': continue
         for limit_rootfile in limit_rootfiles:
             limit_rootfile_path = os.path.join(signal_folder_path, limit_rootfile)
             category_tmp = limit_rootfile.split('.')[0].split('_')[-1]
@@ -202,9 +217,3 @@ for signal_folder in signal_folders:
         from array import array
         ROOT.gROOT.ProcessLine(".x setTDRStyle.C")
         plot_limits(signal_folder, dict_cat_limits)
-
-
-
-
-
-

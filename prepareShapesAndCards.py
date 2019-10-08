@@ -33,6 +33,14 @@ def get_hist_regex(r):
 
 cmssw_base = os.environ['CMSSW_BASE']
 
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0', 'False'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
 parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_190702_2017/training_01', help='Directory containing rootfiles with the TH1 used for limit settings')
@@ -47,7 +55,7 @@ parser.add_argument('--reweight', action='store_true', dest='reweight', help='Ap
 parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
-parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['prefire'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
+parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
@@ -55,8 +63,11 @@ parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
+parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="True", help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
+
+print options.removeHutb4j4
 
 channel_mapping = {
     "mu" : 'Ch0',
@@ -121,7 +132,7 @@ individual_discriminants = { # support regex (allow to avoid ambiguities if many
         #'DNN_Hut_b4j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b4j4'])),
         #'yields': get_hist_regex('yields(?!(_sf|_df))'),
         }
-        
+
 discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
     "DNN_Hct_b2j3" : [(1, 'DNN_Hct_b2j3')],
     "DNN_Hct_b2j4" : [(1, 'DNN_Hct_b2j4')],
@@ -143,6 +154,11 @@ if options.test:
     discriminants = { "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
             #"DNN_Hct_b3j3" : [(1, 'DNN_Hct_b3j3')] 
             }
+if options.removeHutb4j4:
+    del individual_discriminants['DNN_Hut_b4j4']
+    del discriminants['DNN_Hut_b4j4']
+    discriminants["DNN_Hut_all"].remove((5, 'DNN_Hut_b4j4'))
+
 # Our definition of Bkg
 #processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
 #                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
