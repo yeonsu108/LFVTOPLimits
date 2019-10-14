@@ -43,14 +43,14 @@ def str2bool(v):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_190702_2017/training_01', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_191014_2017/training_0101010101', help='Directory containing rootfiles with the TH1 used for limit settings')
 #parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
 parser.add_argument('-le', '--luminosityError', action='store', type=float, dest='luminosityError', default=1.023, help='Error on the integrated luminosity (default is 1.023 /pb)')
 parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_190702_2017', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
-parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_2017_190702.yml', help='YAML config file path with Xsec and Nevt.')
+parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_2017_191014.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--reweight', action='store_true', dest='reweight', help='Apply a preliminary reweighting. Not implemented yet.')
 parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
@@ -102,19 +102,35 @@ individual_discriminants = { # support regex (allow to avoid ambiguities if many
         #'DNN_Hut_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         #'DNN_Hut_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         ##########################################################################################################
-        'DNN_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #For old BDT plots
+        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
 
-        'DNN_Hct_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        #'DNN_Hct_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
 
-        'DNN_Hut_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
 
-        'DNN_Hut_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        #'DNN_Hut_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+
+        #For new BDT plots
+        'DNN_Hct_b2j3': get_hist_regex('{0}_h_DNN_j3b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b3j3': get_hist_regex('{0}_h_DNN_j3b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+
+        'DNN_Hct_b2j4': get_hist_regex('{0}_h_DNN_j4b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b3j4': get_hist_regex('{0}_h_DNN_j4b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+        'DNN_Hct_b4j4': get_hist_regex('{0}_h_DNN_j4b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
+
+        'DNN_Hut_b2j3': get_hist_regex('{0}_h_DNN_j3b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b3j3': get_hist_regex('{0}_h_DNN_j3b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+
+        'DNN_Hut_b2j4': get_hist_regex('{0}_h_DNN_j4b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b3j4': get_hist_regex('{0}_h_DNN_j4b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN_Hut_b4j4': get_hist_regex('{0}_h_DNN_j4b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         ##########################################################################################################
 
         #'BDT_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
@@ -529,20 +545,51 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 else:
                     #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
-            cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
+#            cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
+            cb.cp().AddSyst(cb, 'CMS$ERA_lumi', 'lnN', ch.SystMap()(options.luminosityError))
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
                     (['ttbb', 'ttcc', 'ttlf'], 1.055)
                     )
-            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
-                    (['ttbb'], 1.3)
-                    )
-            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
-                    (['ttcc'], 1.5)
-                    )
+#            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
+#                    (['ttbb'], 1.3)
+#                    )
+#            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
+#                    (['ttcc'], 1.5)
+#                    )
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')
                     #(['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
                     (['other'], 1.1)
                     )
+            if options.dataYear == '2016':
+                cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')
+                        (['ttbb', 'ttcc', 'ttlf'], 1.05)
+                        )
+                cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')
+                        (['ttbb', 'ttcc', 'ttlf'], 1.15)
+                        )
+                for i in xrange(len(discriminant)):
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
+                            (['ttbb'], 1.5)
+                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
+                            (['ttcc'], 1.5)
+                            )
+                    if 'j3' in discriminant[i][1]:
+                        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
+                                (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01)
+                                )
+                    else:
+                        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
+                                (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05)
+                                )#1.05 for j4
+            else:
+               for i in xrange(len(discriminant)):
+                   cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
+                           (['ttbb'], 1.3)
+                           )
+                   cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
+                           (['ttcc'], 1.5)
+                           )
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
             sys.exit(1)
