@@ -18,6 +18,7 @@ parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['
 parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
 parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
 parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="True", help='Remove Hut b4j4 from plots')
+parser.add_argument('-printlimits', dest='printlimits', type=str2bool, default="False", help='Print b2j3 and b2j4 to check run2 combination')
 
 options = parser.parse_args()
 
@@ -173,6 +174,17 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     print "Limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
     print "Limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
 
+    if options.printlimits:
+      #b2j3: 16+17, b2j4: 17+18 
+      print "Limit on Xsec for %s b2j3 jet cat: %f"%(signal_name, limit_dict['b2j3']['expected'])
+      print "Limit on BR for %s b2j3 jet cat: %f %%"%(signal_name, 100*limit_dict['b2j3']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Limit on BR for %s b2j3 jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['b2j3']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Limit on BR for %s b2j3 jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['b2j3']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+
+      print "Limit on Xsec for %s b2j4 jet cat: %f"%(signal_name, limit_dict['b2j4']['expected'])
+      print "Limit on BR for %s b2j4 jet cat: %f %%"%(signal_name, 100*limit_dict['b2j4']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Limit on BR for %s b2j4 jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['b2j4']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Limit on BR for %s b2j4 jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['b2j4']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
 if not signal_folders:
@@ -182,7 +194,7 @@ if not signal_folders:
 for signal_folder in signal_folders:
     print "Extracting limits for %s"%signal_folder
     signal_folder_path = os.path.join(options.limitfolder, signal_folder)
-    limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombine')]
+    limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC')]
     #categories = [] # [rootfilename.split('.')[0].split('_')[-1] for rootfilename in limit_rootfiles]
     dict_cat_limits = {}
     for category in options.category_order:

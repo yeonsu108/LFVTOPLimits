@@ -6,6 +6,7 @@ gROOT.SetBatch()
 gROOT.ProcessLine(".x setTDRStyle.C")
 
 limitfolder = sys.argv[1]
+no_obs = True
 
 signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
@@ -122,6 +123,8 @@ g_coup_exp.SetLineWidth(3)
 g_coup_exp.SetLineStyle(7)
 g_coup_obs.SetLineWidth(3)
 g_coup_obs.SetLineColor(2)
+if no_obs:
+  g_coup_obs.SetLineColorAlpha(kRed, 0.0);
 #g_coup_one_up.SetLineWidth(5)
 #g_coup_one_dn.SetLineWidth(5)
 #g_coup_two_up.SetLineWidth(5)
@@ -194,7 +197,6 @@ legend.Draw('same')
 c1.cd()
 c1.Print(limitfolder + "/interpolated_coupling.pdf")
 
-
 #####################################################
 c2 = TCanvas("c2","extrapolate",450,400)
 p2 = c2.DrawFrame(0, 0.001, 0.07, 0.1)
@@ -206,6 +208,7 @@ g_br_obs = TGraph(len(x_br_obs), x_br_obs, y_br_obs)
 #g_br_one_dn = TGraph(len(x_br_one_dn), x_br_one_dn, y_br_one_dn)
 #g_br_two_up = TGraph(len(x_br_two_up), x_br_two_up, y_br_two_up)
 #g_br_two_dn = TGraph(len(x_br_two_dn), x_br_two_dn, y_br_two_dn)
+
 
 g_br_one_band = TGraph(len(x_br_one_up)+len(x_br_one_dn))
 for i in xrange(len(x_br_one_up)):
@@ -219,12 +222,13 @@ for i in xrange(len(x_br_two_up)):
   if len(x_br_two_up) + i < len(x_br_two_up)+len(x_br_two_dn):
     g_br_two_band.SetPoint(len(x_br_two_up) + i , x_br_two_dn[len(x_br_two_dn)-i-1], y_br_two_dn[len(x_br_two_dn)-i-1]);
 
-
 # Change style
 g_br_exp.SetLineWidth(3)
 g_br_exp.SetLineStyle(7)
 g_br_obs.SetLineWidth(3)
 g_br_obs.SetLineColor(2)
+if no_obs:
+  g_br_obs.SetLineColorAlpha(kRed, 0.0);
 #g_br_one_up.SetLineWidth(5)
 #g_br_one_dn.SetLineWidth(5)
 #g_br_two_up.SetLineWidth(5)
