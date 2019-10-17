@@ -1,7 +1,7 @@
 configuration:
   width: 450
   height: 450
-  luminosity-label: '51.9 fb^{-1} at #sqrt{s} = 13 TeV'
+  luminosity-label: '59.7 fb^{-1} at #sqrt{s} = 13 TeV'
   experiment: " CMS"
   #extra-label: "Preliminary"
   extra-label: "Work in Progress"
