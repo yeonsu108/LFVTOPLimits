@@ -54,31 +54,38 @@ for signal in ['Hct', 'Hut']:
       ' year_2018=' + os.path.join(options.path_18, signal, card_name)+\
 #      ' > ' +  os.path.join(options.output, signal) + '/FCNC_{}_Discriminant_DNN_{}_all_161718.dat'.format(signal, signal), shell=True)
       ' > FCNC_{}_Discriminant_DNN_{}_161718_all.dat'.format(signal, signal), shell=True)
+
   check_call('combineCards.py'+\
       ' year_2016=' + os.path.join(options.path_16, signal, card_name)+\
       ' year_2017=' + os.path.join(options.path_17, signal, card_name)+\
 #      ' > ' +  os.path.join(options.output, signal) + '/FCNC_{}_Discriminant_DNN_{}_all_1617.dat'.format(signal, signal), shell=True)
-      ' > FCNC_{}_Discriminant_DNN_{}_1617_all.dat'.format(signal, signal), shell=True)
+      ' > FCNC_{}_Discriminant_DNN_{}_1617_b2j3.dat'.format(signal, signal), shell=True)
+      #Trick to print all limits at once
+
   check_call('combineCards.py'+\
       ' year_2017=' + os.path.join(options.path_17, signal, card_name)+\
       ' year_2018=' + os.path.join(options.path_18, signal, card_name)+\
 #      ' > ' +  os.path.join(options.output, signal) + '/FCNC_{}_Discriminant_DNN_{}_all_1718.dat'.format(signal, signal), shell=True)
-      ' > FCNC_{}_Discriminant_DNN_{}_1718_all.dat'.format(signal, signal), shell=True)
+      ' > FCNC_{}_Discriminant_DNN_{}_1718_b2j4.dat'.format(signal, signal), shell=True)
 
 
   # Backgrounds is a list of string of the considered backgrounds corresponding to entries in processes_mapping 
   # Signals is a list of string of the considered signals corresponding to entries in processes_mapping 
   # discriminant is the corresponding entry in the dictionary discriminants 
 
-  output_prefix = 'FCNC_{}_Discriminant_DNN_{}_161718_all'.format(signal, signal)
+  output_prefix_list = ['FCNC_{}_Discriminant_DNN_{}_161718_all'.format(signal, signal),
+                        'FCNC_{}_Discriminant_DNN_{}_1617_b2j3'.format(signal, signal),
+                        'FCNC_{}_Discriminant_DNN_{}_1718_b2j4'.format(signal, signal),
+                       ]
 
   fake_mass = '125'
 
   # Write card
-  output_dir = os.path.join(options.output, signal)
-  datacard = os.path.join(output_dir, output_prefix + '.dat')
-  workspace_file = os.path.basename( os.path.join(output_dir, output_prefix + '_combine_workspace.root') )
-  script = """#! /bin/bash
+  for output_prefix in output_prefix_list:
+    output_dir = os.path.join(options.output, signal)
+    datacard = os.path.join(output_dir, output_prefix + '.dat')
+    workspace_file = os.path.basename( os.path.join(output_dir, output_prefix + '_combine_workspace.root') )
+    script = """#! /bin/bash
 
 text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
@@ -88,12 +95,12 @@ echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --r
 combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
-  script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
-  with open(script_file, 'w') as f:
-      f.write(script)
-  
-  st = os.stat(script_file)
-  os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+    script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
+    with open(script_file, 'w') as f:
+        f.write(script)
+    
+    st = os.stat(script_file)
+    os.chmod(script_file, st.st_mode | stat.S_IEXEC)
 
 os.chdir( os.path.join(cmssw_base) )
 #  # Write small script for datacard checks
