@@ -23,6 +23,9 @@ configuration:
 files:
   include: ['postfit_file_Hct.yml']
 
+groups:
+  include: ['postfit_group.yml']
+
 systematics:
     - postfit
 

@@ -40,7 +40,8 @@ for process in list_2016_processName:
                     jet_bin_str = "j4b3"
                 elif "b4j4" in rootfile_name:
                     jet_bin_str = "j4b4"
-                th1_new_name = Hct_or_Hut + "_" + jet_bin_str + "_h_DNN_b" + jet_bin_str[-1] + "_Ch2"  
+                #th1_new_name = Hct_or_Hut + "_" + jet_bin_str + "_h_DNN_b" + jet_bin_str[-1] + "_Ch2"  
+                th1_new_name = Hct_or_Hut + "_h_DNN_" + jet_bin_str + "_Ch2"  
                 if th1_key.GetName()[-2:] == "Up":
                     if th1_key.GetName().split("_")[-1][:-2] not in systematics_list_from_datacard_2016_2017.keys():
                         continue
