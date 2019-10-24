@@ -568,28 +568,42 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                         (['ttbb', 'ttcc', 'ttlf'], 1.15)
                         )
                 for i in xrange(len(discriminant)):
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
-                            (['ttbb'], 1.5)
-                            )
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
-                            (['ttcc'], 1.5)
-                            )
                     if 'j3' in discriminant[i][1]:
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                                (['ttbb'], 1.5)
+                                )
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                                (['ttcc'], 1.5)
+                                )
                         cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
                                 (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01)
                                 )
                     else:
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                                (['ttbb'], 1.5)
+                                )
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                                (['ttcc'], 1.5)
+                                )
                         cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
                                 (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05)
                                 )#1.05 for j4
             else:
                for i in xrange(len(discriminant)):
-                   cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
-                           (['ttbb'], 1.3)
-                           )
-                   cb.cp().AddSyst(cb, '$PROCESS_norm_'+str(discriminant[i][1]), 'lnN', ch.SystMap('process')
-                           (['ttcc'], 1.5)
-                           )
+                    if 'j3' in discriminant[i][1]:
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                                (['ttbb'], 1.5)
+                                )
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                                (['ttcc'], 1.5)
+                                )
+                    else:
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                                (['ttbb'], 1.5)
+                                )
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                                (['ttcc'], 1.5)
+                                )
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
             sys.exit(1)
