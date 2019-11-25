@@ -93,7 +93,9 @@ All the `xsec.yml` contain the cross section and number of generated events used
 
 `update_an.sh` script used to automatize the update of the AN after generating new limits (writes the latex table with limits in the AN, change the limits and psotfit plots, etc). It has to be updated to whatever format will be decided for AN combining 2017 and 2018.
 
+#Run 2 combination
+`run_everything_for161718.sh` read datacards defined as `-p16/17/17` and generate output folder with merged datacards. Then run limit, pull, impact in the directory
 
-
-
+#Customization for closure check label
+'./path_to/HiggsAnalysis/CombinedLimit/test/diffNuisances.py', add 'hist_prefit.LabelsOption("v")' before draw
 
