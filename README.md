@@ -95,6 +95,7 @@ All the `xsec.yml` contain the cross section and number of generated events used
 
 #Run 2 combination
 `run_everything_for161718.sh` read datacards defined as `-p16/17/17` and generate output folder with merged datacards. Then run limit, pull, impact in the directory
+`correlateUnc.py` changes fully correlated sources across the year to partially correlated sources. For example, to excute the code for JEC, `python ../../correlateUnc.py FCNC_Hct_Discriminant_DNN_Hct_161718_all.dat --process CMS_jec,0.5,2017-2018  --output-txt test_datacard.txt --output-root test_datacard.root` in the datacard folder. In the process option, argument carries source name, correlation and years. Years are divided by '-', so if you want to include 2016 as well, type `2016-2017-2018`. The output card and new root file with histograms will be generated.
 
 #Customization for closure check label
 './path_to/HiggsAnalysis/CombinedLimit/test/diffNuisances.py', add 'hist_prefit.LabelsOption("v")' before draw
