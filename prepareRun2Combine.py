@@ -102,39 +102,41 @@ combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run ex
     st = os.stat(script_file)
     os.chmod(script_file, st.st_mode | stat.S_IEXEC)
 
+    if '161718' in output_prefix:
+      # Write small script for datacard checks
+      script = """#! /bin/bash
+
+# Run checks
+echo combine -M MaxLikelihoodFit --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly --rMin -20 --rMax 20 #--plots -t -1
+echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
+combine -M MaxLikelihoodFit --expectSignal 0 {datacard} -n _{name}_bkgOnly --rMin -20 --rMax 20 #--plots -t -1
+python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
+python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
+combine -M MaxLikelihoodFit --expectSignal 1 {datacard} -n _{name}_bkgPlusSig --rMin -20 --rMax 20 #--plots -t -1
+python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root
+python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+      script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
+      with open(script_file, 'w') as f:
+          f.write(script)
+      
+      st = os.stat(script_file)
+      os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+
+      # Write small script for impacts
+      script = """#! /bin/bash
+
+# Run impacts
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --parallel 32 --rMin -20 --rMax 20
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
+plotImpacts.py -i {name}_impacts.json -o {name}_impacts
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+      script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
+      with open(script_file, 'w') as f:
+          f.write(script)
+        
+      st = os.stat(script_file)
+      os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+
 os.chdir( os.path.join(cmssw_base) )
-#  # Write small script for datacard checks
-#  script = """#! /bin/bash
-#
-## Run checks
-#echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly
-#echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-#combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly --rMin -20 --rMax 20
-#python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-#python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-#combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig --rMin -20 --rMax 20
-#python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root
-#python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
-#""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
-#  script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
-#  with open(script_file, 'w') as f:
-#      f.write(script)
-#  
-#  st = os.stat(script_file)
-#  os.chmod(script_file, st.st_mode | stat.S_IEXEC)
-#
-#  # Write small script for impacts
-#  script = """#! /bin/bash
-#
-## Run impacts
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --parallel 10
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json
-#plotImpacts.py -i {name}_impacts.json -o {name}_impacts
-#""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
-#    script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
-#    with open(script_file, 'w') as f:
-#        f.write(script)
-#    
-#    st = os.stat(script_file)
-#    os.chmod(script_file, st.st_mode | stat.S_IEXEC)
