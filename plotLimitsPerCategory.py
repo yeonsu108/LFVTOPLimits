@@ -29,6 +29,7 @@ ROOT.gROOT.SetBatch()
 #    <--> BR(t --> Hq) < XsecExcl*0.19/(sigXsecDivK2 * 1.32158)
 
 signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+#signal_Xsec_couplingOne = {"Hut": 1.527, "Hct": 1.527}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
 
 def getLimitsFromFile(input_file):
