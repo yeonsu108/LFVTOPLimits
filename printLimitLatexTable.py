@@ -1,7 +1,7 @@
 import json, sys, os
 
 limitfolder = sys.argv[1]
-removeHutb4j4 = True
+removeHutb4j4 = False
 if len(sys.argv) > 2:
   removeHutb4j4 = not (sys.argv[2] == "False")
 

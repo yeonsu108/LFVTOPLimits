@@ -655,6 +655,12 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             bbb.SetAddThreshold(0.1)
             bbb.AddBinByBin(cb.cp().backgrounds(), cb)
             bbb.AddBinByBin(cb.cp().signals(), cb)
+        else:
+            print "Treating bbb ONLY for qcd"
+            bbb = ch.BinByBinFactory()
+            #bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
+            bbb.SetAddThreshold(0.1)
+            bbb.AddBinByBin(cb.cp().backgrounds().process(['qcd']), cb)
 
         if options.nosys and options.nobbb : 
             cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
@@ -695,12 +701,12 @@ combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run ex
         script = """#! /bin/bash
 
 # Run checks
-echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly --rMin -20 --rMax 20 #--plots -t -1
+echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly --rMin -20 --rMax 20 -m 125 #--plots -t -1
 echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly --rMin -30 --rMax 30 #--plots -t -1
+combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly --rMin -30 --rMax 30 -m 125 #--plots -t -1
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root > fitDiagnostics_{name}_bkgOnly.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig --rMin -30 --rMax 30 #--plots -t -1
+combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig --rMin -30 --rMax 30 -m 125 #--plots -t -1
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root > fitDiagnostics_{name}_bkgPlusSig.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
