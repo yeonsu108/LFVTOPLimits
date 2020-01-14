@@ -79,11 +79,12 @@ for signal in ['Hct', 'Hut']:
     for year in years:
       #card_name = 'FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
       card_name = 'forCombine_FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
-      check_call('combineCards.py'+\
-          ' year_2016=' + os.path.join(options.path_16, signal, card_name)+\
-          ' year_2017=' + os.path.join(options.path_17, signal, card_name)+\
-          ' year_2018=' + os.path.join(options.path_18, signal, card_name)+\
-          ' > FCNC_{}_Discriminant_DNN_{}_{}_{}.dat'.format(signal, signal, year, jetcat), shell=True)
+      command_string = 'combineCards.py'
+      if '16' in year: command_string += ' year_2016=' + os.path.join(options.path_16, signal, card_name)
+      if '17' in year: command_string += ' year_2017=' + os.path.join(options.path_17, signal, card_name)
+      if '18' in year: command_string += ' year_2018=' + os.path.join(options.path_18, signal, card_name)
+      command_string += ' > FCNC_{}_Discriminant_DNN_{}_{}_{}.dat'.format(signal, signal, year, jetcat)
+      check_call(command_string, shell=True)
       output_prefix_list.append('FCNC_{}_Discriminant_DNN_{}_{}_{}'.format(signal, signal, year, jetcat))
 
 

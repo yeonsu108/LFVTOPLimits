@@ -18,15 +18,23 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 sys.argv = tmpargv
 
 hadNegBinForProcess = {}
+hadNegBinErrForProcess = {}
 def setNegativeBinsToZero(h, process):
     if not process in hadNegBinForProcess:
         hadNegBinForProcess[process] = False
+    #if not process in hadNegBinErrForProcess:
+    #    hadNegBinErrForProcess[process] = False
     for i in range(1, h.GetNbinsX() + 1):
         if h.GetBinContent(i) < 0.:
             if not hadNegBinForProcess[process]:
                 print 'Remove negative bin in TH1 %s for process %s'%(h.GetTitle(), process)
             hadNegBinForProcess[process] = True
             h.SetBinContent(i, 0.)
+        #if h.GetBinContent(i)-h.GetBinErrorLow(i) < 0.:
+        #    if not hadNegBinErrForProcess[process]:
+        #        print 'Set negative (bin-err) in TH1 %s for process %s'%(h.GetTitle(), process)
+        #    hadNegBinErrForProcess[process] = True
+        #    h.SetBinError(i, h.GetBinContent(i))
     
 def get_hist_regex(r):
     return '^%s(__.*(up|down))?$' % r
@@ -65,7 +73,7 @@ parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
-parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="True", help='Remove Hut b4j4 from plots')
+parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
 
@@ -591,50 +599,50 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
                             (['qcd'], 1.5)
                             )
-            if options.dataYear == '2016':
-                cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')
-                        (['ttbb', 'ttcc', 'ttlf'], 1.05)
-                        )
-                cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')
-                        (['ttbb', 'ttcc', 'ttlf'], 1.15)
-                        )
-                for i in xrange(len(discriminant)):
-                    if 'j3' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
-                                (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01)
-                                )
-                    else:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
-                                (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05)
-                                )#1.05 for j4
-            else:
-               for i in xrange(len(discriminant)):
-                    if 'j3' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.3)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
-                    else:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.3)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
+            #if options.dataYear == '2016':
+            #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')
+            #            (['ttbb', 'ttcc', 'ttlf'], 1.05)
+            #            )
+            #    cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')
+            #            (['ttbb', 'ttcc', 'ttlf'], 1.15)
+            #            )
+            #    for i in xrange(len(discriminant)):
+            #        if 'j3' in discriminant[i][1]:
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+            #                    (['ttbb'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+            #                    (['ttcc'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
+            #                    (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01)
+            #                    )
+            #        else:
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+            #                    (['ttbb'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+            #                    (['ttcc'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
+            #                    (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05)
+            #                    )#1.05 for j4
+            #else:
+            for i in xrange(len(discriminant)):
+                if 'j3' in discriminant[i][1]:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                            (['ttbb'], 1.3)
+                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                            (['ttcc'], 1.5)
+                            )
+                else:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                            (['ttbb'], 1.3)
+                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                            (['ttcc'], 1.5)
+                            )
 
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
@@ -658,7 +666,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         else:
             print "Treating bbb ONLY for qcd"
             bbb = ch.BinByBinFactory()
-            #bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
             bbb.SetAddThreshold(0.1)
             bbb.AddBinByBin(cb.cp().backgrounds().process(['qcd']), cb)
 
@@ -701,12 +708,12 @@ combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run ex
         script = """#! /bin/bash
 
 # Run checks
-echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly --rMin -20 --rMax 20 -m 125 #--plots -t -1
+echo combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly -m 125 --robustHesse 1 #--plots --rMin -30 --rMax 30
 echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly --rMin -30 --rMax 30 -m 125 #--plots -t -1
+combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly -m 125 --robustHesse 1 #--plots --rMin -30 --rMax 30
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root > fitDiagnostics_{name}_bkgOnly.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig --rMin -30 --rMax 30 -m 125 #--plots -t -1
+combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --robustHesse 1 #--plots --rMin -30 --rMax 30
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root > fitDiagnostics_{name}_bkgPlusSig.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
@@ -721,8 +728,8 @@ python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
         script = """#! /bin/bash
 
 # Run impacts
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --parallel 10 --rMin -20 --rMax 20
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20 #--cminDefaultMinimizerStrategy 0
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 --parallel 10
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
 plotImpacts.py -i {name}_impacts.json -o {name}_impacts
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
@@ -737,8 +744,8 @@ plotImpacts.py -i {name}_impacts.json -o {name}_impacts
         script = """#! /bin/bash
 
 # Run postfit
-echo combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20
-combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 #--plots
+echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20
+combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 #--plots
 PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
 $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
