@@ -3,7 +3,7 @@ import os
 import ROOT
 
 # Script to draw 2016 and 2017 rocCurves on same graph (easy to modifiy for ther purposes)
-pathToTh1_2016 = "datacards_191014_2016_j3j4"
+pathToTh1_2016 = "datacards_200101_2016"
 pathToTh1_2017 = "datacards_200101_2017"
 pathToTh1_2018 = "datacards_200101_2018"
 

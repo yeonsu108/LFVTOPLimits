@@ -716,6 +716,9 @@ python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
 combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --robustHesse 1 #--plots --rMin -30 --rMax 30
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root > fitDiagnostics_{name}_bkgPlusSig.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
+
+#print NLL for check
+combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
         with open(script_file, 'w') as f:

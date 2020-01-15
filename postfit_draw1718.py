@@ -12,7 +12,7 @@ chs = ['Hct', 'Hut']
 cmssw_base = os.environ['CMSSW_BASE']
 plotit_path = os.path.join(cmssw_base, 'src/UserCode/HEPToolsFCNC/plotIt/plotIt')
 config_path = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits')
-dest_folder = 'postfit_' + ver17.replace('datacards_','') + '_' + ver18.replace('datacards_','')
+dest_folder = 'postfit_' + ver17.split('_')[1] + '_' + ver18.split('_')[1]
 dest_path = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits', dest_folder)
 
 if not os.path.exists(dest_path):

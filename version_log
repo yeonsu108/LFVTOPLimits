@@ -1,0 +1,4 @@
+190702 - default: corr. ttbb/cc, no lumi
+190910 - default: corr. ttbb/cc, no lumi, selected vars
+191014 - default: uncorr ttbb/cc, lumi, included, all var (new rev ver!), j3j4 -> ANv3 ~ v4
+200101 - default: new ntuple (2017) or cattuple (2018), 191014 options + j3/j4 ttbb/cc unc separately, for AN v5
