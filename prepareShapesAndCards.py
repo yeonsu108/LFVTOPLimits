@@ -731,8 +731,13 @@ combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
         script = """#! /bin/bash
 
 # Run impacts
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20 -t -1 #--cminDefaultMinimizerStrategy 0
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 32
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
+plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts
+
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20 #--cminDefaultMinimizerStrategy 0
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 --parallel 10
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 --parallel 32
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
 plotImpacts.py -i {name}_impacts.json -o {name}_impacts
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
