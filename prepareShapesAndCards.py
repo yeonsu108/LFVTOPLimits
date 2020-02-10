@@ -68,8 +68,8 @@ parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+'
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
 #parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp','jec'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lumi', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
-parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
-#parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
+#parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
+parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
@@ -734,12 +734,12 @@ combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20 -t -1 #--cminDefaultMinimizerStrategy 0
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 32
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
-plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts
+plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 40
 
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20 #--cminDefaultMinimizerStrategy 0
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 --parallel 32
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
-plotImpacts.py -i {name}_impacts.json -o {name}_impacts
+plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 40
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
