@@ -18,15 +18,23 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 sys.argv = tmpargv
 
 hadNegBinForProcess = {}
+hadNegBinErrForProcess = {}
 def setNegativeBinsToZero(h, process):
     if not process in hadNegBinForProcess:
         hadNegBinForProcess[process] = False
+    #if not process in hadNegBinErrForProcess:
+    #    hadNegBinErrForProcess[process] = False
     for i in range(1, h.GetNbinsX() + 1):
         if h.GetBinContent(i) < 0.:
             if not hadNegBinForProcess[process]:
                 print 'Remove negative bin in TH1 %s for process %s'%(h.GetTitle(), process)
             hadNegBinForProcess[process] = True
             h.SetBinContent(i, 0.)
+        #if h.GetBinContent(i)-h.GetBinErrorLow(i) < 0.:
+        #    if not hadNegBinErrForProcess[process]:
+        #        print 'Set negative (bin-err) in TH1 %s for process %s'%(h.GetTitle(), process)
+        #    hadNegBinErrForProcess[process] = True
+        #    h.SetBinError(i, h.GetBinContent(i))
     
 def get_hist_regex(r):
     return '^%s(__.*(up|down))?$' % r
@@ -43,14 +51,14 @@ def str2bool(v):
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_191014_2017/training_0101010101', help='Directory containing rootfiles with the TH1 used for limit settings')
+parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_200101_2017/training_0101010101', help='Directory containing rootfiles with the TH1 used for limit settings')
 #parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
 parser.add_argument('-le', '--luminosityError', action='store', type=float, dest='luminosityError', default=1.023, help='Error on the integrated luminosity (default is 1.023 /pb)')
-parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_190702_2017', help='Output directory')
+parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_200101_2017', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
-parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_2017_191014.yml', help='YAML config file path with Xsec and Nevt.')
+parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_2017_200101.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--reweight', action='store_true', dest='reweight', help='Apply a preliminary reweighting. Not implemented yet.')
 parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
 parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
@@ -58,16 +66,22 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
-parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
-parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
+#parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp','jec'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lumi', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+#parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
+parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
-parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="True", help='Remove Hut b4j4 from plots')
+parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
 
 print options.removeHutb4j4
+correlatedSys = options.correlatedSys
+if options.dataYear == '2016':
+    for i in ['scale', 'ps', 'TuneCP5', 'hdamp', 'pdf']: correlatedSys.remove(i)
+print correlatedSys
 
 channel_mapping = {
     "mu" : 'Ch0',
@@ -76,7 +90,7 @@ channel_mapping = {
     }
 
 selection_mapping = {
-   'b2j3' : 'S2',
+    'b2j3' : 'S2',
     'b2j4' : 'S6',
     'b3j3' : 'S3',
     'b3j4' : 'S7',
@@ -162,7 +176,7 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
     "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
     "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
-
+    #key does matter when removeing qcd-relavant discriminant below
     # tests
     #"BDT_Hct_b2j3" : [(1, 'BDT_Hct_b2j3')],
     }
@@ -244,6 +258,7 @@ if options.dataYear != '2016':
             #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
             'Hut': ['TTTH1L3BaTLepHut', 'TTTH1L3BTLepHut', 'STTH1L3BHut'],
             'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
+            'qcd': ['hist_QCD*'],
             # Data
             'data_el' : ['SingleElectronRun%s'%options.dataYear],
             'data_mu' : ['SingleMuonRun%s'%options.dataYear],
@@ -304,7 +319,8 @@ def main():
     """Main function"""
     signals = ['Hut', 'Hct']
     #backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
-    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other']
+    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other', 'qcd']
+    if options.dataYear == '2016': backgrounds.remove('qcd')
     print "Background considered: ", backgrounds
 
     for signal in signals:
@@ -530,8 +546,25 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     for signal in signals :
         cb = ch.CombineHarvester()
         cb.AddObservations(['*'], [''], ['_%s'%options.dataYear], [''], discriminant)
-        cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
         cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], [signal], discriminant, True)
+        if options.dataYear == '2016':
+            cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
+        else:
+            if not 'b2j3' in discriminantName:
+                try: backgrounds.remove('qcd')
+                except: pass
+            else:
+                if not 'qcd' in backgrounds: backgrounds.append('qcd')
+            if 'all' in discriminantName:
+                if signal == 'Hut':
+                    discriminant.remove((1, 'DNN_Hut_b2j3'))
+                    cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds+['qcd'], [(1,'DNN_Hut_b2j3')], False)
+                else:
+                    discriminant.remove((1, 'DNN_Hct_b2j3'))
+                    cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds+['qcd'], [(1,'DNN_Hct_b2j3')], False)
+                cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
+            else:
+                cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
 
         # Systematics
         if not options.nosys:
@@ -546,7 +579,8 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
 #            cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
-            cb.cp().AddSyst(cb, 'CMS$ERA_lumi', 'lnN', ch.SystMap()(options.luminosityError))
+            #cb.cp().AddSyst(cb, 'CMS$ERA_lumi', 'lnN', ch.SystMap()(options.luminosityError))
+            cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
                     (['ttbb', 'ttcc', 'ttlf'], 1.055)
                     )
@@ -560,50 +594,56 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     #(['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
                     (['other'], 1.1)
                     )
-            if options.dataYear == '2016':
-                cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')
-                        (['ttbb', 'ttcc', 'ttlf'], 1.05)
-                        )
-                cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')
-                        (['ttbb', 'ttcc', 'ttlf'], 1.15)
-                        )
-                for i in xrange(len(discriminant)):
-                    if 'j3' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
-                                (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01)
-                                )
-                    else:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
-                                (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05)
-                                )#1.05 for j4
-            else:
-               for i in xrange(len(discriminant)):
-                    if 'j3' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
-                    else:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttbb'], 1.5)
-                                )
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                                (['ttcc'], 1.5)
-                                )
+            for i in xrange(len(discriminant)):
+                if 'b2j3' in discriminant[i][1]:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
+                            (['qcd'], 1.5)
+                            )
+            #if options.dataYear == '2016':
+            #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')
+            #            (['ttbb', 'ttcc', 'ttlf'], 1.05)
+            #            )
+            #    cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')
+            #            (['ttbb', 'ttcc', 'ttlf'], 1.15)
+            #            )
+            #    for i in xrange(len(discriminant)):
+            #        if 'j3' in discriminant[i][1]:
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+            #                    (['ttbb'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+            #                    (['ttcc'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
+            #                    (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01)
+            #                    )
+            #        else:
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+            #                    (['ttbb'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+            #                    (['ttcc'], 1.5)
+            #                    )
+            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
+            #                    (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05)
+            #                    )#1.05 for j4
+            #else:
+            for i in xrange(len(discriminant)):
+                if 'j3' in discriminant[i][1]:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                            (['ttbb'], 1.3)
+                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
+                            (['ttcc'], 1.5)
+                            )
+                else:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                            (['ttbb'], 1.3)
+                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
+                            (['ttcc'], 1.5)
+                            )
+
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
             sys.exit(1)
@@ -623,6 +663,11 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             bbb.SetAddThreshold(0.1)
             bbb.AddBinByBin(cb.cp().backgrounds(), cb)
             bbb.AddBinByBin(cb.cp().signals(), cb)
+        else:
+            print "Treating bbb ONLY for qcd"
+            bbb = ch.BinByBinFactory()
+            bbb.SetAddThreshold(0.1)
+            bbb.AddBinByBin(cb.cp().backgrounds().process(['qcd']), cb)
 
         if options.nosys and options.nobbb : 
             cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
@@ -663,14 +708,17 @@ combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run ex
         script = """#! /bin/bash
 
 # Run checks
-echo combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly --rMin -20 --rMax 20
+echo combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly -m 125 --robustHesse 1 #--plots --rMin -30 --rMax 30
 echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly --rMin -20 --rMax 20 #--plots
-python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
+combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly -m 125 --robustHesse 1 #--plots --rMin -30 --rMax 30
+python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root > fitDiagnostics_{name}_bkgOnly.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M MaxLikelihoodFit -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig --rMin -20 --rMax 20 #--plots
-python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root
+combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --robustHesse 1 #--plots --rMin -30 --rMax 30
+python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root > fitDiagnostics_{name}_bkgPlusSig.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
+
+#print NLL for check
+combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
         with open(script_file, 'w') as f:
@@ -683,10 +731,15 @@ python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
         script = """#! /bin/bash
 
 # Run impacts
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --parallel 10 --rMin -20 --rMax 20
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20 -t -1 #--cminDefaultMinimizerStrategy 0
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 32
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
+plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 40
+
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit 1 --rMin -20 --rMax 20 #--cminDefaultMinimizerStrategy 0
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit 1 --doFits --rMin -20 --rMax 20 --parallel 32
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
-plotImpacts.py -i {name}_impacts.json -o {name}_impacts
+plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 40
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
@@ -699,11 +752,12 @@ plotImpacts.py -i {name}_impacts.json -o {name}_impacts
         script = """#! /bin/bash
 
 # Run postfit
-echo combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20
-combine -M MaxLikelihoodFit {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 #--plots
+echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20
+combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 #--plots
 PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
 $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
+$CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}_qcd.yml -y
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("Hut" if "Hut" in output_prefix else "Hct"), year=options.dataYear)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
@@ -715,7 +769,8 @@ $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_for
 def CMSNamingConvention(syst):
     # Taken from https://twiki.cern.ch/twiki/bin/view/CMS/HiggsWG/HiggsCombinationConventions
     # systlist = ['jec', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
-    if syst not in options.correlatedSys:
+    #if syst not in options.correlatedSys:
+    if syst not in correlatedSys:
         return 'CMS_' + options.dataYear + '_' + syst
     else:
         return 'CMS_' + syst
