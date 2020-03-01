@@ -3,8 +3,7 @@ import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-input_path = 'datacards_200101_2017/'
-year = '2017'
+input_path = 'datacards_200101_2017v8/'
 
 couplings = ['Hct', 'Hut']
 jet_bins = ['b2j3', 'b3j3', 'b2j4', 'b3j4', 'b4j4']
@@ -52,22 +51,20 @@ for coupling in couplings:
                 line = ROOT.TLine(-1, 1, 1, 1)
                 line.SetLineStyle(2)
                 minmax = [ratio_up.GetMaximum(), ratio_up.GetMinimum(), ratio_down.GetMaximum(), ratio_down.GetMinimum()]
-                ratio_up.GetYaxis().SetRangeUser(min(minmax)*0.9, max(minmax)*1.1)
+                tmp_min = min(minmax)
+                #If min = 0
+                if tmp_min < 0.01:
+                    nbins = ratio_up.GetNbinsX()
+                    contents_org = [ratio_up.GetBinContent(x) for x in xrange(nbins)]
+                    contents_org.extend([ratio_down.GetBinContent(x) for x in xrange(nbins)])
+                    contents = contents_org[:]
+                    for i in xrange(len(contents_org)):
+                        if contents_org[i] < 0.01: contents.remove(contents_org[i])
+                    tmp_min = min(contents)
+                ratio_up.GetYaxis().SetRangeUser(tmp_min*0.9, max(minmax)*1.1)
                 ratio_up.Draw()
                 ratio_down.Draw('same')
                 legend.Draw()
                 line.Draw()
                 canvas.Print(os.path.join(plot_dir, plot_name + '.png'))
-
-
-
-        
-
-
-
-
-
-
-
-
 
