@@ -2,3 +2,15 @@
 190910 - default: corr. ttbb/cc, no lumi, selected vars
 191014 - default: uncorr ttbb/cc, lumi, included, all var (new rev ver!), j3j4 -> ANv3 ~ v4
 200101 - default: new ntuple (2017) or cattuple (2018), 191014 options + j3/j4 ttbb/cc unc separately, for AN v5
+200101 - default: we removed elect. ch iso cut, fully rely on ID info
+  - variations:
+    - 2017v2: sum of weight by EventInfo bin(1), not 2, for scale/pdf/tune -> deprecated
+    - 2017v3: merged jetcat
+    - 2017v4: for PDF weight, rescale sum of weight with pdf0 / pdf_n (n<103) because pdf0 is nominal among sets! (but not one for mc prodiuction)
+    - 2017v5: remove scale / pdf rescale by sum of weight
+    - 2017v6: v5 + smooth (1 iteration)
+    - 2017v7: v5 + smooth (20 iteration)
+
+    - 2017v8: v5 + remove ps (new ref!) + rmin -20 for closure test // 2016 - same hist as v1, but different fit options 
+    - 2017v9: v8 + new pdf unc (for plot)
+    - 2017v10: v8 + smooth 10 iter + rmin -20 for closure test
