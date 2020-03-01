@@ -20,7 +20,7 @@ cmssw_base = os.environ['CMSSW_BASE']
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p16', '--path16', action='store', dest='path_16', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_200101_2016', help='Directory containing data cards of 2016 analysis')
+parser.add_argument('-p16', '--path16', action='store', dest='path_16', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_200101_2016v8', help='Directory containing data cards of 2016 analysis')
 parser.add_argument('-p17', '--path17', action='store', dest='path_17', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_200101_2017v8', help='Directory containing data cards of 2017 analysis')
 parser.add_argument('-p18', '--path18', action='store', dest='path_18', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_200101_2018v8', help='Directory containing data cards of 2018 analysis')
 parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='fullComb_default', help='Output directory, please follow convention to distunguish input cards') 
@@ -120,12 +120,12 @@ combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run ex
     script = """#! /bin/bash
 
 # Run checks
-echo combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly -m 125 --robustHesse 1 --robustFit=1 #--plots --rMin -30 --rMax 30
+echo combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly -m 125 --robustHesse 1 --robustFit=1 --rMin -20 --rMax 20 #--plots
 echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly -m 125 --robustHesse 1 --robustFit=1 #--plots --rMin -30 --rMax 30
+combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly -m 125 --robustHesse 1 --robustFit=1 --rMin -20 --rMax 20 #--plots
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root > fitDiagnostics_{name}_bkgOnly.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --robustHesse 1 --robustFit=1 #--plots --rMin -30 --rMax 30
+combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --robustHesse 1 --robustFit=1 --rMin -20 --rMax 20 #--plots
 python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root > fitDiagnostics_{name}_bkgPlusSig.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
 
