@@ -11,6 +11,10 @@
     - 2017v6: v5 + smooth (1 iteration)
     - 2017v7: v5 + smooth (20 iteration)
 
-    - 2017v8: v5 + remove ps (new ref!) + rmin -20 for closure test // 2016 - same hist as v1, but different fit options 
+    - 2017v8: v5 + remove ps + rmin -20 for closure test // 2016 - same hist as v1, but different fit options 
     - 2017v9: v8 + new pdf unc (for plot)
-    - 2017v10: v8 + smooth 10 iter + rmin -20 for closure test
+    - 2017v10: v8 + smooth 10 iter
+    - 2017v11: v8 + pdf norm by its nominal : new ref! (2016: no change!)
+    - 2017v12: v8 + fix max of low stat samples (1.2/0.8, before rebin)
+    - 2017v13: v8 + average of up/down for low stat sample
+    - 2017v14: v13 + fix max of low stat samples (1.2/0.8, before rebin), 2016: same as v11 ( = v8)
