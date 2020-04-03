@@ -68,8 +68,8 @@ parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+'
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
 #parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp','jec'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lumi', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
-#parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
-parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
+parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
+#parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
 parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
@@ -581,78 +581,42 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 else:
                     #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
-#            cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], options.luminosityError))
-            #cb.cp().AddSyst(cb, 'CMS$ERA_lumi', 'lnN', ch.SystMap()(options.luminosityError))
+
             cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
-            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')
-                    (['ttbb', 'ttcc', 'ttlf'], 1.055)
-                    )
-#            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
-#                    (['ttbb'], 1.3)
-#                    )
-#            cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
-#                    (['ttcc'], 1.5)
-#                    )
-            cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')
-                    #(['SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth'], 1.1)
-                    (['other'], 1.1)
-                    )
+            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.055))
+            cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')(['other'], 1.1))
+
             for i in xrange(len(discriminant)):
                 if 'b2j3' in discriminant[i][1]:
                     cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
                             (['qcd'], 1.5)
                             )
             #if options.dataYear == '2016':
-            #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')
-            #            (['ttbb', 'ttcc', 'ttlf'], 1.05)
-            #            )
-            #    cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')
-            #            (['ttbb', 'ttcc', 'ttlf'], 1.15)
-            #            )
+            #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.05))
+            #    cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.15))
             #    for i in xrange(len(discriminant)):
             #        if 'j3' in discriminant[i][1]:
-            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-            #                    (['ttbb'], 1.5)
-            #                    )
-            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-            #                    (['ttcc'], 1.5)
-            #                    )
-            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
-            #                    (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01)
-            #                    )
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01))
             #        else:
-            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-            #                    (['ttbb'], 1.5)
-            #                    )
-            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-            #                    (['ttcc'], 1.5)
-            #                    )
-            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('process')
-            #                    (['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05)
-            #                    )#1.05 for j4
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
+            #            cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+            #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05))#1.05 for j4
             #else:
             for i in xrange(len(discriminant)):
                 if 'j3' in discriminant[i][1]:
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                            (['ttbb'], 1.3)
-                            )
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('process')
-                            (['ttcc'], 1.5)
-                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
                 else:
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                            (['ttbb'], 1.3)
-                            )
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('process')
-                            (['ttcc'], 1.5)
-                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+
 
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
             sys.exit(1)
-            cb.cp().AddSyst(cb, 'SF_$PROCESS', 'rateParam', ch.SystMap('process')
-                    (['ttbb'], 1.)
-                    )
+            cb.cp().AddSyst(cb, 'SF_$PROCESS', 'rateParam', ch.SystMap('process')(['ttbb'], 1.))
 
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
@@ -667,6 +631,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             bbb = ch.BinByBinFactory()
             #bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
             bbb.SetAddThreshold(0.1)
+            #bbb.SetAddThreshold(0.0001)
             bbb.AddBinByBin(cb.cp().backgrounds(), cb)
             bbb.AddBinByBin(cb.cp().signals(), cb)
         else:
