@@ -566,6 +566,8 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     discriminant.remove((1, 'DNN_Hct_b2j3'))
                     cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds+['qcd'], [(1,'DNN_Hct_b2j3')], False)
                 cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
+                if signal == 'Hut': discriminant.append((1, 'DNN_Hut_b2j3'))
+                else:               discriminant.append((1, 'DNN_Hct_b2j3'))
             else:
                 cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
 
@@ -588,9 +590,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 
             for i in xrange(len(discriminant)):
                 if 'b2j3' in discriminant[i][1]:
-                    cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')
-                            (['qcd'], 1.5)
-                            )
+                    cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')(['qcd'], 1.5))
             #if options.dataYear == '2016':
             #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.05))
             #    cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.15))
