@@ -354,10 +354,85 @@ def merge_histograms(process, histogram, destination):
         #print "Rescaleing %s to lumi: "%process, options.luminosity
         histogram.Scale(options.luminosity)
     #print process, " ", histogram.GetTitle(), " ", destination, " ", histogram.GetNbinsX()
-    histogram.Rebin(options.rebinning)
-    #import array
-    #arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
-    #histogram = histogram.Rebin(8, histogram.GetName(), arr)
+    if options.rebinning < 40: #We have 40 bins!
+        histogram.Rebin(options.rebinning)
+        #import array
+        #arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
+        #histogram = histogram.Rebin(8, histogram.GetName(), arr)
+    else:
+        import array
+        arr = array.array('d',[-1., 0., 1.])
+        if options.dataYear == '2016':
+            if 'Hut' in histogram.GetName():
+                if 'j3b2' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.2, 1.0])
+                elif 'j3b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.3, 1.0])
+                elif 'j4b2' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.2, 1.0])
+                elif 'j4b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.2, 1.0])
+                elif 'j4b4' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.4, 1.0])
+            elif 'Hct' in histogram.GetName():
+                if 'j3b2' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.1, 1.0])
+                elif 'j3b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.0, 1.0])
+                elif 'j4b2' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.0, 1.0])
+                elif 'j4b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.0, 1.0])
+                elif 'j4b4' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.0, 1.0])
+        elif options.dataYear == '2017':
+            if 'Hut' in histogram.GetName():
+                if 'j3b2' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.2, 1.0])
+                elif 'j3b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.6, 1.0])
+                elif 'j4b2' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.0, 1.0])
+                elif 'j4b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.75, 1.0])
+                elif 'j4b4' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.5, 1.0])
+            elif 'Hct' in histogram.GetName():
+                if 'j3b2' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.05, 1.0])
+                elif 'j3b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.3, 1.0])
+                elif 'j4b2' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.3, 1.0])
+                elif 'j4b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.75, 1.0])
+                elif 'j4b4' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.5, 1.0])
+        elif options.dataYear == '2018':
+            if 'Hut' in histogram.GetName():
+                if 'j3b2' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.2, 1.0])
+                elif 'j3b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.6, 1.0])
+                elif 'j4b2' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.0, 1.0])
+                elif 'j4b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.75, 1.0])
+                elif 'j4b4' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.2, 1.0])
+            elif 'Hct' in histogram.GetName():
+                if 'j3b2' in histogram.GetName():
+                    arr = array.array('d',[-1., -0.1, 1.0])
+                elif 'j3b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.25, 1.0])
+                elif 'j4b2' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.2, 1.0])
+                elif 'j4b3' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.75, 1.0])
+                elif 'j4b4' in histogram.GetName():
+                    arr = array.array('d',[-1., 0.55, 1.0])
+
+        histogram = histogram.Rebin(2, histogram.GetName(), arr)
 
     d = destination
     if not d:

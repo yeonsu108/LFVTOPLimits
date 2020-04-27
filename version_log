@@ -18,3 +18,5 @@
     - 2017v12: v8 + fix max of low stat samples (1.2/0.8, before rebin)
     - 2017v13: v8 + average of up/down for low stat sample
     - 2017v14: v13 + fix max of low stat samples (1.2/0.8, before rebin), 2016: same as v11 ( = v8)
+    - 2017v15: v13, merged jet cat
+    - 2017v16: v14 + fix systematic for all category, same histo as v14!!

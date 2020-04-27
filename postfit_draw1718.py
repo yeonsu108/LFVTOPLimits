@@ -8,11 +8,14 @@ if len(sys.argv) < 3:
 ver17 = sys.argv[1]
 ver18 = sys.argv[2]
 
+out_postfix = ''
+if sys.argv[3]: out_postfix = sys.argv[3]
+
 chs = ['Hct', 'Hut']
 cmssw_base = os.environ['CMSSW_BASE']
 plotit_path = os.path.join(cmssw_base, 'src/UserCode/HEPToolsFCNC/plotIt/plotIt')
 config_path = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits')
-dest_folder = 'postfit_' + ver17.split('_')[1] + '_' + ver18.split('_')[1]
+dest_folder = 'postfit_' + ver17.split('_')[1] + '_' + ver18.split('_')[1] + out_postfix
 dest_path = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits', dest_folder)
 
 if not os.path.exists(dest_path):
