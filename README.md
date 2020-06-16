@@ -12,9 +12,12 @@ git fetch origin
 git checkout v7.0.11
 cd -
 git clone https://github.com/cms-analysis/CombineHarvester.git CombineHarvester
+cd CombineHarvester
+git checkout 3573c4e14931a9ca9b7557ddf3fe85cf56383df8
+cd -
 mkdir UserCode
 git clone https://github.com/BrieucF/FCNCLimits UserCode/FCNCLimits
-scramv1 b clean; scramv1 b
+scram build clean; scram build --ignore-arch
 ```
 # Stay up to date
 You can check that the above recipe is up to date by following the links
