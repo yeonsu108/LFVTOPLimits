@@ -6,6 +6,7 @@ from datetime import datetime
 from math import sqrt
 import yaml
 from collections import OrderedDict
+from subprocess import call
 
 # to prevent pyroot to hijack argparse we need to go around
 tmpargv = sys.argv[:] 
@@ -434,6 +435,34 @@ def merge_histograms(process, histogram, destination):
 
         histogram = histogram.Rebin(2, histogram.GetName(), arr)
 
+        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.])
+        #if options.dataYear == '2016': pass
+        #elif options.dataYear == '2017':
+        #    if 'Hut' in histogram.GetName():
+        #        if 'j3b2' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #        elif 'j4b4' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #    elif 'Hct' in histogram.GetName():
+        #        if 'j3b2' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #        elif 'j4b4' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #elif options.dataYear == '2018':
+        #    if 'Hut' in histogram.GetName():
+        #        if 'j3b2' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #        elif 'j4b4' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #    elif 'Hct' in histogram.GetName():
+        #        if 'j3b2' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #        elif 'j4b4' in histogram.GetName():
+        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
+        #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+
+    #if 'ttbb' in process: histogram.Scale(1.21)
+
     d = destination
     if not d:
         d = histogram.Clone()
@@ -525,6 +554,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
         print "After ignoring the one mentioned with sysToAvoid option: ", systematics
 
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
+#    for je in ['jec']:
+#        cms_systematics.remove(CMSNamingConvention(je))
+#        cms_systematics.append(CMSNamingConvention(je) + 'j3')
+#        cms_systematics.append(CMSNamingConvention(je) + 'j4')
 
     def dict_get(dict, name):
         if name in dict:
@@ -566,6 +599,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             continue
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
+#                            if any(je in systematic for je in ['jec']):
+#                                if   'j3' in original_histogram_name: key = CMSNamingConvention(systematic) + 'j3' + variation.capitalize()
+#                                elif 'j4' in original_histogram_name: key = CMSNamingConvention(systematic) + 'j4' + variation.capitalize()
                             #print "Key: ", key
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             #if systematic in options.sysForSMtt and not process in smTTlist:
@@ -620,6 +656,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
+    #call(['python', 'symmetrize.py', options.output, file], shell=False)
     
     for signal in signals :
         cb = ch.CombineHarvester()
@@ -653,11 +690,21 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 for systSMtt in options.sysForSMtt:
                     if CMSNamingConvention(systSMtt) == systematic:
                         systematic_only_for_SMtt = True
+#                splitJet = False
+#                if any(je in systematic for je in ['jec']): splitJet = True
                 if not systematic_only_for_SMtt:
+#                if not systematic_only_for_SMtt and not splitJet:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
                 else:
+#                elif systematic_only_for_SMtt:
                     #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
+#                elif splitJet:
+#                    for i in xrange(len(discriminant)):
+#                        if 'j3' in discriminant[i][1] and 'j3' in systematic:
+#                            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin')([discriminant[i][1]], 1.00))
+#                        elif 'j4' in discriminant[i][1] and 'j4' in systematic:
+#                            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin')([discriminant[i][1]], 1.00))
 
             cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.055))
@@ -681,12 +728,20 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             #else:
             for i in xrange(len(discriminant)):
                 if 'j3' in discriminant[i][1]:
+#                    pass
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+#                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.15))
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+#                    cb.cp().AddSyst(cb, 'ttbb_rate_j3', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
                 else:
+#                    pass
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+#                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.15))
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+#                    cb.cp().AddSyst(cb, 'ttbb_rate_j4', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
 
+#            cb.cp().AddSyst(cb, 'ttbb_rate', 'rateParam', ch.SystMap('process')(['ttbb'], 1.0))
+#            cb.cp().AddSyst(cb, 'ttcc_rate', 'rateParam', ch.SystMap('process')(['ttcc'], 1.0))
 
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
