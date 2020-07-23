@@ -3,7 +3,7 @@ import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-input_path = 'datacards_200101_2017v21/'
+input_path = 'datacards_200101_2017v34_test/'
 drawNom = False
 #drawNom = True
 
@@ -72,7 +72,8 @@ def drawComp(c, nom, up, dn, lowstat):
     up_.SetLineColor(ROOT.kRed)
     dn_.SetLineColor(ROOT.kBlue)
     max_list = [nom_.GetMaximum(), up_.GetMaximum(), dn_.GetMaximum()]
-    nom_.GetYaxis().SetRangeUser(0, max(max_list) * 1.25)
+    #nom_.GetYaxis().SetRangeUser(0.0, max(max_list) * 1.25)
+    nom_.GetYaxis().SetRangeUser(0.1, max(max_list) * 20)
 
     nom_.GetXaxis().SetTitleSize(0.0)
     nom_.GetYaxis().SetTitle('Events')
@@ -83,6 +84,7 @@ def drawComp(c, nom, up, dn, lowstat):
     if lowstat:
       up_.Draw('hist e same')
       dn_.Draw('hist e same')
+      nom_.Draw('hist e same')
     else:
       up_.Draw('hist same')
       dn_.Draw('hist same')
@@ -91,6 +93,7 @@ def drawComp(c, nom, up, dn, lowstat):
     legend.AddEntry(up_, "Up")
     legend.AddEntry(dn_, "Down")
     legend.Draw()
+    pad1.SetLogy()
 
     pad2.cd()
     ratio_up = nom.Clone()

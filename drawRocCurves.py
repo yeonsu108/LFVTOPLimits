@@ -1,11 +1,14 @@
 from rocCurveFacility import *
-import os
+import os, sys
 import ROOT
 
 # Script to draw 2016 and 2017 rocCurves on same graph (easy to modifiy for ther purposes)
-pathToTh1_2016 = "datacards_200101_2016"
-pathToTh1_2017 = "datacards_200101_2017"
-pathToTh1_2018 = "datacards_200101_2018"
+pathToTh1_2016 = "datacards_200101_2016v16"
+pathToTh1_2017 = "datacards_200101_2017v34"
+pathToTh1_2018 = "datacards_200101_2018v34"
+output_postfix = ''
+
+if sys.argv[1]: output_postfix = sys.argv[1]
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
@@ -31,7 +34,7 @@ def getRocCurve(partial_name, th1_rootFileName, coupling):
 
 
 
-rocCurveOutputFolder = 'rocCurves_' + pathToTh1_2016.split('_')[1] + ('_') + pathToTh1_2017.split('_')[1] + ('_') + pathToTh1_2018.split('_')[1] 
+rocCurveOutputFolder = 'rocCurves_' + pathToTh1_2016.split('_')[1] + ('_') + pathToTh1_2017.split('_')[1] + ('_') + pathToTh1_2018.split('_')[1] + output_postfix
 
 if not os.path.exists(rocCurveOutputFolder):
     os.mkdir(rocCurveOutputFolder)

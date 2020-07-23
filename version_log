@@ -39,5 +39,6 @@
     - 2017v32: v16 + symm for jer b2j3 and cferr1 b4j4 (2017) cferr1 and pdf b4j4 (18)
     - 2017v33: v16 + symm for 'jer other b2j3' and 'cferr1 ttcc b4j4' (2017) / 'cferr1 ttcc b4j4' and 'pdf b4j4' (18)
 
-    - 2017v34: v33 + improve zerobin (h_nom binX = 0 -> ratio = 1.)
-    - 2017v34: v34 + symm. jec
+    - 2017v34: v33 + improve zerobin (h_nom binX = 0 -> ratio = 1.) : New Ref! (16: same as v16) (test -> symm after merge)
+    - 2017v35: v34 + symm. jec
+    - 2017v36: merge bin first

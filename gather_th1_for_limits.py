@@ -1,10 +1,10 @@
 import ROOT
 import os, re
 
-base_dir = '/home/minerva1993/HEPToolsFCNC/finalMVA/histos/2017/'
-#base_dir = '/home/minerva1993/HEPToolsFCNC/finalMVA/histos/2018/'
-base_output_dir = 'histos_suitable_for_limits_191014_2017/'
-#base_output_dir = 'histos_suitable_for_limits_190910_2018_v10/'
+base_dir = '/home2/minerva1993/HEPToolsFCNC/finalMVA/histos/2017/'
+#base_dir = '/home2/minerva1993/HEPToolsFCNC/finalMVA/histos/2018/'
+base_output_dir = 'histos_suitable_for_limits_200101v34_2017/'
+#base_output_dir = 'histos_suitable_for_limits_200101v34_2018/'
 
 if not os.path.isdir(base_output_dir):
     os.mkdir(base_output_dir)
