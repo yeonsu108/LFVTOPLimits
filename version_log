@@ -42,3 +42,6 @@
     - 2017v34: v33 + improve zerobin (h_nom binX = 0 -> ratio = 1.) : New Ref! (16: same as v16) (test -> symm after merge)
     - 2017v35: v34 + symm. jec
     - 2017v36: merge bin first
+    - 2017v37: v34 + new bSF unc
+    - 2017v38: v34 + new bSF unc - all symmetrization
+    - 2017v39: v37 + fix symm.

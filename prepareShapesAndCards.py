@@ -171,12 +171,16 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hct_b3j4" : [(1, 'DNN_Hct_b3j4')],
     "DNN_Hct_b4j4" : [(1, 'DNN_Hct_b4j4')],
     "DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b3j4'), (5, 'DNN_Hct_b4j4')],
+    #"DNN_Hct_all" : [(1, 'DNN_Hct_b2j4'), (2, 'DNN_Hct_b3j3'), (3, 'DNN_Hct_b3j4'), (4, 'DNN_Hct_b4j4')],
+    #"DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b3j3')],
     "DNN_Hut_b2j3" : [(1, 'DNN_Hut_b2j3')],
     "DNN_Hut_b2j4" : [(1, 'DNN_Hut_b2j4')],
     "DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
     "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
     "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
+    #"DNN_Hut_all" : [(1, 'DNN_Hut_b2j4'), (2, 'DNN_Hut_b3j3'), (3, 'DNN_Hut_b3j4'), (4, 'DNN_Hut_b4j4')],
+    #"DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b3j3')],
     #key does matter when removeing qcd-relavant discriminant below
     # tests
     #"BDT_Hct_b2j3" : [(1, 'BDT_Hct_b2j3')],
@@ -728,20 +732,19 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             #else:
             for i in xrange(len(discriminant)):
                 if 'j3' in discriminant[i][1]:
-#                    pass
+                    pass
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-#                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.15))
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 #                    cb.cp().AddSyst(cb, 'ttbb_rate_j3', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
                 else:
-#                    pass
+                    pass
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-#                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.15))
                     cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 #                    cb.cp().AddSyst(cb, 'ttbb_rate_j4', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
 
 #            cb.cp().AddSyst(cb, 'ttbb_rate', 'rateParam', ch.SystMap('process')(['ttbb'], 1.0))
 #            cb.cp().AddSyst(cb, 'ttcc_rate', 'rateParam', ch.SystMap('process')(['ttcc'], 1.0))
+#            cb.cp().AddSyst(cb, 'qcd_rate', 'rateParam', ch.SystMap('process')(['qcd'], 1.0))
 
         if options.SF :
             print "Background renormalization is deprecated! Exitting..."
@@ -769,6 +772,8 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             bbb = ch.BinByBinFactory()
             bbb.SetAddThreshold(0.1)
             bbb.AddBinByBin(cb.cp().backgrounds().process(['qcd']), cb)
+        #AutoMCStat
+        #cb.SetAutoMCStats(cb, 0.1)
 
         if options.nosys and options.nobbb : 
             cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
