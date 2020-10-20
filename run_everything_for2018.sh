@@ -10,3 +10,4 @@ python run_all_closureChecks.py $datacardFolder
 python run_all_impacts.py $datacardFolder
 python run_all_gatherFailedFits.py $datacardFolder
 python run_all_postfits.py $datacardFolder
+python printPostfitLatexTable.py $datacardFolder
