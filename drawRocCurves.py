@@ -4,8 +4,8 @@ import ROOT
 
 # Script to draw 2016 and 2017 rocCurves on same graph (easy to modifiy for ther purposes)
 pathToTh1_2016 = "datacards_200101_2016v16"
-pathToTh1_2017 = "datacards_200101_2017v34"
-pathToTh1_2018 = "datacards_200101_2018v34"
+pathToTh1_2017 = "datacards_200101_2017v39"
+pathToTh1_2018 = "datacards_200101_2018v39"
 output_postfix = ''
 
 if sys.argv[1]: output_postfix = sys.argv[1]

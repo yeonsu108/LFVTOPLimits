@@ -15,7 +15,7 @@ parser.add_argument('-verbose', dest='verbose', type=bool, default=False, help='
 parser.add_argument('-doPlot', dest='doPlot', type=str2bool, default="True", help='Do the limit plot or not.')
 parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: e.g. higgsCombine*_b3j3*.root.')
 parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
-parser.add_argument('-unblind', dest='unblind', type=bool, default=False, help='Display or not the observed limit.')
+parser.add_argument('-unblind', dest='unblind', type=str2bool, default="False", help='Display or not the observed limit.')
 parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
 parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
 parser.add_argument('-printlimits', dest='printlimits', type=str2bool, default="False", help='Print b2j3 and b2j4 to check run2 combination')

@@ -5,6 +5,9 @@ removeHutb4j4 = False
 if len(sys.argv) > 2:
   removeHutb4j4 = not (sys.argv[2] == "False")
 
+if any('unblind' in i for i in sys.argv): unblind = True
+else: unblind = False
+
 print removeHutb4j4
 #Hct_cross_sec = 48.4
 #Hut_cross_sec = 60.34
@@ -20,7 +23,7 @@ for key in Hut_limits:
             Hut_limits[key][number_type][1] = round(Hut_limits[key][number_type][1]*Hut_cross_sec, 2)
         else:
             Hut_limits[key][number_type] = round(Hut_limits[key][number_type]*Hut_cross_sec, 2)
-        if number_type == 'observed':
+        if number_type == 'observed' and not unblind:
             Hut_limits[key][number_type] = 'X'#*Hut_cross_sec
 
 if removeHutb4j4:
@@ -76,7 +79,7 @@ for key in Hct_limits:
             Hct_limits[key][number_type][1] = round(Hct_limits[key][number_type][1]*Hct_cross_sec, 2)
         else:
             Hct_limits[key][number_type] = round(Hct_limits[key][number_type]*Hct_cross_sec, 2)
-        if number_type == 'observed':
+        if number_type == 'observed' and not unblind:
             Hct_limits[key][number_type] = 'X'#*Hct_cross_sec
 
 Hct_table = """

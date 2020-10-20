@@ -45,3 +45,4 @@
     - 2017v37: v34 + new bSF unc
     - 2017v38: v34 + new bSF unc - all symmetrization
     - 2017v39: v37 + fix symm.
+    - 2017v40: 2017 H*t_0101010201 (new b3j4 training with less trees)
