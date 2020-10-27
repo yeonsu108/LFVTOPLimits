@@ -79,14 +79,14 @@ for ch in chs:
 
 """.format(dest_folder, ch)
 
-  with open(config_path + '/postfit_file_' + ch + '_1718.yml', 'w+') as fnew:
+  with open(config_path + '/postfit_file_stack_' + ch + '_1718.yml', 'w+') as fnew:
     fnew.write(strings_for_signal)
     fnew.write(string_for_files)
 
-  with open(config_path + '/postfit_file_' + ch + '_1718_qcd.yml', 'w+') as fnew:
+  with open(config_path + '/postfit_file_stack_' + ch + '_1718_qcd.yml', 'w+') as fnew:
     fnew.write(strings_for_signal)
     fnew.write(string_for_files_qcd)
 
   print 'Drawing 17+18 postfit distributions for ' + ch
-  call([plotit_path, '-o ' + dest_path, config_path + '/postfit_plotIt_config_' + ch +'_1718.yml'], shell=False)
-  call([plotit_path, '-o ' + dest_path, config_path + '/postfit_plotIt_config_' + ch +'_1718_qcd.yml'], shell=False)
+  call([plotit_path, '-o ' + dest_path, config_path + '/postfit_plotIt_config_stack_' + ch +'_1718.yml'], shell=False)
+  call([plotit_path, '-o ' + dest_path, config_path + '/postfit_plotIt_config_stack_' + ch +'_1718_qcd.yml'], shell=False)

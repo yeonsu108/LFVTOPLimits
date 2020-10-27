@@ -23,7 +23,7 @@ groups:
   include: ['postfit_group.yml']
 
 files:
-  include: ['postfit_file_Hut_1718.yml']
+  include: ['postfit_file_stack_Hut_1718.yml']
 
 systematics:
   - postfit
