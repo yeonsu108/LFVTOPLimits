@@ -5,7 +5,7 @@ configuration:
   experiment: " CMS"
   #extra-label: "Preliminary"
   extra-label: "Work in Progress"
-  root: './'
+  root: './postfit_shapes_FCNC_Hct_Discriminant_DNN_Hct_1718_all_forPlotIt'
   luminosity: 1
   luminosity-error: 0
   error-fill-style: 3154
@@ -23,7 +23,7 @@ groups:
   include: ['postfit_group.yml']
 
 files:
-  include: ['postfit_file_stack_Hct_1718.yml']
+  include: ['postfit_file_Hct.yml']
 
 systematics:
   - postfit

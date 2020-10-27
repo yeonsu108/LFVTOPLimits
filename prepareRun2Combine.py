@@ -96,6 +96,8 @@ for signal in ['Hct', 'Hut']:
 
   # Write card
   for output_prefix in output_prefix_list:
+    year = output_prefix.split('_')[5]
+    print year
     output_dir = os.path.join(options.output, signal)
     datacard = os.path.join(output_dir, output_prefix + '.dat')
     workspace_file = os.path.basename( os.path.join(output_dir, output_prefix + '_combine_workspace.root') )
@@ -159,5 +161,24 @@ plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 40
       
     st = os.stat(script_file)
     os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+
+    # Write small script for postfit shapes
+    script = """#! /bin/bash
+
+# Run postfit
+echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 --robustHesse 1 --robustFit=1 -v 1
+combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 --robustHesse 1 --robustFit=1 -m {fake_mass} -v 1 #--plots
+PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling -m {fake_mass}
+python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
+$CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
+$CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}_qcd.yml -y
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=signal, year=year)
+    script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
+    with open(script_file, 'w') as f:
+        f.write(script)
+
+    st = os.stat(script_file)
+    os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+
 
 os.chdir( os.path.join(cmssw_base) )
