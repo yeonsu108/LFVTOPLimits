@@ -6,11 +6,16 @@ import ROOT
 limitfolder = sys.argv[1]
 couplings = ['Hut','Hct']
 
+if len(sys.argv) > 2: years = sys.argv[2]
+else: years = ''
+
 for coupling in couplings:
 
     nums = {}
     for process in ['data_obs', 'ttbb', 'ttcc', 'ttlf', 'other', 'qcd', 'TotalBkg']:
         rootfolder = os.path.join(limitfolder, coupling + '/postfit_shapes_FCNC_'+coupling+'_Discriminant_DNN_'+coupling+'_all_forPlotIt')
+        if len(years) > 1:
+            rootfolder = os.path.join(limitfolder, coupling + '/postfit_shapes_FCNC_'+coupling+'_Discriminant_DNN_'+coupling+'_'+years+'_all_forPlotIt')
         f_tmp = TFile.Open(os.path.join(rootfolder, process + '_postfit_histos.root'))
 
         for cat in ['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4']:

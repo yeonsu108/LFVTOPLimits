@@ -10,4 +10,5 @@ python printLimitLatexTable.py $datacardFolder #For 161718 b2j3-b4j4
 python run_all_closureChecks.py $datacardFolder
 python run_all_impacts.py $datacardFolder
 python run_all_gatherFailedFits.py $datacardFolder
-#python run_all_postfits.py $datacardFolder
+python run_all_postfits.py $datacardFolder 1718
+python printPostfitLatexTable.py $datacardFolder 1718
