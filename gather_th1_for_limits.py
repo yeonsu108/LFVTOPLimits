@@ -15,7 +15,7 @@ coupling_strings = ['Hct', 'Hut']
 #jet_strings = ['j3', 'j4']
 jet_strings = ['j3b2', 'j3b3', 'j4b2', 'j4b3', 'j4b4']
 #training_strings = ['01', '02', '03', '04']
-training_strings = ['0101010201'] #ver of j3b2+j3b3+j4b2+j4b3+j4b4
+training_strings = ['0101010101'] #ver of j3b2+j3b3+j4b2+j4b3+j4b4
 
 systematics_in_separated_rootfiles = ['hdamp', 'jec', 'jer', 'TuneCP5'] # first entry for the rootfiles with nominal and other syst TH1
 systematics_to_merge = {'lepton':'(\S*)__(el|mu)(\S*)',}#'btag':'(\S*)__(lf|hf|cferr)(\S*)'}

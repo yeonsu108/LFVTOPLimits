@@ -46,19 +46,33 @@ y_br_one_up, y_br_one_dn = array( 'd' ), array( 'd' )
 x_br_two_up, x_br_two_dn = array( 'd' ), array( 'd' )
 y_br_two_up, y_br_two_dn = array( 'd' ), array( 'd' )
 
-Hut_exp = Hut_limits['161718_all']['expected']
-Hut_obs = Hut_limits['161718_all']['observed']
-Hut_one_up = Hut_limits['161718_all']['one_sigma'][1]
-Hut_one_dn = Hut_limits['161718_all']['one_sigma'][0]
-Hut_two_up = Hut_limits['161718_all']['two_sigma'][1]
-Hut_two_dn = Hut_limits['161718_all']['two_sigma'][0]
+#Hut_exp = Hut_limits['161718_all']['expected']
+#Hut_obs = Hut_limits['161718_all']['observed']
+#Hut_one_up = Hut_limits['161718_all']['one_sigma'][1]
+#Hut_one_dn = Hut_limits['161718_all']['one_sigma'][0]
+#Hut_two_up = Hut_limits['161718_all']['two_sigma'][1]
+#Hut_two_dn = Hut_limits['161718_all']['two_sigma'][0]
+#
+#Hct_exp = Hct_limits['161718_all']['expected']
+#Hct_obs = Hct_limits['161718_all']['observed']
+#Hct_one_up = Hct_limits['161718_all']['one_sigma'][1]
+#Hct_one_dn = Hct_limits['161718_all']['one_sigma'][0]
+#Hct_two_up = Hct_limits['161718_all']['two_sigma'][1]
+#Hct_two_dn = Hct_limits['161718_all']['two_sigma'][0]
 
-Hct_exp = Hct_limits['161718_all']['expected']
-Hct_obs = Hct_limits['161718_all']['observed']
-Hct_one_up = Hct_limits['161718_all']['one_sigma'][1]
-Hct_one_dn = Hct_limits['161718_all']['one_sigma'][0]
-Hct_two_up = Hct_limits['161718_all']['two_sigma'][1]
-Hct_two_dn = Hct_limits['161718_all']['two_sigma'][0]
+Hut_exp = Hut_limits['all']['expected']
+Hut_obs = Hut_limits['all']['observed']
+Hut_one_up = Hut_limits['all']['one_sigma'][1]
+Hut_one_dn = Hut_limits['all']['one_sigma'][0]
+Hut_two_up = Hut_limits['all']['two_sigma'][1]
+Hut_two_dn = Hut_limits['all']['two_sigma'][0]
+
+Hct_exp = Hct_limits['all']['expected']
+Hct_obs = Hct_limits['all']['observed']
+Hct_one_up = Hct_limits['all']['one_sigma'][1]
+Hct_one_dn = Hct_limits['all']['one_sigma'][0]
+Hct_two_up = Hct_limits['all']['two_sigma'][1]
+Hct_two_dn = Hct_limits['all']['two_sigma'][0]
 
 def coupl(Hut_limit, Hct_limit, pos, arrX, arrY):
   if pos <= sqrt(Hut_limit/signal_Xsec_couplingOneForBR['Hut']):

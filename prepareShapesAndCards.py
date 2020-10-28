@@ -171,16 +171,14 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hct_b3j4" : [(1, 'DNN_Hct_b3j4')],
     "DNN_Hct_b4j4" : [(1, 'DNN_Hct_b4j4')],
     "DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b3j4'), (5, 'DNN_Hct_b4j4')],
-    #"DNN_Hct_all" : [(1, 'DNN_Hct_b2j4'), (2, 'DNN_Hct_b3j3'), (3, 'DNN_Hct_b3j4'), (4, 'DNN_Hct_b4j4')],
-    #"DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b3j3')],
+    #"DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b4j4')],
     "DNN_Hut_b2j3" : [(1, 'DNN_Hut_b2j3')],
     "DNN_Hut_b2j4" : [(1, 'DNN_Hut_b2j4')],
     "DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
     "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
     "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
-    #"DNN_Hut_all" : [(1, 'DNN_Hut_b2j4'), (2, 'DNN_Hut_b3j3'), (3, 'DNN_Hut_b3j4'), (4, 'DNN_Hut_b4j4')],
-    #"DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b3j3')],
+    #"DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b4j4')],
     #key does matter when removeing qcd-relavant discriminant below
     # tests
     #"BDT_Hct_b2j3" : [(1, 'BDT_Hct_b2j3')],
@@ -465,7 +463,12 @@ def merge_histograms(process, histogram, destination):
         #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
         #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
-    #if 'ttbb' in process: histogram.Scale(1.21)
+        if 'j4b3' in histogram.GetName():
+            arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 1.])
+        histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+
+    #if 'ttbb' in process: histogram.Scale(1.23)
+    #elif 'ttcc' in process: histogram.Scale(0.81)
 
     d = destination
     if not d:
@@ -559,6 +562,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
 
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
 #    for je in ['jec']:
+#    for je in ['cferr1','cferr2','hfstat1','hfstat2','lfstat1','lfstat2','hf','lf']:
 #        cms_systematics.remove(CMSNamingConvention(je))
 #        cms_systematics.append(CMSNamingConvention(je) + 'j3')
 #        cms_systematics.append(CMSNamingConvention(je) + 'j4')
@@ -604,6 +608,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
 #                            if any(je in systematic for je in ['jec']):
+#                            if any(je in systematic for je in ['cferr1','cferr2','hfstat1','hfstat2','lfstat1','lfstat2','hf','lf']):
 #                                if   'j3' in original_histogram_name: key = CMSNamingConvention(systematic) + 'j3' + variation.capitalize()
 #                                elif 'j4' in original_histogram_name: key = CMSNamingConvention(systematic) + 'j4' + variation.capitalize()
                             #print "Key: ", key
@@ -696,6 +701,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                         systematic_only_for_SMtt = True
 #                splitJet = False
 #                if any(je in systematic for je in ['jec']): splitJet = True
+#                if any(je in systematic for je in ['cferr1','cferr2','hfstat1','hfstat2','lfstat1','lfstat2','hf','lf']): splitJet = True
                 if not systematic_only_for_SMtt:
 #                if not systematic_only_for_SMtt and not splitJet:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
@@ -731,16 +737,46 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05))#1.05 for j4
             #else:
             for i in xrange(len(discriminant)):
-                if 'j3' in discriminant[i][1]:
-                    pass
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-#                    cb.cp().AddSyst(cb, 'ttbb_rate_j3', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
-                else:
-                    pass
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-#                    cb.cp().AddSyst(cb, 'ttbb_rate_j4', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
+                #if 'j3' in discriminant[i][1]:
+                #    pass
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.3))
+                #    cb.cp().AddSyst(cb, 'ttbb_rate_j3', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
+                #    cb.cp().AddSyst(cb, 'ttcc_rate_j3', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.0))
+                #else:
+                #    pass
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.3))
+                #    cb.cp().AddSyst(cb, 'ttbb_rate_j4', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
+                #    cb.cp().AddSyst(cb, 'ttcc_rate_j4', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.0))
+
+                if 'b2' in discriminant[i][1]:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                elif 'b3' in discriminant[i][1]:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_b3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_b3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                elif 'b4' in discriminant[i][1]:
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                    cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+
+                #if 'b2j3' in discriminant[i][1]:
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                #elif 'b2j4' in discriminant[i][1]:
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                #elif 'b3j3' in discriminant[i][1]:
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                #elif 'b3j4' in discriminant[i][1]:
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                #elif 'b4j4' in discriminant[i][1]:
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b4j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b4j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 
 #            cb.cp().AddSyst(cb, 'ttbb_rate', 'rateParam', ch.SystMap('process')(['ttbb'], 1.0))
 #            cb.cp().AddSyst(cb, 'ttcc_rate', 'rateParam', ch.SystMap('process')(['ttcc'], 1.0))
@@ -755,8 +791,9 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
         cb.cp().signals().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
 
-        #rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
-        #rebin.Rebin(cb.cp(), cb)
+        if options.dataYear == '2016':
+            rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
+            rebin.Rebin(cb.cp(), cb)
 
         # Bin by bin uncertainties
         if not options.nobbb:
@@ -764,7 +801,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             bbb = ch.BinByBinFactory()
             #bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
             bbb.SetAddThreshold(0.1)
-            #bbb.SetAddThreshold(0.0001)
             bbb.AddBinByBin(cb.cp().backgrounds(), cb)
             bbb.AddBinByBin(cb.cp().signals(), cb)
         else:
