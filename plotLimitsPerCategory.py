@@ -9,6 +9,8 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+doLogy = False
+
 parser = argparse.ArgumentParser(description='Store limits inside a json file and plot them if required (one bin per category).')
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
 parser.add_argument('-verbose', dest='verbose', type=bool, default=False, help='Dump limits to stdout or not.')
@@ -125,6 +127,8 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
             th1_for_canvas_layout.SetBinContent(category_binNumber+1, categ_limits['two_sigma'][1]*1.5)
     th1_for_canvas_layout.SetMinimum(0)
     th1_for_canvas_layout.Draw()
+    y_max = 0.1
+    y_min = 10
     for category_binNumber in range(len(cat_order)):
         category = cat_order[category_binNumber]
         if category in limit_dict.keys():
@@ -154,6 +158,9 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
             one_sigma_rectangles[category].Draw('f same')
             expected_lines[category].Draw('same')
             observed_lines[category].Draw('same')
+            if two_sigma_up > y_max: y_max = two_sigma_up
+            if two_sigma_down < y_min: y_min = two_sigma_down
+    if doLogy: yAxis.SetRangeUser(two_sigma_down, two_sigma_up+300*two_sigma_up)
     # Legend
     legend = ROOT.TLegend(legend_position[0], legend_position[1], legend_position[2], legend_position[3], "95% CL upper limits")
     legend.SetTextFont(42)
@@ -168,9 +175,9 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     legend.Draw('same')
     add_labels(canvas, signal_name)
     th1_for_canvas_layout.Draw('sameaxis')#reprint ticks on top of rectangles
+    if doLogy: canvas.SetLogy()
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.pdf'))
     canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.png'))
-    #canvas.SetLogy()
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.pdf'))
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
     if options.printlimits:
@@ -203,7 +210,7 @@ if not signal_folders:
 for signal_folder in signal_folders:
     print "Extracting limits for %s"%signal_folder
     signal_folder_path = os.path.join(options.limitfolder, signal_folder)
-    limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC')]
+    limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and '_1718_' not in rootfile]
     #categories = [] # [rootfilename.split('.')[0].split('_')[-1] for rootfilename in limit_rootfiles]
     dict_cat_limits = {}
     for category in options.category_order:
