@@ -3,7 +3,7 @@ import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-input_path = 'datacards_200101_2018v39/'
+input_path = 'datacards_200101_2017v45/'
 drawNom = False
 #drawNom = True
 

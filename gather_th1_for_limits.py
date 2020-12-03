@@ -3,8 +3,8 @@ import os, re
 
 base_dir = '/home2/minerva1993/HEPToolsFCNC/finalMVA/histos/2017/'
 #base_dir = '/home2/minerva1993/HEPToolsFCNC/finalMVA/histos/2018/'
-base_output_dir = 'histos_suitable_for_limits_200101v39_2017/'
-#base_output_dir = 'histos_suitable_for_limits_200101v39_2018/'
+base_output_dir = 'histos_suitable_for_limits_200101v45_2017/'
+#base_output_dir = 'histos_suitable_for_limits_200101v45_2018/'
 
 if not os.path.isdir(base_output_dir):
     os.mkdir(base_output_dir)

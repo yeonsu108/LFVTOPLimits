@@ -47,6 +47,12 @@
 
     - 2017v39: v37 + fix symm. : New Ref!, ANv11 and paper v2
     - 2017v40: 2017 H*t_0101010201 (new b3j4 training with less trees)
-    - 2017v41: v39_ttbbccRateBjets + jetcat all merged
-    - 2017v42: v39_ttbbccRateBjets + jetcat merged (b2 and b3~4)
-    - 2017v43: v39_ttbbccRateBjets + jetcat merged (j3 and j4)
+    - 2017v41: v39_ttbbccRateBjets + jetcat all merged (same histo as v39)
+    - 2017v42: v39_ttbbccRateBjets + jetcat merged (b2 and b3~4) (same histo as v39)
+    - 2017v43: v39_ttbbccRateBjets + jetcat merged (j3 and j4) (same histo as v39)
+    - 2018v44: HEM (not propagated to MET!!)
+    - 2017v45: 200101v39_ttbbccRateBjets + 100% corr. ttbar unc + AutoMCStats + lumi corr. - 16(17): same histo as v16(v39), 18: v45
+
+2012xx
+  - variations:
+    - 2017v1: 

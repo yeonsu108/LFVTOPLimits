@@ -17,6 +17,17 @@ do
   cp $folder/Hct/*.dat $outname/$folder/Hct
   cp $folder/Hut/*shapes.root $outname/$folder/Hut
   cp $folder/Hct/*shapes.root $outname/$folder/Hct
-  cp $folder/Hut/forCombine*.root $outname/$folder/Hut
-  cp $folder/Hct/forCombine*.root $outname/$folder/Hct
+  #cp $folder/Hut/forCombine*.root $outname/$folder/Hut
+  #cp $folder/Hct/forCombine*.root $outname/$folder/Hct
+done
+
+declare -a YearList=(1617 1618 1718)
+for year in "${YearList[@]}"
+do
+  rm $outname/$datacardRun2/*/*_${year}_*
+done
+
+for i in $outname/$datacardRun2/*/*.dat
+do
+  sed -i 's/\/home\/minerva1993\/CMSSW_8_1_0\/src\/UserCode\/FCNCLimits/..\/../g' $i
 done

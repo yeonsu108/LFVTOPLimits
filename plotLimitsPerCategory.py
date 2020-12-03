@@ -76,7 +76,7 @@ def getLimitsFromFile(input_file):
 
     return data
 
-def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms='Work in progress'):
+def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms='Preliminary'):
     latexLabel = ROOT.TLatex()
     latexLabel.SetTextSize(0.75 * canvas.GetTopMargin())
     latexLabel.SetNDC()
@@ -211,6 +211,7 @@ for signal_folder in signal_folders:
     print "Extracting limits for %s"%signal_folder
     signal_folder_path = os.path.join(options.limitfolder, signal_folder)
     limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and '_1718_' not in rootfile]
+    #limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and '_1718_' in rootfile]
     #categories = [] # [rootfilename.split('.')[0].split('_')[-1] for rootfilename in limit_rootfiles]
     dict_cat_limits = {}
     for category in options.category_order:

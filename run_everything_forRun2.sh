@@ -1,7 +1,6 @@
 datacardFolder=$1
 #python prepareRun2Combine.py -o $datacardFolder
-python prepareRun2Combine.py -o $datacardFolder -p16 datacards_200101_2016v16_rebinttbbccRateBjets -p17 datacards_200101_2017v39_ttbbccRateBjets -p18 datacards_200101_2018v39_ttbbccRateBjets
-#python prepareRun2Combine.py -o $datacardFolder -p16 datacards_200101_2016v16_rebinttbbccRateBjets_nobbb -p17 datacards_200101_2017v39_ttbbccRateBjets_nobbb -p18 datacards_200101_2018v39_ttbbccRateBjets_nobbb
+python prepareRun2Combine.py -o $datacardFolder -p16 datacards_200101_2016v45 -p17 datacards_200101_2017v45 -p18 datacards_200101_2018v45
 python run_all_limits.py $datacardFolder
 python plotLimitsPerCategory.py -lumi 137.2  -limitfolder $datacardFolder #For 161718  b2j3-b4j4
 #python plotLimitsPerCategory.py -lumi 137.2 -printlimits True -limitfolder $datacardFolder #For 161718, 1718, 1617
