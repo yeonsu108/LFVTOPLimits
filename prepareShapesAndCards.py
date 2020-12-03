@@ -67,9 +67,6 @@ options = parser.parse_args()
 
 print options.removeHutb4j4
 correlatedSys = options.correlatedSys
-if options.dataYear == '2016':
-    for i in ['scale', 'ps', 'TuneCP5', 'hdamp', 'pdf']: correlatedSys.remove(i)
-print correlatedSys
 
 channel_mapping = {
     "mu" : 'Ch0',
