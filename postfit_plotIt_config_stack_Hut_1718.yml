@@ -3,8 +3,7 @@ configuration:
   height: 450
   luminosity-label: '101.2 fb^{-1} at #sqrt{s} = 13 TeV'
   experiment: " CMS"
-  #extra-label: "Preliminary"
-  extra-label: "Work in Progress"
+  extra-label: "Preliminary"
   root: './'
   luminosity: 1
   luminosity-error: 0

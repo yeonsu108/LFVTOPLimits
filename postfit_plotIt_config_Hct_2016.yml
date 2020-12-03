@@ -3,10 +3,8 @@ configuration:
   height: 450
   luminosity-label: '35.9 fb^{-1} at #sqrt{s} = 13 TeV'
   experiment: " CMS"
-  #extra-label: "Preliminary"
-  extra-label: "Work in Progress"
+  extra-label: "Preliminary"
   root: 'postfit_shapes_FCNC_Hct_Discriminant_DNN_Hct_all_forPlotIt/'
-  #root: ROOTFILEDIR
   luminosity: 1
   luminosity-error: 0
   error-fill-style: 3154
