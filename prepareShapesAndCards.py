@@ -23,19 +23,12 @@ hadNegBinErrForProcess = {}
 def setNegativeBinsToZero(h, process):
     if not process in hadNegBinForProcess:
         hadNegBinForProcess[process] = False
-    #if not process in hadNegBinErrForProcess:
-    #    hadNegBinErrForProcess[process] = False
     for i in range(1, h.GetNbinsX() + 1):
         if h.GetBinContent(i) < 0.:
             if not hadNegBinForProcess[process]:
                 print 'Remove negative bin in TH1 %s for process %s'%(h.GetTitle(), process)
             hadNegBinForProcess[process] = True
             h.SetBinContent(i, 0.)
-        #if h.GetBinContent(i)-h.GetBinErrorLow(i) < 0.:
-        #    if not hadNegBinErrForProcess[process]:
-        #        print 'Set negative (bin-err) in TH1 %s for process %s'%(h.GetTitle(), process)
-        #    hadNegBinErrForProcess[process] = True
-        #    h.SetBinError(i, h.GetBinContent(i))
     
 def get_hist_regex(r):
     return '^%s(__.*(up|down))?$' % r
@@ -53,25 +46,19 @@ def str2bool(v):
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
 parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_200101_2017/training_0101010101', help='Directory containing rootfiles with the TH1 used for limit settings')
-#parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default='/afs/cern.ch/user/b/brfranco/work/public/FCNC/limits/rootfiles_for_limits/DNN_181109_j3b2/', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
 parser.add_argument('-le', '--luminosityError', action='store', type=float, dest='luminosityError', default=1.023, help='Error on the integrated luminosity (default is 1.023 /pb)')
 parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_200101_2017', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_2017_200101.yml', help='YAML config file path with Xsec and Nevt.')
-parser.add_argument('--reweight', action='store_true', dest='reweight', help='Apply a preliminary reweighting. Not implemented yet.')
-parser.add_argument('--fake-data', action='store_true', dest='fake_data', help='Use fake data instead of real data')
-parser.add_argument('--SF', action='store_true', dest='SF', help='Produce cards for scale factors extraction (add line with rateParam). Not final yet!')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
-#parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp','jec'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lumi', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
 #parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
-parser.add_argument('--test', action='store_true', help='Do not prepare all categories, fasten the process for development')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
 parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
@@ -103,36 +90,6 @@ DNN_Hct_hist_name = 'Hct'
 DNN_Hut_hist_name = 'Hut'
 channel = options.channel 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
-        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-
-        #'DNN_Hct_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-
-        #'DNN_Hut_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        #'DNN_Hut_b3j3': get_hist_regex('{0}_j3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-
-        #'DNN_Hut_b2j4': get_hist_regex('{0}_j4_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        #'DNN_Hut_b3j4': get_hist_regex('{0}_j4_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        #'DNN_Hut_b4j4': get_hist_regex('{0}_j4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        ##########################################################################################################
-        #For old BDT plots
-        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-
-        #'DNN_Hct_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-
-        #'DNN_Hut_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        #'DNN_Hut_b3j3': get_hist_regex('{0}_j3b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-
-        #'DNN_Hut_b2j4': get_hist_regex('{0}_j4b2_h_DNN_b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        #'DNN_Hut_b3j4': get_hist_regex('{0}_j4b3_h_DNN_b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        #'DNN_Hut_b4j4': get_hist_regex('{0}_j4b4_h_DNN_b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-
-        #For new BDT plots
         'DNN_Hct_b2j3': get_hist_regex('{0}_h_DNN_j3b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
         'DNN_Hct_b3j3': get_hist_regex('{0}_h_DNN_j3b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
 
@@ -146,22 +103,6 @@ individual_discriminants = { # support regex (allow to avoid ambiguities if many
         'DNN_Hut_b2j4': get_hist_regex('{0}_h_DNN_j4b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         'DNN_Hut_b3j4': get_hist_regex('{0}_h_DNN_j4b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
         'DNN_Hut_b4j4': get_hist_regex('{0}_h_DNN_j4b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        ##########################################################################################################
-
-        #'BDT_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3b2_h_DNN_b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-
-        #'DNN_Hct_b2j3': get_hist_regex('{0}_j3_h_DNN_b2_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        #'DNN_Hct_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
-        #'DNN_Hct_b3j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b3j3'])),
-        #'DNN_Hct_b3j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b3j4'])),
-        #'DNN_Hct_b4j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hct_hist_name, channel_mapping[channel], selection_mapping['b4j4'])),
-        #'DNN_Hut_b2j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b2j3'])),
-        #'DNN_Hut_b2j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b2j4'])),
-        #'DNN_Hut_b3j3': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b3j3'])),
-        #'DNN_Hut_b3j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b3j4'])),
-        #'DNN_Hut_b4j4': get_hist_regex('{0}_{1}_{2}'.format(DNN_Hut_hist_name, channel_mapping[channel], selection_mapping['b4j4'])),
-        #'yields': get_hist_regex('yields(?!(_sf|_df))'),
         }
 
 discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
@@ -171,67 +112,20 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     "DNN_Hct_b3j4" : [(1, 'DNN_Hct_b3j4')],
     "DNN_Hct_b4j4" : [(1, 'DNN_Hct_b4j4')],
     "DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b3j4'), (5, 'DNN_Hct_b4j4')],
-    #"DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b4j4')],
     "DNN_Hut_b2j3" : [(1, 'DNN_Hut_b2j3')],
     "DNN_Hut_b2j4" : [(1, 'DNN_Hut_b2j4')],
     "DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
     "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
     "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
     "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
-    #"DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b4j4')],
     #key does matter when removeing qcd-relavant discriminant below
-    # tests
-    #"BDT_Hct_b2j3" : [(1, 'BDT_Hct_b2j3')],
     }
-if options.test:
-    discriminants = { "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
-            #"DNN_Hct_b3j3" : [(1, 'DNN_Hct_b3j3')] 
-            }
 if options.removeHutb4j4:
     del individual_discriminants['DNN_Hut_b4j4']
     del discriminants['DNN_Hut_b4j4']
     discriminants["DNN_Hut_all"].remove((5, 'DNN_Hut_b4j4'))
 
-# Our definition of Bkg
-#processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
-#                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
-#        # Background
-#        ## TT Semileptonic 
-#        'ttother': ['hist_TTpowhegttother.root'],
-#        'ttlf': ['hist_TTpowhegttlf.root'],
-#        'ttcc': ['hist_TTpowhegttcc.root'],
-#        'ttbj' : ['hist_TTpowhegttbj.root'],
-#        'ttbb': ['TTpowhegttbb'],
-#        ## Other Top
-#        'tthad': ['hist_TTHadpowheg.root'],
-#        'ttfullLep': ['hist_TTLLpowheg.root'],
-#        'SingleTop': ['.*SingleT.*'],
-#        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
-#        ## V + jets
-#        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
-#        'DYjets': ['hist_DYJets.*'],
-#        ## VV
-#        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
-#        ## Higgs
-#        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
-#        # Signal
-#        'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
-#        'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
-#        #'Hct': ['STTH1L3BHct'],
-#        # Data
-#        'data_el' : ['SingleElectronRun2017'],
-#        'data_mu' : ['SingleMuonRun2017'],
-#        'data_all' : ['Single.*Run2017']
-#        }
-#processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
-#processes_mapping.pop('data_el')
-#processes_mapping.pop('data_mu')
-#processes_mapping.pop('data_all')
-#
-#smTTlist = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep'] # for systematics affecting only SM tt
-
 # IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
-
 # ~Kirill definition of Bkg
 if options.dataYear != '2016':
     processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
@@ -241,24 +135,9 @@ if options.dataYear != '2016':
             'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTLLpowhegttlf.root', 'hist_TTHadpowhegttlf.root'],
             'ttcc': ['hist_TTpowhegttcc.root', 'hist_TTLLpowhegttcc.root', 'hist_TTHadpowhegttcc.root'],
             'ttbb': ['hist_TTpowhegttbb.root', 'hist_TTLLpowhegttbb.root', 'hist_TTHadpowhegttbb.root'],
-            ## Other Top
-            #'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
             ## Other Bkg
             'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root', '.*SingleT.*'],
-    #        'tthad': ['hist_TTHadpowheg.root'],
-    #        'ttfullLep': ['hist_TTLLpowheg.root'],
-    #        'SingleTop': ['.*SingleT.*'],
-    #        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
-    #        ## V + jets
-    #        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
-    #        'DYjets': ['hist_DYJetsv2.*'],
-    #        ## VV
-    #        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
-    #        ## Higgs
-    #        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
             # Signal
-            #'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
-            #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
             'Hut': ['TTTH1L3BaTLepHut', 'TTTH1L3BTLepHut', 'STTH1L3BHut'],
             'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
             'qcd': ['hist_QCD*'],
@@ -279,24 +158,9 @@ else:
             'ttlf': ['ttlf.root'],
             'ttcc': ['ttcc.root'],
             'ttbb': ['ttbb.root'],
-            ## Other Top
-            #'ttother': ['hist_TTpowhegttother.root', 'hist_TTHadpowheg.root', 'hist_TTLLpowheg.root'],
             ## Other Bkg
             'other' : ['other.root'],
-    #        'tthad': ['hist_TTHadpowheg.root'],
-    #        'ttfullLep': ['hist_TTLLpowheg.root'],
-    #        'SingleTop': ['.*SingleT.*'],
-    #        'ttV': ['hist_TTWJetsToLNuPSweight.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root'],
-    #        ## V + jets
-    #        'Wjets': ['hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root'],
-    #        'DYjets': ['hist_DYJetsv2.*'],
-    #        ## VV
-    #        'VV': ['hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root'],
-    #        ## Higgs
-    #        'tth': ['hist_ttHTobb.root', 'hist_ttHToNonbb.root'],
             # Signal
-            #'Hut': ['TTTH1L3BHut', 'STTH1L3BHut'],
-            #'Hct': ['TTTH1L3BHct', 'STTH1L3BHct'],
             'Hut': ['sig_stop_Hut.root', 'sig_ttbar_Hut.root'],
             'Hct': ['sig_stop_Hct.root', 'sig_ttbar_Hct.root'],
             # Data
@@ -305,10 +169,6 @@ else:
 
 
 smTTlist = ['ttlf', 'ttcc', 'ttbb'] # for systematics affecting only SM tt
-
-if options.fake_data:
-  print "Fake data mode not implemented yet! Exitting..."
-  sys.exit(1)
 
 if options.applyxsec:
     # Read Xsec file
@@ -321,7 +181,6 @@ if options.applyxsec:
 def main():
     """Main function"""
     signals = ['Hut', 'Hct']
-    #backgrounds = ['ttother', 'ttlf', 'ttcc', 'ttbj', 'ttbb', 'tthad', 'ttfullLep', 'SingleTop', 'ttV', 'Wjets', 'DYjets', 'VV', 'tth']
     backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other', 'qcd']
     if options.dataYear == '2016': backgrounds.remove('qcd')
     print "Background considered: ", backgrounds
@@ -360,8 +219,8 @@ def merge_histograms(process, histogram, destination):
     if options.rebinning < 40: #We have 40 bins!
         histogram.Rebin(options.rebinning)
         #import array
-        #arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
-        #histogram = histogram.Rebin(8, histogram.GetName(), arr)
+        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
+        #histogram = histogram.Rebin(10, histogram.GetName(), arr)
     else:
         import array
         arr = array.array('d',[-1., 0., 1.])
@@ -388,69 +247,11 @@ def merge_histograms(process, histogram, destination):
                     arr = array.array('d',[-1., 0.0, 1.0])
                 elif 'j4b4' in histogram.GetName():
                     arr = array.array('d',[-1., 0.0, 1.0])
-        elif options.dataYear == '2017':
-            if 'Hut' in histogram.GetName():
-                if 'j3b2' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.2, 1.0])
-                elif 'j3b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.6, 1.0])
-                elif 'j4b2' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.0, 1.0])
-                elif 'j4b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.75, 1.0])
-                elif 'j4b4' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.5, 1.0])
-            elif 'Hct' in histogram.GetName():
-                if 'j3b2' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.05, 1.0])
-                elif 'j3b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.3, 1.0])
-                elif 'j4b2' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.3, 1.0])
-                elif 'j4b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.75, 1.0])
-                elif 'j4b4' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.5, 1.0])
-        elif options.dataYear == '2018':
-            if 'Hut' in histogram.GetName():
-                if 'j3b2' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.2, 1.0])
-                elif 'j3b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.6, 1.0])
-                elif 'j4b2' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.0, 1.0])
-                elif 'j4b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.75, 1.0])
-                elif 'j4b4' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.2, 1.0])
-            elif 'Hct' in histogram.GetName():
-                if 'j3b2' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.1, 1.0])
-                elif 'j3b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.25, 1.0])
-                elif 'j4b2' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.2, 1.0])
-                elif 'j4b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.75, 1.0])
-                elif 'j4b4' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.55, 1.0])
-
         histogram = histogram.Rebin(2, histogram.GetName(), arr)
 
         #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.])
         #if options.dataYear == '2016': pass
         #elif options.dataYear == '2017':
-        #    if 'Hut' in histogram.GetName():
-        #        if 'j3b2' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #        elif 'j4b4' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #    elif 'Hct' in histogram.GetName():
-        #        if 'j3b2' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #        elif 'j4b4' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #elif options.dataYear == '2018':
         #    if 'Hut' in histogram.GetName():
         #        if 'j3b2' in histogram.GetName():
         #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
@@ -592,14 +393,6 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     nevt = xsec_data[process_file_basename]['generated-events']
                     #print "Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt, " --> ", xsec/float(nevt)
                     TH1.Scale(xsec/float(nevt))
-                if options.reweight :
-                    print 'Reweighting on the flight not implemented yet! Exitting...'
-                    # if you implement it, don't forget also to scale TH1 for systematics
-                    sys.exit(1)
-                    if "DY" in process_file :
-                        if not ('DYJetsToLL_M-10to50') in process_file:
-                            print "Reweight ", process_file, " by 0.75950" 
-                            TH1.Scale(0.75950)
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
@@ -629,19 +422,6 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 f.Close()
 
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
-
-    if options.fake_data:
-        print "Fake data mode not implemented yet! Exitting..."
-        sys.exit(1)
-        for category, processes in shapes.items():
-            fake_data = None
-            for process, systematics_dict in processes.items():
-                if not fake_data:
-                    fake_data = systematics_dict['nominal'].Clone()
-                    fake_data.SetDirectory(ROOT.nullptr)
-                else:
-                    fake_data.Add(systematics_dict['nominal'])
-            processes['data_obs'] = {'nominal': fake_data}
 
     for category, processes in shapes.items():
         output_file.mkdir(category).cd()
@@ -762,30 +542,9 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
                     cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 
-                #if 'b2j3' in discriminant[i][1]:
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #elif 'b2j4' in discriminant[i][1]:
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b2j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #elif 'b3j3' in discriminant[i][1]:
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #elif 'b3j4' in discriminant[i][1]:
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b3j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #elif 'b4j4' in discriminant[i][1]:
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b4j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_b4j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-
 #            cb.cp().AddSyst(cb, 'ttbb_rate', 'rateParam', ch.SystMap('process')(['ttbb'], 1.0))
 #            cb.cp().AddSyst(cb, 'ttcc_rate', 'rateParam', ch.SystMap('process')(['ttcc'], 1.0))
 #            cb.cp().AddSyst(cb, 'qcd_rate', 'rateParam', ch.SystMap('process')(['qcd'], 1.0))
-
-        if options.SF :
-            print "Background renormalization is deprecated! Exitting..."
-            sys.exit(1)
-            cb.cp().AddSyst(cb, 'SF_$PROCESS', 'rateParam', ch.SystMap('process')(['ttbb'], 1.))
 
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
@@ -794,12 +553,13 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         if options.dataYear == '2016':
             rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
             rebin.Rebin(cb.cp(), cb)
+        #rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
+        #rebin.Rebin(cb.cp(), cb)
 
         # Bin by bin uncertainties
         if not options.nobbb:
             print "Treating bbb"
             bbb = ch.BinByBinFactory()
-            #bbb.SetAddThreshold(0.1).SetMergeThreshold(0.5).SetFixNorm(True)
             bbb.SetAddThreshold(0.1)
             bbb.AddBinByBin(cb.cp().backgrounds(), cb)
             bbb.AddBinByBin(cb.cp().signals(), cb)
@@ -835,7 +595,8 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 # Run limit
 
 echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run blind #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
@@ -916,29 +677,7 @@ def CMSNamingConvention(syst):
         return 'CMS_' + options.dataYear + '_' + syst
     else:
         return 'CMS_' + syst
-    #if syst == 'jec':
-    #    return 'CMS_scale_j'
-    #elif syst == 'jer': 
-    #    return 'CMS_res_j'
-    #elif syst == 'elidiso': 
-    #    return 'CMS_eff_e'
-    #elif syst == 'muidiso': 
-    #    return 'CMS_eff_mu'
-    #elif any(x in syst for x in ['lf', 'hf', 'lfstats1', 'lfstats2', 'hfstats1', 'hfstats2', 'cferr1', 'cferr2']): 
-    #    return 'CMS_btag_%s'%syst
-    #elif syst == 'pu': 
-    #    return 'CMS_pu'
-    #elif syst == 'trigeff': 
-    #    return 'CMS_eff_trigger'
-    #elif syst == 'pdf':
-    #    return 'pdf'
-    #elif syst == 'scale':
-    #    return 'QCDscale'
-    #else:
-    #    return syst
-#
-# main
-#
+
 if __name__ == '__main__':
     main()
 
