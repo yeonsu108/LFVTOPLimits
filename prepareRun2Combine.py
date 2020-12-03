@@ -29,7 +29,7 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 options = parser.parse_args()
 
 jetcats = ['b2j3','b2j4','b3j3','b3j4','b4j4','all']
-years = ['1617','1718','161718']
+years = ['1617','1618','1718','161718']
 
 if cmssw_base not in options.path_16:
   options.path_16 = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.path_16)
@@ -50,25 +50,25 @@ except:
 
 # Firstly, deal with partial correlation
 # Write here: 'source1,corr1:source2,corr2:...'
-partCorr_dict = {'16':'CMS_lumi,0.2',
-                 '17':'CMS_lumi,0.3',
-                 '18':'CMS_lumi,0.3'
-}
-
-for each_year in ['16','17','18']:
-  for signal in ['Hct', 'Hut']:
-    if   each_year == '16': datacard_dir = options.path_16
-    elif each_year == '17': datacard_dir = options.path_17
-    elif each_year == '18': datacard_dir = options.path_18
-
-    os.chdir( os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', datacard_dir, signal) )
-
-    for jetcat in jetcats:
-      card_name = 'FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
-      output_name = 'forCombine_FCNC_{}_Discriminant_DNN_{}_{}'.format(signal, signal, jetcat)
-
-      check_call('partialCorrelationEdit.py {} -m 125 --process {} --postfix-uncorr _20{} --output-txt {}.dat --output-root {}.root'
-                 .format(card_name, partCorr_dict[each_year], each_year, output_name, output_name), shell=True)
+#partCorr_dict = {'16':'CMS_lumi,0.2',
+#                 '17':'CMS_lumi,0.3',
+#                 '18':'CMS_lumi,0.3'
+#}
+#
+#for each_year in ['16','17','18']:
+#  for signal in ['Hct', 'Hut']:
+#    if   each_year == '16': datacard_dir = options.path_16
+#    elif each_year == '17': datacard_dir = options.path_17
+#    elif each_year == '18': datacard_dir = options.path_18
+#
+#    os.chdir( os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', datacard_dir, signal) )
+#
+#    for jetcat in jetcats:
+#      card_name = 'FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
+#      output_name = 'forCombine_FCNC_{}_Discriminant_DNN_{}_{}'.format(signal, signal, jetcat)
+#
+#      check_call('partialCorrelationEdit.py {} -m 125 --process {} --postfix-uncorr _20{} --output-txt {}.dat --output-root {}.root'
+#                 .format(card_name, partCorr_dict[each_year], each_year, output_name, output_name), shell=True)
 
 
 for signal in ['Hct', 'Hut']:
@@ -77,8 +77,8 @@ for signal in ['Hct', 'Hut']:
 
   for jetcat in jetcats:
     for year in years:
-      #card_name = 'FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
-      card_name = 'forCombine_FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
+      card_name = 'FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
+      #card_name = 'forCombine_FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, jetcat)
       command_string = 'combineCards.py'
       if '16' in year: command_string += ' year_2016=' + os.path.join(options.path_16, signal, card_name)
       if '17' in year: command_string += ' year_2017=' + os.path.join(options.path_17, signal, card_name)
@@ -106,8 +106,9 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run blind #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run blind #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
     script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')

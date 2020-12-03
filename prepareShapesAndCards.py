@@ -56,8 +56,8 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
-parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lumi', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
-parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
+parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+#parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
 #parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
@@ -493,7 +493,28 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 #                        elif 'j4' in discriminant[i][1] and 'j4' in systematic:
 #                            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin')([discriminant[i][1]], 1.00))
 
-            cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
+            #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
+            #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
+            if options.dataYear == '2016':
+                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.022))
+                cb.cp().AddSyst(cb, 'CMS_lumi_xyfactor', 'lnN', ch.SystMap()(1.009))
+                cb.cp().AddSyst(cb, 'CMS_lumi_deflect', 'lnN', ch.SystMap()(1.004))
+                cb.cp().AddSyst(cb, 'CMS_lumi_dynamicbeta', 'lnN', ch.SystMap()(1.005))
+                cb.cp().AddSyst(cb, 'CMS_lumi_ghost', 'lnN', ch.SystMap()(1.004))
+            elif options.dataYear == '2017':
+                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
+                cb.cp().AddSyst(cb, 'CMS_lumi_xyfactor', 'lnN', ch.SystMap()(1.008))
+                cb.cp().AddSyst(cb, 'CMS_lumi_length', 'lnN', ch.SystMap()(1.003))
+                cb.cp().AddSyst(cb, 'CMS_lumi_deflect', 'lnN', ch.SystMap()(1.004))
+                cb.cp().AddSyst(cb, 'CMS_lumi_dynamicbeta', 'lnN', ch.SystMap()(1.005))
+                cb.cp().AddSyst(cb, 'CMS_lumi_beamcurrent', 'lnN', ch.SystMap()(1.003))
+                cb.cp().AddSyst(cb, 'CMS_lumi_ghost', 'lnN', ch.SystMap()(1.001))
+            elif options.dataYear == '2018':
+                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
+                cb.cp().AddSyst(cb, 'CMS_lumi_xyfactor', 'lnN', ch.SystMap()(1.02))
+                cb.cp().AddSyst(cb, 'CMS_lumi_length', 'lnN', ch.SystMap()(1.002))
+                cb.cp().AddSyst(cb, 'CMS_lumi_beamcurrent', 'lnN', ch.SystMap()(1.002))
+
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.055))
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')(['other'], 1.1))
 
@@ -514,21 +535,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             #            cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05))#1.05 for j4
             #else:
             for i in xrange(len(discriminant)):
-                #if 'j3' in discriminant[i][1]:
-                #    pass
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.3))
-                #    cb.cp().AddSyst(cb, 'ttbb_rate_j3', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
-                #    cb.cp().AddSyst(cb, 'ttcc_rate_j3', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.0))
-                #else:
-                #    pass
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.3))
-                #    cb.cp().AddSyst(cb, 'ttbb_rate_j4', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.0))
-                #    cb.cp().AddSyst(cb, 'ttcc_rate_j4', 'rateParam', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.0))
-
                 if 'b2' in discriminant[i][1]:
                     cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
                     cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
@@ -550,26 +556,24 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         if options.dataYear == '2016':
             rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
             rebin.Rebin(cb.cp(), cb)
-        #rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
-        #rebin.Rebin(cb.cp(), cb)
 
         # Bin by bin uncertainties
-        if not options.nobbb:
-            print "Treating bbb"
-            bbb = ch.BinByBinFactory()
-            bbb.SetAddThreshold(0.1)
-            bbb.AddBinByBin(cb.cp().backgrounds(), cb)
-            bbb.AddBinByBin(cb.cp().signals(), cb)
-        else:
-            print "Treating bbb ONLY for qcd"
-            bbb = ch.BinByBinFactory()
-            bbb.SetAddThreshold(0.1)
-            bbb.AddBinByBin(cb.cp().backgrounds().process(['qcd']), cb)
+        #if not options.nobbb:
+        #    print "Treating bbb"
+        #    bbb = ch.BinByBinFactory()
+        #    bbb.SetAddThreshold(0.1)
+        #    bbb.AddBinByBin(cb.cp().backgrounds(), cb)
+        #    bbb.AddBinByBin(cb.cp().signals(), cb)
+        #else:
+        #    print "Treating bbb ONLY for qcd"
+        #    bbb = ch.BinByBinFactory()
+        #    bbb.SetAddThreshold(0.1)
+        #    bbb.AddBinByBin(cb.cp().backgrounds().process(['qcd']), cb)
         #AutoMCStat
-        #cb.SetAutoMCStats(cb, 0.1)
+        cb.SetAutoMCStats(cb, 0.1)
 
-        if options.nosys and options.nobbb : 
-            cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
+        #if options.nosys and options.nobbb :
+        #    cb.cp().AddSyst(cb, '$ERA_lumi', 'lnN', ch.SystMap('era')(['%s'%options.dataYear], 1.00001)) # Add a negligible systematic (chosen to be lumi) to trick combine
 
         output_prefix = 'FCNC_%s_Discriminant_%s' % (signal, discriminantName)
 
@@ -591,7 +595,7 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run blind #-v +2
 #combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run blind #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
