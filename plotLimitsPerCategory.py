@@ -9,7 +9,7 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-doLogy = False
+doLogy = True
 
 parser = argparse.ArgumentParser(description='Store limits inside a json file and plot them if required (one bin per category).')
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
@@ -160,7 +160,8 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
             observed_lines[category].Draw('same')
             if two_sigma_up > y_max: y_max = two_sigma_up
             if two_sigma_down < y_min: y_min = two_sigma_down
-    if doLogy: yAxis.SetRangeUser(two_sigma_down, two_sigma_up+300*two_sigma_up)
+    #if doLogy: yAxis.SetRangeUser(two_sigma_down, two_sigma_up+300*two_sigma_up)
+    if doLogy: yAxis.SetRangeUser(0.05, two_sigma_up+1000*two_sigma_up)
     # Legend
     legend = ROOT.TLegend(legend_position[0], legend_position[1], legend_position[2], legend_position[3], "95% CL upper limits")
     legend.SetTextFont(42)

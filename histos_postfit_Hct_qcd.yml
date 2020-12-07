@@ -7,6 +7,7 @@
   yields-title: '$b2j3$'
   x-axis: 'BDT Score'
   ratio-y-axis-range: [0.8, 1.2]
+  ratio-y-axis-auto-range: true
   labels:
       - position: [0.778, 0.8]
         text: 'b2j3'
@@ -21,6 +22,7 @@
 #  yields-title: '$b3j3$'
 #  x-axis: 'BDT Score'
 #  ratio-y-axis-range: [0.8, 1.2]
+#  ratio-y-axis-auto-range: true
 #  labels:
 #      - position: [0.778, 0.8]
 #        text: 'b3j3'
@@ -36,6 +38,7 @@
 #  yields-title: '$b2j4$'
 #  x-axis: 'BDT Score'
 #  ratio-y-axis-range: [0.8, 1.2]
+#  ratio-y-axis-auto-range: true
 #  labels:
 #      - position: [0.778, 0.8]
 #        text: 'b2j4'
@@ -50,6 +53,7 @@
 #  yields-title: '$b3j4$'
 #  x-axis: 'BDT Score'
 #  ratio-y-axis-range: [0.8, 1.2]
+#  ratio-y-axis-auto-range: true
 #  labels:
 #      - position: [0.778, 0.8]
 #        text: 'b3j4'
@@ -64,6 +68,7 @@
 #  yields-title: '$b4j4$'
 #  x-axis: 'BDT Score'
 #  ratio-y-axis-range: [0.8, 1.2]
+#  ratio-y-axis-auto-range: true
 #  labels:
 #      - position: [0.778, 0.8]
 #        text: 'b4j4'
