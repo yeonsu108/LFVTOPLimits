@@ -56,6 +56,7 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
+parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=['scale', 'ps', 'pdf'], help='Systematics affecting Signals (must be common with SMtt)')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 #parser.add_argument('--nobbb', action='store_true', help='Consider or not bin by bin MC stat systematic uncertainties')
 #parser.add_argument('--nobbb', action='store_false', help='Consider or not bin by bin MC stat systematic uncertainties')
@@ -344,8 +345,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
-                        if systematic in options.sysForSMtt and not process in smTTlist:
-                            continue
+                        if systematic in [item for item in options.sysForSMtt if item not in options.sysForSig] \
+                            and not process in smTTlist: continue
+                        if systematic in options.sysForSig and not process in ['Hut','Hct']+smTTlist: continue
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
                             #print "Key: ", key
@@ -420,13 +422,23 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         if not options.nosys:
             for systematic in systematics:
                 systematic_only_for_SMtt = False
+                systematic_only_for_Sig = False
+
                 for systSMtt in options.sysForSMtt:
                     if CMSNamingConvention(systSMtt) == systematic:
                         systematic_only_for_SMtt = True
-                if not systematic_only_for_SMtt:
+                for systSig in options.sysForSig:
+                    if CMSNamingConvention(systSig) == systematic:
+                        systematic_only_for_Sig = True
+
+                if not systematic_only_for_SMtt and not systematic_only_for_Sig:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
-                else:
+                elif systematic_only_for_SMtt and not systematic_only_for_Sig:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
+                elif not systematic_only_for_SMtt and systematic_only_for_Sig:
+                    cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')([signal], 1.00))
+                else:
+                    cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist+[signal], 1.00))
 
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
             #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
