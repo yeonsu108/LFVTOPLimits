@@ -67,6 +67,7 @@ options = parser.parse_args()
 
 print options.removeHutb4j4
 correlatedSys = options.correlatedSys
+correlatedSys.extend(['jecAbsolute', 'jecAbsolute'+options.dataYear, 'jecBBEC1', 'jecBBEC1'+options.dataYear, 'jecFlavorQCD', 'jecRelativeBal', 'jecRelativeSample'+options.dataYear])
 
 channel_mapping = {
     "mu" : 'Ch0',
@@ -215,54 +216,9 @@ def merge_histograms(process, histogram, destination):
     #print process, " ", histogram.GetTitle(), " ", destination, " ", histogram.GetNbinsX()
     if options.rebinning < 40: #We have 40 bins!
         histogram.Rebin(options.rebinning)
-        #import array
-        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
-        #histogram = histogram.Rebin(10, histogram.GetName(), arr)
     else:
         import array
-        arr = array.array('d',[-1., 0., 1.])
-        if options.dataYear == '2016':
-            if 'Hut' in histogram.GetName():
-                if 'j3b2' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.2, 1.0])
-                elif 'j3b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.3, 1.0])
-                elif 'j4b2' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.2, 1.0])
-                elif 'j4b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.2, 1.0])
-                elif 'j4b4' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.4, 1.0])
-            elif 'Hct' in histogram.GetName():
-                if 'j3b2' in histogram.GetName():
-                    arr = array.array('d',[-1., -0.1, 1.0])
-                elif 'j3b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.0, 1.0])
-                elif 'j4b2' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.0, 1.0])
-                elif 'j4b3' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.0, 1.0])
-                elif 'j4b4' in histogram.GetName():
-                    arr = array.array('d',[-1., 0.0, 1.0])
-        histogram = histogram.Rebin(2, histogram.GetName(), arr)
-
-        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.])
-        #if options.dataYear == '2016': pass
-        #elif options.dataYear == '2017':
-        #    if 'Hut' in histogram.GetName():
-        #        if 'j3b2' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #        elif 'j4b4' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #    elif 'Hct' in histogram.GetName():
-        #        if 'j3b2' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #        elif 'j4b4' in histogram.GetName():
-        #            arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.])
-        #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
-
-        if 'j4b3' in histogram.GetName():
-            arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 1.])
+        arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
         histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     #if 'ttbb' in process: histogram.Scale(1.23)
@@ -359,11 +315,6 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
         print "After ignoring the one mentioned with sysToAvoid option: ", systematics
 
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
-#    for je in ['jec']:
-#    for je in ['cferr1','cferr2','hfstat1','hfstat2','lfstat1','lfstat2','hf','lf']:
-#        cms_systematics.remove(CMSNamingConvention(je))
-#        cms_systematics.append(CMSNamingConvention(je) + 'j3')
-#        cms_systematics.append(CMSNamingConvention(je) + 'j4')
 
     def dict_get(dict, name):
         if name in dict:
@@ -397,10 +348,6 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             continue
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
-#                            if any(je in systematic for je in ['jec']):
-#                            if any(je in systematic for je in ['cferr1','cferr2','hfstat1','hfstat2','lfstat1','lfstat2','hf','lf']):
-#                                if   'j3' in original_histogram_name: key = CMSNamingConvention(systematic) + 'j3' + variation.capitalize()
-#                                elif 'j4' in original_histogram_name: key = CMSNamingConvention(systematic) + 'j4' + variation.capitalize()
                             #print "Key: ", key
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             #if systematic in options.sysForSMtt and not process in smTTlist:
@@ -476,22 +423,10 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 for systSMtt in options.sysForSMtt:
                     if CMSNamingConvention(systSMtt) == systematic:
                         systematic_only_for_SMtt = True
-#                splitJet = False
-#                if any(je in systematic for je in ['jec']): splitJet = True
-#                if any(je in systematic for je in ['cferr1','cferr2','hfstat1','hfstat2','lfstat1','lfstat2','hf','lf']): splitJet = True
                 if not systematic_only_for_SMtt:
-#                if not systematic_only_for_SMtt and not splitJet:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
                 else:
-#                elif systematic_only_for_SMtt:
-                    #cb.cp().AddSyst(cb, '$PROCESS_'+systematic, 'shape', ch.SystMap('process')(['ttother', 'ttlf', 'ttbj', 'tthad', 'ttfullLep'], 1.00))
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
-#                elif splitJet:
-#                    for i in xrange(len(discriminant)):
-#                        if 'j3' in discriminant[i][1] and 'j3' in systematic:
-#                            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin')([discriminant[i][1]], 1.00))
-#                        elif 'j4' in discriminant[i][1] and 'j4' in systematic:
-#                            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin')([discriminant[i][1]], 1.00))
 
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
             #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
