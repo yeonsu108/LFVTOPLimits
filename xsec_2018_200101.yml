@@ -1,8 +1,9 @@
 'hist_STTH1L3BHct.root':
   type: signal
   pretty-name: 'STTH1L3BHct'
-  cross-section: 0.04
-  generated-events: 3016710 #
+  #cross-section: 0.04
+  cross-section: 0.0641
+  generated-events: 3016710
   line-color: '#006666'
   legend: 'STHct'
   order: 1
@@ -19,7 +20,8 @@
 'hist_TTTH1L3BaTLepHct.root':
   type: signal
   pretty-name: 'TTTH1L3BaTLepHct'
-  cross-section: 0.48
+  #cross-section: 0.48
+  cross-section: 0.2791
   generated-events: 800715
   line-color: '#0000cc'
   legend: 'TTHct'
@@ -28,7 +30,8 @@
 'hist_TTTH1L3BTLepHct.root':
   type: signal
   pretty-name: 'TTTH1L3BTLepHct'
-  cross-section: 0.48
+  #cross-section: 0.48
+  cross-section: 0.2791
   generated-events: 784969
   line-color: '#0000cc'
   legend: 'TTHct'
@@ -37,8 +40,9 @@
 'hist_STTH1L3BHut.root':
   type: signal
   pretty-name: 'STTH1L3BHut'
-  cross-section: 0.23
-  generated-events: 3105204 #
+  #cross-section: 0.23
+  cross-section: 0.3329
+  generated-events: 3105204
   line-color: '#666600'
   legend: 'STHut'
   order: 3
@@ -55,7 +59,8 @@
 'hist_TTTH1L3BaTLepHut.root':
   type: signal
   pretty-name: 'TTTH1L3BaTLepHut'
-  cross-section: 0.385
+  #cross-section: 0.385
+  cross-section: 0.1989
   generated-events: 809380
   line-color: '#cccc00'
   legend: 'TTHut'
@@ -64,7 +69,8 @@
 'hist_TTTH1L3BTLepHut.root':
   type: signal
   pretty-name: 'TTTH1L3BTLepHut'
-  cross-section: 0.385
+  #cross-section: 0.385
+  cross-section: 0.1989
   generated-events: 759992
   line-color: '#cccc00'
   legend: 'TTHut'
@@ -206,7 +212,7 @@
 'hist_TTWJetsToLNu.root':
   type: mc
   pretty-name: 'TTWJetsToLNu'
-  cross-section: 0.2043 
+  cross-section: 0.2043
   generated-events: 2686095
   fill-color: '#ff66ff'
   legend: 'ttV/H'

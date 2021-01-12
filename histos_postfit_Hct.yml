@@ -13,6 +13,7 @@
 #        text: 'b2j3'
 #        size: 18
 ##  signal-normalize-data: false
+
 'DNN_Hct_b3j3':
   y-axis: "Entries"
   y-axis-format: "%1% / %2$.2f"

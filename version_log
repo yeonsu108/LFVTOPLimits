@@ -52,7 +52,12 @@
     - 2017v43: v39_ttbbccRateBjets + jetcat merged (j3 and j4) (same histo as v39)
     - 2018v44: HEM (not propagated to MET!!)
     - 2017v45: 200101v39_ttbbccRateBjets + 100% corr. ttbar unc + AutoMCStats + lumi corr. - 16(17): same histo as v16(v39), 18: v45
+    - 2017v46: same as 45, but no symmetrization (using shapeN2 instead)
 
-2012xx
+201215
   - variations:
-    - 2017v1: 
+    - 2017v1: v45
+    - 2017v2: v1 + sig theory unc
+    - 2017v3: v2 + top pt reweight, no smoothing/symm
+    - 2017v4: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 4), no other symmetrization
+    - 2017v5: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 2), no other symmetrization

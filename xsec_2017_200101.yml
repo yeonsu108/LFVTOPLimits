@@ -1,7 +1,8 @@
 'hist_STTH1L3BHct.root':
   type: signal
   pretty-name: 'STTH1L3BHct'
-  cross-section: 0.04
+  #cross-section: 0.04
+  cross-section: 0.0641
   generated-events: 3099824
   line-color: '#006666'
   legend: 'STHct'
@@ -15,11 +16,12 @@
 #  line-color: '#0000cc'
 #  legend: 'TTHct'
 #  order: 2
-#
+
 'hist_TTTH1L3BaTLepHct.root':
   type: signal
   pretty-name: 'TTTH1L3BaTLepHct'
-  cross-section: 0.48
+  #cross-section: 0.48
+  cross-section: 0.2791
   generated-events: 688297
   line-color: '#0000cc'
   legend: 'TTHct'
@@ -28,7 +30,8 @@
 'hist_TTTH1L3BTLepHct.root':
   type: signal
   pretty-name: 'TTTH1L3BTLepHct'
-  cross-section: 0.48
+  #cross-section: 0.48
+  cross-section: 0.2791
   generated-events: 798449
   line-color: '#0000cc'
   legend: 'TTHct'
@@ -37,7 +40,8 @@
 'hist_STTH1L3BHut.root':
   type: signal
   pretty-name: 'STTH1L3BHut'
-  cross-section: 0.23
+  #cross-section: 0.23
+  cross-section: 0.3329
   generated-events: 2598940
   line-color: '#666600'
   legend: 'STHut'
@@ -55,7 +59,8 @@
 'hist_TTTH1L3BaTLepHut.root':
   type: signal
   pretty-name: 'TTTH1L3BaTLepHut'
-  cross-section: 0.385
+  #cross-section: 0.385
+  cross-section: 0.1989
   generated-events: 796066
   line-color: '#cccc00'
   legend: 'TTHut'
@@ -64,7 +69,8 @@
 'hist_TTTH1L3BTLepHut.root':
   type: signal
   pretty-name: 'TTTH1L3BTLepHut'
-  cross-section: 0.385
+  #cross-section: 0.385
+  cross-section: 0.1989
   generated-events: 790258
   line-color: '#cccc00'
   legend: 'TTHut'

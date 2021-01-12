@@ -12,7 +12,8 @@
 #      - position: [0.778, 0.8]
 #        text: 'b2j3'
 #        size: 18
-#  signal-normalize-data: false
+##  signal-normalize-data: false
+
 'DNN_Hut_b3j3':
   y-axis: "Entries"
   y-axis-format: "%1% / %2$.2f"
