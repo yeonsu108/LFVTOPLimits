@@ -3,14 +3,17 @@ import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-input_path = 'datacards_200101_2017v45/'
+input_path = 'datacards_201215_2017v3/'
+#input_path = 'datacards_201215_2018v3/'
 drawNom = False
 #drawNom = True
+#logy = False
+logy = True
 
 couplings = ['Hct', 'Hut']
 jet_bins = ['b2j3', 'b3j3', 'b2j4', 'b3j4', 'b4j4']
 rootfile_template = 'FCNC_COUPLING_Discriminant_DNN_COUPLING_JETBIN_shapes.root'
-process_list_org = ['ttlf', 'ttcc', 'ttbb', 'other']
+process_list_org = ['ttlf', 'ttcc', 'ttbb', 'other','qcd']
 
 plot_dir = 'systematics_plots_' + input_path
 if drawNom: plot_dir = plot_dir.rstrip('/') + '_nom/'
@@ -72,8 +75,8 @@ def drawComp(c, nom, up, dn, lowstat):
     up_.SetLineColor(ROOT.kRed)
     dn_.SetLineColor(ROOT.kBlue)
     max_list = [nom_.GetMaximum(), up_.GetMaximum(), dn_.GetMaximum()]
-    #nom_.GetYaxis().SetRangeUser(0.0, max(max_list) * 1.25)
-    nom_.GetYaxis().SetRangeUser(0.1, max(max_list) * 20)
+    if not logy: nom_.GetYaxis().SetRangeUser(0.0, max(max_list) * 1.25)
+    else:        nom_.GetYaxis().SetRangeUser(0.1, max(max_list) * 20)
 
     nom_.GetXaxis().SetTitleSize(0.0)
     nom_.GetYaxis().SetTitle('Events')
@@ -93,7 +96,7 @@ def drawComp(c, nom, up, dn, lowstat):
     legend.AddEntry(up_, "Up")
     legend.AddEntry(dn_, "Down")
     legend.Draw()
-    pad1.SetLogy()
+    if logy: pad1.SetLogy()
 
     pad2.cd()
     ratio_up = nom.Clone()

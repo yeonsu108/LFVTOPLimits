@@ -181,6 +181,7 @@ def main():
     """Main function"""
     signals = ['Hut', 'Hct']
     backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other', 'qcd']
+    #backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other']
     if options.dataYear == '2016': backgrounds.remove('qcd')
     print "Background considered: ", backgrounds
 
@@ -217,6 +218,11 @@ def merge_histograms(process, histogram, destination):
     #print process, " ", histogram.GetTitle(), " ", destination, " ", histogram.GetNbinsX()
     if options.rebinning < 40: #We have 40 bins!
         histogram.Rebin(options.rebinning)
+         #if 'j3b2' not in histogram.GetName(): histogram.Rebin(options.rebinning)
+         #else:
+         #   import array
+         #   arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
+         #   histogram = histogram.Rebin(8, histogram.GetName(), arr) 
     else:
         import array
         arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
@@ -391,12 +397,13 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
-    #call(['python', 'symmetrize.py', options.output, file], shell=False)
+    call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
     
     for signal in signals :
         cb = ch.CombineHarvester()
         cb.AddObservations(['*'], [''], ['_%s'%options.dataYear], [''], discriminant)
         cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], [signal], discriminant, True)
+        #cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
         if options.dataYear == '2016':
             cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
         else:

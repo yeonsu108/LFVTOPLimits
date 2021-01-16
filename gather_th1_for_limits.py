@@ -3,8 +3,11 @@ import os, re
 
 base_dir = '/home2/minerva1993/HEPToolsFCNC/finalMVA/histos/2017/'
 #base_dir = '/home2/minerva1993/HEPToolsFCNC/finalMVA/histos/2018/'
-base_output_dir = 'histos_suitable_for_limits_200101v45_2017/'
-#base_output_dir = 'histos_suitable_for_limits_200101v45_2018/'
+base_output_dir = 'histos_suitable_for_limits_201215v3_2017/'
+#base_output_dir = 'histos_suitable_for_limits_201215v3_2018/'
+
+if   '2017' in base_dir: era = '2017'
+elif '2018' in base_dir: era = '2018'
 
 if not os.path.isdir(base_output_dir):
     os.mkdir(base_output_dir)
@@ -14,10 +17,10 @@ if not os.path.isdir(base_output_dir):
 coupling_strings = ['Hct', 'Hut']
 #jet_strings = ['j3', 'j4']
 jet_strings = ['j3b2', 'j3b3', 'j4b2', 'j4b3', 'j4b4']
-#training_strings = ['01', '02', '03', '04']
 training_strings = ['0101010101'] #ver of j3b2+j3b3+j4b2+j4b3+j4b4
 
-systematics_in_separated_rootfiles = ['hdamp', 'jec', 'jer', 'TuneCP5'] # first entry for the rootfiles with nominal and other syst TH1
+#systematics_in_separated_rootfiles = ['hdamp', 'jec', 'jer', 'TuneCP5'] # first entry for the rootfiles with nominal and other syst TH1
+systematics_in_separated_rootfiles = ['hdamp', 'jecAbsolute', 'jecAbsolute'+era, 'jecBBEC1', 'jecBBEC1'+era, 'jecFlavorQCD', 'jecRelativeBal', 'jecRelativeSample'+era, 'jer', 'TuneCP5']
 systematics_to_merge = {'lepton':'(\S*)__(el|mu)(\S*)',}#'btag':'(\S*)__(lf|hf|cferr)(\S*)'}
 
 # Derive first the list of processes
