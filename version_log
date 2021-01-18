@@ -58,6 +58,6 @@
   - variations:
     - 2017v1: v45
     - 2017v2: v1 + sig theory unc
-    - 2017v3: v2 + top pt reweight, no smoothing/symm
+    - 2017v3: v2 + top pt reweight, no smoothing/symm (2016: same as v45 but updated lumi - no sig theory unc)
     - 2017v4: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 4), no other symmetrization
     - 2017v5: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 2), no other symmetrization

@@ -395,7 +395,8 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
-    call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
+    if options.dataYear != '2016':
+        call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
     
     for signal in signals :
         cb = ch.CombineHarvester()
