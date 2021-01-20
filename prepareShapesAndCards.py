@@ -55,9 +55,9 @@ parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, def
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
-parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
+parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'TuneCUETP', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=['scale', 'ps', 'pdf'], help='Systematics affecting Signals (must be common with SMtt)')
-parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lepton', 'scale', 'ps', 'TuneCP5', 'hdamp', 'pdf'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lepton', 'scale', 'ps', 'TuneCP5', 'TuneCUETP', 'hdamp', 'pdf', 'lf', 'hf', 'cferr1', 'cferr2'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
 parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
@@ -574,12 +574,12 @@ combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20 -t -1
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --robustHesse 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 32
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
-plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 40
+plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 50
 
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --robustHesse 1 --rMin -20 --rMax 20 --parallel 32
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
-plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 40
+plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:

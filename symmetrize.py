@@ -110,9 +110,8 @@ for dir_ in dir_list:
 
 
     elif year == '2018':
-      if ( ('jec' in hname and any(name in hname for name in ['qcd']) and 'b2j3' in dir_) ):
-        #or ('pdf' in hname and any(name in hname for name in ['ttbb']) and 'b4j4' in dir_) ):
-        #or ('pdf' in hname and any(name in hname for name in ['ttbb','Hut','Hct']) and 'b4j4' in dir_) ):
+      if ( ('jec' in hname and any(name in hname for name in ['qcd']) and 'b2j3' in dir_)
+        or ('pdf' in hname and any(name in hname for name in ['ttbb','ttcc','ttlf']) and 'b4j4' in dir_) ):
 
         if 'Down' in hname:
           h_opp = f_dir.Get(hname.replace('Down','Up'))
