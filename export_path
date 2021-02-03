@@ -1,0 +1,2 @@
+#!/bin/bash
+export PYTHONPATH=/home/minerva1993/CMSSW_8_1_0/external/py2_install/lib/python2.7/site-packages:$PYTHONPATH
