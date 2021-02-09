@@ -216,11 +216,23 @@ def merge_histograms(process, histogram, destination):
     #print process, " ", histogram.GetTitle(), " ", destination, " ", histogram.GetNbinsX()
     if options.rebinning < 40: #We have 40 bins!
         histogram.Rebin(options.rebinning)
-         #if 'j3b2' not in histogram.GetName(): histogram.Rebin(options.rebinning)
-         #else:
-         #   import array
-         #   arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
-         #   histogram = histogram.Rebin(8, histogram.GetName(), arr) 
+
+        #if 'j4b3' in histogram.GetName() or 'j3b3' in histogram.GetName():
+        #    import array
+        #    #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
+        #    arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
+        #    histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+        #else: histogram.Rebin(options.rebinning)
+
+        #if 'j3b2' not in histogram.GetName(): histogram.Rebin(options.rebinning)
+        #else:
+        #   import array
+        #   arr = array.array('d',[-1., -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
+        #   histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+
+        #import array
+        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
+        #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
     else:
         import array
         arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
@@ -476,6 +488,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             for i in xrange(len(discriminant)):
                 if 'b2j3' in discriminant[i][1]:
                     cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')(['qcd'], 1.5))
+
             #if options.dataYear == '2016':
             #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.05))
             #    cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.15))
@@ -499,6 +512,16 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 elif 'b4' in discriminant[i][1]:
                     cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
                     cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+
+                #if 'j3' in discriminant[i][1]:
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                #else:
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+
+                #cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
+                #cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
