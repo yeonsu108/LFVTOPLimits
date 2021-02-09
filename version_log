@@ -59,5 +59,8 @@
     - 2017v1: v45
     - 2017v2: v1 + sig theory unc
     - 2017v3: v2 + top pt reweight, 2016: same as v45 but updated lumi - no sig theory unc / 2018 b4j4 pdf is not symmetrized due to error
-    - 2017v4: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 4), no other symmetrization
-    - 2017v5: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 2), no other symmetrization
+    - 2017v4: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 4)
+    - 2017v5: v3 + smoothing hdamp and tune (h-h_nom, FWHM = 6)
+    - 2017v6: v3 + lowess directly on templates
+    - 2017v7: v3 + lowess directly on h-h_nom (frac 2/3 which is default)
+    - 2017v8: v3 + lowess directly on h/h_nom (frac 2/3 which is default)

@@ -3,12 +3,12 @@ import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-input_path = 'datacards_201215_2017v3/'
-#input_path = 'datacards_201215_2018v3/'
-drawNom = False
-#drawNom = True
-#logy = False
-logy = True
+input_path = 'datacards_201215_2017v3_cor/'
+#input_path = 'datacards_201215_2018v3_cor/'
+#drawNom = False
+drawNom = True
+logy = False
+#logy = True
 
 couplings = ['Hct', 'Hut']
 jet_bins = ['b2j3', 'b3j3', 'b2j4', 'b3j4', 'b4j4']
