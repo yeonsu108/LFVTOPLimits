@@ -106,9 +106,9 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run blind #-v +2
-#combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} --run blind #-v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run blind #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run expected #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run blind #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
     script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
