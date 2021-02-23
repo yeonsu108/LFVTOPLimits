@@ -64,3 +64,4 @@
     - 2017v6: v3 + lowess directly on templates
     - 2017v7: v3 + lowess directly on h-h_nom (frac 2/3 which is default)
     - 2017v8: v3 + lowess directly on h/h_nom (frac 2/3 which is default)
+    - 2017v9: v3 with 0102010401, run2 -> v3_cor for 2016

@@ -17,7 +17,7 @@ parser.add_argument('-verbose', dest='verbose', type=bool, default=False, help='
 parser.add_argument('-doPlot', dest='doPlot', type=str2bool, default="True", help='Do the limit plot or not.')
 parser.add_argument('-category_order', dest='category_order', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Bin order in the limit plot, names must be the same then in the combine rootfile: e.g. higgsCombine*_b3j3*.root.')
 parser.add_argument('-bin_labels', dest='category_labels', nargs='+', default=['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4', 'all'], help='Use this option if you want to modify the x-axis labels. Must be same order and length then -category_order argument.')
-parser.add_argument('-unblind', dest='unblind', type=str2bool, default="False", help='Display or not the observed limit.')
+parser.add_argument('-unblind', dest='unblind', type=str2bool, default="True", help='Display or not the observed limit.')
 parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
 parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
 parser.add_argument('-printlimits', dest='printlimits', type=str2bool, default="False", help='Print b2j3 and b2j4 to check run2 combination')
@@ -143,7 +143,7 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
             expected_lines[category].SetLineStyle(7)
             expected_lines[category].SetLineWidth(2)
             observed_lines[category] = ROOT.TLine(xlow, categ_limits['observed'], xup, categ_limits['observed'])
-            observed_lines[category].SetLineWidth(2)
+            observed_lines[category].SetLineWidth(3)
             if not options.unblind:
                 observed_lines[category].SetLineColorAlpha(ROOT.kWhite, 0)
             one_sigma_rectangles[category] = ROOT.TPolyLine(4, array('d', [xlow, xup, xup, xlow]), array('d',[one_sigma_down, one_sigma_down, one_sigma_up, one_sigma_up] ))
@@ -198,10 +198,12 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
       print "Limit on BR for %s 1718_all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['1718_all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
 
     else:
-      print "Limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['expected'])
-      print "Limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      if options.unblind: print "Observed limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['observed'])
+      print "Expected limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['expected'])
+      if options.unblind: print "Observed limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['observed']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Expected limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Expected limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Expected limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
 if not signal_folders:

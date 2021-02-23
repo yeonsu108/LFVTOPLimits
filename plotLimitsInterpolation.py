@@ -6,7 +6,8 @@ gROOT.SetBatch()
 gROOT.ProcessLine(".x setTDRStyle.C")
 
 limitfolder = sys.argv[1]
-no_obs = True
+#no_obs = True
+no_obs = False
 
 signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
