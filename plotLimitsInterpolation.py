@@ -1,18 +1,30 @@
-import json, sys, os
+import json, sys, os, argparse
 from math import sqrt
 from array import array
 from ROOT import *
 gROOT.SetBatch()
 gROOT.ProcessLine(".x setTDRStyle.C")
 
-limitfolder = sys.argv[1]
-#no_obs = True
-no_obs = False
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0', 'False'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+parser = argparse.ArgumentParser(description='Store limits inside a json file and plot them if required (one bin per category).')
+parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
+parser.add_argument('-category', dest='category', type=str, default='all', help='Bin name to draw. all, 1718_all, etc.')
+parser.add_argument('-unblind', dest='unblind', type=str2bool, default="True", help='Display or not the observed limit.')
+parser.add_argument('-lumi', dest='lumi', type=str, default='137.2', help='Luminosity to display on the plot.')
+
+options = parser.parse_args()
 
 signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
 
-Hut_limits = json.loads(open(os.path.join(limitfolder, 'Hut_limits.json')).read())
+Hut_limits = json.loads(open(os.path.join(options.limitfolder, 'Hut_limits.json')).read())
 for key in Hut_limits:
   for number_type in Hut_limits[key]:
     if isinstance(Hut_limits[key][number_type], list):
@@ -23,7 +35,7 @@ for key in Hut_limits:
 #   if number_type == 'observed':
 #     Hut_limits[key][number_type] = 'X'#*Hut_cross_sec
 
-Hct_limits = json.loads(open(os.path.join(limitfolder, 'Hct_limits.json')).read())
+Hct_limits = json.loads(open(os.path.join(options.limitfolder, 'Hct_limits.json')).read())
 for key in Hct_limits:
   for number_type in Hct_limits[key]:
     if isinstance(Hct_limits[key][number_type], list):
@@ -47,33 +59,19 @@ y_br_one_up, y_br_one_dn = array( 'd' ), array( 'd' )
 x_br_two_up, x_br_two_dn = array( 'd' ), array( 'd' )
 y_br_two_up, y_br_two_dn = array( 'd' ), array( 'd' )
 
-#Hut_exp = Hut_limits['161718_all']['expected']
-#Hut_obs = Hut_limits['161718_all']['observed']
-#Hut_one_up = Hut_limits['161718_all']['one_sigma'][1]
-#Hut_one_dn = Hut_limits['161718_all']['one_sigma'][0]
-#Hut_two_up = Hut_limits['161718_all']['two_sigma'][1]
-#Hut_two_dn = Hut_limits['161718_all']['two_sigma'][0]
-#
-#Hct_exp = Hct_limits['161718_all']['expected']
-#Hct_obs = Hct_limits['161718_all']['observed']
-#Hct_one_up = Hct_limits['161718_all']['one_sigma'][1]
-#Hct_one_dn = Hct_limits['161718_all']['one_sigma'][0]
-#Hct_two_up = Hct_limits['161718_all']['two_sigma'][1]
-#Hct_two_dn = Hct_limits['161718_all']['two_sigma'][0]
+Hut_exp = Hut_limits[options.category]['expected']
+Hut_obs = Hut_limits[options.category]['observed']
+Hut_one_up = Hut_limits[options.category]['one_sigma'][1]
+Hut_one_dn = Hut_limits[options.category]['one_sigma'][0]
+Hut_two_up = Hut_limits[options.category]['two_sigma'][1]
+Hut_two_dn = Hut_limits[options.category]['two_sigma'][0]
 
-Hut_exp = Hut_limits['all']['expected']
-Hut_obs = Hut_limits['all']['observed']
-Hut_one_up = Hut_limits['all']['one_sigma'][1]
-Hut_one_dn = Hut_limits['all']['one_sigma'][0]
-Hut_two_up = Hut_limits['all']['two_sigma'][1]
-Hut_two_dn = Hut_limits['all']['two_sigma'][0]
-
-Hct_exp = Hct_limits['all']['expected']
-Hct_obs = Hct_limits['all']['observed']
-Hct_one_up = Hct_limits['all']['one_sigma'][1]
-Hct_one_dn = Hct_limits['all']['one_sigma'][0]
-Hct_two_up = Hct_limits['all']['two_sigma'][1]
-Hct_two_dn = Hct_limits['all']['two_sigma'][0]
+Hct_exp = Hct_limits[options.category]['expected']
+Hct_obs = Hct_limits[options.category]['observed']
+Hct_one_up = Hct_limits[options.category]['one_sigma'][1]
+Hct_one_dn = Hct_limits[options.category]['one_sigma'][0]
+Hct_two_up = Hct_limits[options.category]['two_sigma'][1]
+Hct_two_dn = Hct_limits[options.category]['two_sigma'][0]
 
 def coupl(Hut_limit, Hct_limit, pos, arrX, arrY):
   if pos <= sqrt(Hut_limit/signal_Xsec_couplingOneForBR['Hut']):
@@ -138,7 +136,7 @@ g_coup_exp.SetLineWidth(3)
 g_coup_exp.SetLineStyle(7)
 g_coup_obs.SetLineWidth(3)
 g_coup_obs.SetLineColor(2)
-if no_obs:
+if not options.unblind:
   g_coup_obs.SetLineColorAlpha(kRed, 0.0);
 #g_coup_one_up.SetLineWidth(5)
 #g_coup_one_dn.SetLineWidth(5)
@@ -173,7 +171,7 @@ latexLabel = TLatex()
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.SetNDC()
 latexLabel.SetTextFont(42) # helvetica
-latexLabel.DrawLatex(0.69, 0.96, '137.2 fb^{-1} (13 TeV)')
+latexLabel.DrawLatex(0.69, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
 latexLabel.SetTextFont(61) # helvetica bold face
 #latexLabel.SetTextSize(1.15 * c1.GetTopMargin())
 #latexLabel.DrawLatex(0.78, 0.85, 'Hct')
@@ -210,7 +208,7 @@ g_coup_exp.Draw("c same")
 gPad.RedrawAxis();
 legend.Draw('same')
 c1.cd()
-c1.Print(limitfolder + "/interpolated_coupling.pdf")
+c1.Print(options.limitfolder + "/interpolated_coupling.pdf")
 
 #####################################################
 c2 = TCanvas("c2","extrapolate",450,400)
@@ -242,7 +240,7 @@ g_br_exp.SetLineWidth(3)
 g_br_exp.SetLineStyle(7)
 g_br_obs.SetLineWidth(3)
 g_br_obs.SetLineColor(2)
-if no_obs:
+if not options.unblind:
   g_br_obs.SetLineColorAlpha(kRed, 0.0);
 #g_br_one_up.SetLineWidth(5)
 #g_br_one_dn.SetLineWidth(5)
@@ -277,7 +275,7 @@ latexLabel = TLatex()
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.SetNDC()
 latexLabel.SetTextFont(42) # helvetica
-latexLabel.DrawLatex(0.69, 0.96, '137.2 fb^{-1} (13 TeV)')
+latexLabel.DrawLatex(0.69, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
 latexLabel.SetTextFont(61) # helvetica bold face
 #latexLabel.SetTextSize(1.15 * c1.GetTopMargin())
 #latexLabel.DrawLatex(0.78, 0.85, 'Hct')
@@ -300,4 +298,4 @@ g_br_exp.Draw("c same")
 gPad.RedrawAxis();
 legend.Draw('same')
 
-c2.Print(limitfolder + "/interpolated_br.pdf")
+c2.Print(options.limitfolder + "/interpolated_br.pdf")

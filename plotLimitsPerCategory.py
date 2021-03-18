@@ -24,7 +24,9 @@ parser.add_argument('-printlimits', dest='printlimits', type=str2bool, default="
 
 options = parser.parse_args()
 if options.printlimits:
-    options.category_order = ['161718_all', '1617_all', '1718_all']
+    #options.category_order = ['161718_all', '1617_all', '1718_all']
+    options.category_order = ['1718_all']
+    options.category_labels = options.category_order
 
 ROOT.gROOT.SetBatch()
 
@@ -182,21 +184,11 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.pdf'))
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
     if options.printlimits:
-      print "Limit on Xsec for %s 161718_all jet cat: %f"%(signal_name, limit_dict['161718_all']['expected'])
-      print "Limit on BR for %s 161718_all jet cat: %f %%"%(signal_name, 100*limit_dict['161718_all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s 161718_all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['161718_all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s 161718_all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['161718_all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-
-      print "Limit on Xsec for %s 1617_all jet cat: %f"%(signal_name, limit_dict['1617_all']['expected'])
-      print "Limit on BR for %s 1617_all jet cat: %f %%"%(signal_name, 100*limit_dict['1617_all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s 1617_all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['1617_all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s 1617_all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['1617_all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-
-      print "Limit on Xsec for %s 1718_all jet cat: %f"%(signal_name, limit_dict['1718_all']['expected'])
-      print "Limit on BR for %s 1718_all jet cat: %f %%"%(signal_name, 100*limit_dict['1718_all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s 1718_all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['1718_all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Limit on BR for %s 1718_all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['1718_all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-
+      for cat in options.category_order:
+        print "Limit on Xsec for %s %s jet cat: %f"%(signal_name, cat, limit_dict[cat]['expected'])
+        print "Limit on BR for %s %s jet cat: %f %%"%(signal_name, cat, 100*limit_dict[cat]['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+        print "Limit on BR for %s %s jet cat one sigma up: %f %%"%(signal_name, cat, 100*limit_dict[cat]['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+        print "Limit on BR for %s %s jet cat one sigma down: %f %%"%(signal_name, cat, 100*limit_dict[cat]['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
     else:
       if options.unblind: print "Observed limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['observed'])
       print "Expected limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['expected'])
@@ -213,11 +205,9 @@ if not signal_folders:
 for signal_folder in signal_folders:
     print "Extracting limits for %s"%signal_folder
     signal_folder_path = os.path.join(options.limitfolder, signal_folder)
-    limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and '_1718_' not in rootfile]
-    #limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and '_1718_' in rootfile]
-    #categories = [] # [rootfilename.split('.')[0].split('_')[-1] for rootfilename in limit_rootfiles]
     dict_cat_limits = {}
     for category in options.category_order:
+        limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and category in rootfile and ( (not options.printlimits and not any(t in rootfile for t in ['_1617_', '_1718_'])) or (options.printlimits and any(t in rootfile for t in [signal_folder+'_'+category])) )]
         found_category = False
         if options.removeHutb4j4 and 'Hut/' in signal_folder_path and category == 'b4j4': continue
         for limit_rootfile in limit_rootfiles:
