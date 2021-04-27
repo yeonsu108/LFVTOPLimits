@@ -216,8 +216,10 @@ def merge_histograms(process, histogram, destination):
     #print process, " ", histogram.GetTitle(), " ", destination, " ", histogram.GetNbinsX()
     if options.rebinning < 40: #We have 40 bins!
         histogram.Rebin(options.rebinning)
+        #pass
 
         #if 'j4b3' in histogram.GetName() or 'j3b3' in histogram.GetName():
+        #if 'j3b3' in histogram.GetName():
         #    import array
         #    #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
         #    arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
@@ -231,7 +233,9 @@ def merge_histograms(process, histogram, destination):
         #   histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
         #import array
-        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
+        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
+        ##if 'j3b3' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
+        ##else: arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
         #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
     else:
         import array
@@ -461,24 +465,18 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
             #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
             if options.dataYear == '2016':
-                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.022))
-                cb.cp().AddSyst(cb, 'CMS_lumi_xyfactor', 'lnN', ch.SystMap()(1.009))
-                cb.cp().AddSyst(cb, 'CMS_lumi_deflect', 'lnN', ch.SystMap()(1.004))
-                cb.cp().AddSyst(cb, 'CMS_lumi_dynamicbeta', 'lnN', ch.SystMap()(1.005))
-                cb.cp().AddSyst(cb, 'CMS_lumi_ghost', 'lnN', ch.SystMap()(1.004))
+                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
+                #reproducing 2016
+                #cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.027))
             elif options.dataYear == '2017':
                 cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
-                cb.cp().AddSyst(cb, 'CMS_lumi_xyfactor', 'lnN', ch.SystMap()(1.008))
-                cb.cp().AddSyst(cb, 'CMS_lumi_length', 'lnN', ch.SystMap()(1.003))
-                cb.cp().AddSyst(cb, 'CMS_lumi_deflect', 'lnN', ch.SystMap()(1.004))
-                cb.cp().AddSyst(cb, 'CMS_lumi_dynamicbeta', 'lnN', ch.SystMap()(1.005))
-                cb.cp().AddSyst(cb, 'CMS_lumi_beamcurrent', 'lnN', ch.SystMap()(1.003))
-                cb.cp().AddSyst(cb, 'CMS_lumi_ghost', 'lnN', ch.SystMap()(1.001))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
             elif options.dataYear == '2018':
                 cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
-                cb.cp().AddSyst(cb, 'CMS_lumi_xyfactor', 'lnN', ch.SystMap()(1.02))
-                cb.cp().AddSyst(cb, 'CMS_lumi_length', 'lnN', ch.SystMap()(1.002))
-                cb.cp().AddSyst(cb, 'CMS_lumi_beamcurrent', 'lnN', ch.SystMap()(1.002))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
 
             cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.055))
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')(['other'], 1.1))
@@ -488,7 +486,14 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             for i in xrange(len(discriminant)):
                 if 'b2j3' in discriminant[i][1]:
                     cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')(['qcd'], 1.5))
+                #reproducing 2016
+                #if 'b2j3' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b2j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
+                #if 'b2j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b2j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
+                #if 'b3j3' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b3j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
+                #if 'b3j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b3j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
+                #if 'b4j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b4j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
 
+            #reproducing 2016
             #if options.dataYear == '2016':
             #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.05))
             #    cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.15))
@@ -533,6 +538,12 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 
         #AutoMCStat
         cb.SetAutoMCStats(cb, 0.1)
+        #reproducing 2016
+        #print "Treating bbb"
+        #bbb = ch.BinByBinFactory()
+        #bbb.SetAddThreshold(0.0001)
+        #bbb.AddBinByBin(cb.cp().backgrounds(), cb)
+        #bbb.AddBinByBin(cb.cp().signals(), cb)
 
         output_prefix = 'FCNC_%s_Discriminant_%s' % (signal, discriminantName)
 

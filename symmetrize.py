@@ -107,7 +107,7 @@ for dir_ in dir_list:
       if ( ('jec' in hname and any(name in hname for name in ['qcd']) and 'b2j3' in dir_)
         or ('jer' in hname and any(name in hname for name in ['qcd']) and 'b2j3' in dir_)
         or ('Tune' in hname and any(sname in dir_ for sname in ['b2j3', 'b2j4']))
-        or ('hdamp' in hname and any(sname in dir_ for sname in ['b2j3', 'b3j4'])) ):
+        or ('hdamp' in hname and any(sname in dir_ for sname in ['b2j3', 'b3j4','b3j3'])) ):
 
         if 'Down' in hname:
           h_opp = f_dir.Get(hname.replace('Down','Up'))

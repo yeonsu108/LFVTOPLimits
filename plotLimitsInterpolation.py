@@ -21,10 +21,18 @@ parser.add_argument('-lumi', dest='lumi', type=str, default='137.2', help='Lumin
 
 options = parser.parse_args()
 
+postfix = ''
+Hctjson = 'Hct_limits.json'
+Hutjson = 'Hut_limits.json'
+if options.category != 'all':
+  postfix = '_' + options.category
+  Hctjson = 'Hct_limits_add.json'
+  Hutjson = 'Hut_limits_add.json'
+
 signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158) 
 
-Hut_limits = json.loads(open(os.path.join(options.limitfolder, 'Hut_limits.json')).read())
+Hut_limits = json.loads(open(os.path.join(options.limitfolder, Hutjson)).read())
 for key in Hut_limits:
   for number_type in Hut_limits[key]:
     if isinstance(Hut_limits[key][number_type], list):
@@ -35,7 +43,7 @@ for key in Hut_limits:
 #   if number_type == 'observed':
 #     Hut_limits[key][number_type] = 'X'#*Hut_cross_sec
 
-Hct_limits = json.loads(open(os.path.join(options.limitfolder, 'Hct_limits.json')).read())
+Hct_limits = json.loads(open(os.path.join(options.limitfolder, Hctjson)).read())
 for key in Hct_limits:
   for number_type in Hct_limits[key]:
     if isinstance(Hct_limits[key][number_type], list):
@@ -107,7 +115,7 @@ for i in xrange(20000):
 
 # Create Canvas
 c1 = TCanvas("c1","extrapolate",450,400)
-p1 = c1.DrawFrame(0, 0.001, 0.1, 0.1)
+p1 = c1.DrawFrame(0, 0.001, 0.15, 0.15)
 
 
 # Create TGraph
@@ -208,11 +216,11 @@ g_coup_exp.Draw("c same")
 gPad.RedrawAxis();
 legend.Draw('same')
 c1.cd()
-c1.Print(options.limitfolder + "/interpolated_coupling.pdf")
+c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+".pdf")
 
 #####################################################
 c2 = TCanvas("c2","extrapolate",450,400)
-p2 = c2.DrawFrame(0, 0.001, 0.1, 0.13)
+p2 = c2.DrawFrame(0, 0.001, 0.25, 0.25)
 
 # Create TGraph
 g_br_exp = TGraph(len(x_br_exp), x_br_exp, y_br_exp)
@@ -298,4 +306,4 @@ g_br_exp.Draw("c same")
 gPad.RedrawAxis();
 legend.Draw('same')
 
-c2.Print(options.limitfolder + "/interpolated_br.pdf")
+c2.Print(options.limitfolder + "/interpolated_br"+postfix+".pdf")
