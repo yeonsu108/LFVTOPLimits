@@ -23,10 +23,12 @@ parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, defau
 parser.add_argument('-printlimits', dest='printlimits', type=str2bool, default="False", help='Print b2j3 and b2j4 to check run2 combination')
 
 options = parser.parse_args()
+postfix = ''
 if options.printlimits:
     #options.category_order = ['161718_all', '1617_all', '1718_all']
     options.category_order = ['1718_all']
     options.category_labels = options.category_order
+    postfix = '_add'
 
 ROOT.gROOT.SetBatch()
 
@@ -232,14 +234,14 @@ for signal_folder in signal_folders:
                 dict_cat_limits[category] = limits
         if not found_category:
             print "Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form e.g. higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path)
-    json_limit_filepath = os.path.join(options.limitfolder, signal_folder + '_limits.json')
+    json_limit_filepath = os.path.join(options.limitfolder, signal_folder + '_limits'+postfix+'.json')
     if options.verbose:
         print json.dumps(dict_cat_limits, indent=4)
     with open(json_limit_filepath, 'w') as limit_json:
         json.dump(dict_cat_limits, limit_json)
     print "%s written with limits inside"%json_limit_filepath
 
-    if options.doPlot:
+    if options.doPlot and not options.printlimits:
         from array import array
         ROOT.gROOT.ProcessLine(".x setTDRStyle.C")
         plot_limits(signal_folder, dict_cat_limits)

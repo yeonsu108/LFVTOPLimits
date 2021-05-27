@@ -3,10 +3,12 @@ import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-input_path = 'datacards_201215_2017v3_cor/'
-#input_path = 'datacards_201215_2018v3_cor/'
-#drawNom = False
-drawNom = True
+#input_path = 'datacards_201215_2017v2_mergeHighBins_3binsb3'
+#input_path = 'datacards_201215_2017v2_nosymm'
+#input_path = 'datacards_201215_2018v2_mergeHighBins_3binsb3'
+input_path = 'datacards_201215_2018v2_nosymm'
+drawNom = False
+#drawNom = True
 logy = False
 #logy = True
 
@@ -46,7 +48,7 @@ def drawRatio(c, nom, up, dn):
         for i in xrange(len(contents_org)):
             if contents_org[i] < 0.01: contents.remove(contents_org[i])
         tmp_min = min(contents)
-    ratio_up.GetYaxis().SetRangeUser(tmp_min*0.9, max(minmax)*1.1)
+    ratio_up.GetYaxis().SetRangeUser(tmp_min*0.85, max(minmax)*1.15)
     ratio_up.Draw()
     ratio_dn.Draw('same')
     legend.Draw()

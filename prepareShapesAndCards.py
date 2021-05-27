@@ -234,8 +234,10 @@ def merge_histograms(process, histogram, destination):
 
         #import array
         #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
-        ##if 'j3b3' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
-        ##else: arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
+        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
+        #if 'j3b3' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
+        #if 'j3b3' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
+        #else: arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
         #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
     else:
         import array
@@ -486,13 +488,12 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             for i in xrange(len(discriminant)):
                 if 'b2j3' in discriminant[i][1]:
                     cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')(['qcd'], 1.5))
-                #reproducing 2016
+                #reproducing 2016 ### comment out Other_xsec above!
                 #if 'b2j3' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b2j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
                 #if 'b2j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b2j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
                 #if 'b3j3' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b3j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
                 #if 'b3j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b3j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
                 #if 'b4j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b4j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
-
             #reproducing 2016
             #if options.dataYear == '2016':
             #    cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.05))
@@ -519,9 +520,11 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 
                 #if 'j3' in discriminant[i][1]:
+                #    #cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
                 #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
                 #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
                 #else:
+                #    #cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
                 #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
                 #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 
@@ -532,6 +535,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
         cb.cp().signals().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
 
+        #reproducing 2016 - comment out
         if options.dataYear == '2016':
             rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
             rebin.Rebin(cb.cp(), cb)
