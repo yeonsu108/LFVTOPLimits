@@ -79,3 +79,5 @@
     - 2017v2: 0102010201 - remove inputs from b3j3, b3j4
     - 2017v3: 0101010103 - new reco DNN for b4j4
     - 2017v4: 0102010203 - remove inputs from b3j3, b3j4 + new reco DNN for b4j4
+    - 2018v5: 0104010203 - remove inputs from b3j3 (+jet12dr), b3j4 + new reco DNN for b4j4,
+    - 2018v6: 0102010203 - v4 + ttbbscaled. ttbb/cc unc updated (uncorr. 2016, lower magnitude in 2017-8)

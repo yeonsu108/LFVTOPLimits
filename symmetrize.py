@@ -1,6 +1,6 @@
 import os, sys
 import numpy as np
-#import statsmodels.api as sm
+import statsmodels.api as sm
 from ROOT import *
 import ROOT
 
@@ -97,17 +97,14 @@ for dir_ in dir_list:
     h.SetDirectory(ROOT.nullptr)
     hname = h.GetName()
 
-    #if ('Tune' in hname or 'hdamp' in hname):
-    #  h_nom = f_dir.Get(hname[:hname.rfind('__')])
-    #  h_nom.SetDirectory(ROOT.nullptr)
-    #  smoothing(h, h_nom, 2)
-
     #Special treatements
     if year == '2017':
       if ( ('jec' in hname and any(name in hname for name in ['qcd']) and 'b2j3' in dir_)
         or ('jer' in hname and any(name in hname for name in ['qcd']) and 'b2j3' in dir_)
-        or ('Tune' in hname and any(sname in dir_ for sname in ['b2j3', 'b2j4']))
-        or ('hdamp' in hname and any(sname in dir_ for sname in ['b2j3', 'b3j4','b3j3'])) ):
+        or ('pdf' in hname and any(name in hname for name in ['ttbb']) and 'b3j3' in dir_)
+        #or ('Tune' in hname and any(sname in dir_ for sname in ['b2j3', 'b2j4']))
+        #or ('hdamp' in hname and any(sname in dir_ for sname in ['b2j3', 'b3j4','b3j3'])) ):
+        or (any(s in hname for s in ['Tune', 'hdamp',])) ):
 
         if 'Down' in hname:
           h_opp = f_dir.Get(hname.replace('Down','Up'))
@@ -117,12 +114,23 @@ for dir_ in dir_list:
 
         h_nom = f_dir.Get(hname[:hname.rfind('__')])
         h_nom.SetDirectory(ROOT.nullptr)
-        h = symmetrize(h, h_opp, h_nom)
+
+        if any(s in hname for s in ['Tune', 'hdamp',]):
+          #smoothing(h, h_nom, 2)
+          #smoothing(h_opp, h_nom, 2)
+          symmetrize(h, h_opp, h_nom)
+
+        else:
+          h_nom = f_dir.Get(hname[:hname.rfind('__')])
+          h_nom.SetDirectory(ROOT.nullptr)
+          symmetrize(h, h_opp, h_nom)
 
 
     elif year == '2018':
       if ( ('jec' in hname and any(name in hname for name in ['qcd']) and 'b2j3' in dir_)
-        or ('pdf' in hname and any(name in hname for name in ['ttbb','ttcc','ttlf']) and 'b4j4' in dir_) ):
+        or ('pdf' in hname and any(name in hname for name in ['ttbb','ttcc','ttlf']) and 'b4j4' in dir_)
+        or ('cferr1' in hname and any(name in hname for name in ['other']) and 'b4j4' in dir_)
+        or (any(s in hname for s in ['Tune', 'hdamp',])) ):
 
         if 'Down' in hname:
           h_opp = f_dir.Get(hname.replace('Down','Up'))
@@ -132,7 +140,16 @@ for dir_ in dir_list:
 
         h_nom = f_dir.Get(hname[:hname.rfind('__')])
         h_nom.SetDirectory(ROOT.nullptr)
-        h = symmetrize(h, h_opp, h_nom)
+
+        if any(s in hname for s in ['Tune', 'hdamp',]):
+          #smoothing(h, h_nom, 2)
+          #smoothing(h_opp, h_nom, 2)
+          symmetrize(h, h_opp, h_nom)
+
+        else:
+          h_nom = f_dir.Get(hname[:hname.rfind('__')])
+          h_nom.SetDirectory(ROOT.nullptr)
+          symmetrize(h, h_opp, h_nom)
 
     h.Write()
 
