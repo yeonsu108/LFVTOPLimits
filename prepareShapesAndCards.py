@@ -511,13 +511,16 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 for i in xrange(len(discriminant)):
                     if 'b2' in discriminant[i][1]:
                         cb.cp().AddSyst(cb, '$PROCESS_norm_b2_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b2_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                        #cb.cp().AddSyst(cb, '$PROCESS_norm_b2_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
                     elif 'b3' in discriminant[i][1]:
                         cb.cp().AddSyst(cb, '$PROCESS_norm_b3_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b3_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                        #cb.cp().AddSyst(cb, '$PROCESS_norm_b3_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_b3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
                     elif 'b4' in discriminant[i][1]:
                         cb.cp().AddSyst(cb, '$PROCESS_norm_b4_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b4_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                        #cb.cp().AddSyst(cb, '$PROCESS_norm_b4_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+                        cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
             else:
                 for i in xrange(len(discriminant)):
                     if 'b2' in discriminant[i][1]:

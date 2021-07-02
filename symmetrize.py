@@ -116,8 +116,8 @@ for dir_ in dir_list:
         h_nom.SetDirectory(ROOT.nullptr)
 
         if any(s in hname for s in ['Tune', 'hdamp',]):
-          #smoothing(h, h_nom, 2)
-          #smoothing(h_opp, h_nom, 2)
+          smoothing(h, h_nom, 2)
+          smoothing(h_opp, h_nom, 2)
           symmetrize(h, h_opp, h_nom)
 
         else:
@@ -142,8 +142,8 @@ for dir_ in dir_list:
         h_nom.SetDirectory(ROOT.nullptr)
 
         if any(s in hname for s in ['Tune', 'hdamp',]):
-          #smoothing(h, h_nom, 2)
-          #smoothing(h_opp, h_nom, 2)
+          smoothing(h, h_nom, 2)
+          smoothing(h_opp, h_nom, 2)
           symmetrize(h, h_opp, h_nom)
 
         else:

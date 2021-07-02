@@ -1,4 +1,5 @@
-import sys, os
+import sys, os, re
+import numpy as np
 from math import sqrt
 from ROOT import *
 import ROOT
@@ -25,15 +26,16 @@ for coupling in couplings:
                 nums[cat+process] = f_tmp.Get(hname).Integral()
                 if any(i in process for i in ['data_obs', 'TotalBkg']): pass
                 else:
-                    nums[cat+process+'Unc'] = 0.5*(abs(f_tmp.Get(hname+'__postfitup').Integral()-f_tmp.Get(hname).Integral())+abs(f_tmp.Get(hname+'__postfitdown').Integral()-f_tmp.Get(hname).Integral()))
+                    nums[cat+process+'Unc'] = float(np.format_float_positional(0.5*(abs(f_tmp.Get(hname+'__postfitup').Integral()-f_tmp.Get(hname).Integral())+abs(f_tmp.Get(hname+'__postfitdown').Integral()-f_tmp.Get(hname).Integral())), precision=2, unique=False, fractional=False, trim='k'))
 
     for cat in ['b2j3', 'b2j4', 'b3j3', 'b3j4', 'b4j4']:
-        if cat == 'b2j3': nums[cat+'TotalBkgUnc'] = sqrt(nums[cat+'ttbbUnc']**2 + nums[cat+'ttccUnc']**2 + nums[cat+'ttlfUnc']**2 + nums[cat+'otherUnc']**2 + nums[cat+'qcdUnc']**2)
-        else: nums[cat+'TotalBkgUnc'] = sqrt(nums[cat+'ttbbUnc']**2 + nums[cat+'ttccUnc']**2 + nums[cat+'ttlfUnc']**2 + nums[cat+'otherUnc']**2)
+        if cat == 'b2j3': nums[cat+'TotalBkgUnc'] = float(np.format_float_positional(sqrt(nums[cat+'ttbbUnc']**2 + nums[cat+'ttccUnc']**2 + nums[cat+'ttlfUnc']**2 + nums[cat+'otherUnc']**2 + nums[cat+'qcdUnc']**2), precision=2, unique=False, fractional=False, trim='k'))
+        else: nums[cat+'TotalBkgUnc'] = float(np.format_float_positional(sqrt(nums[cat+'ttbbUnc']**2 + nums[cat+'ttccUnc']**2 + nums[cat+'ttlfUnc']**2 + nums[cat+'otherUnc']**2), precision=2, unique=False, fractional=False, trim='k'))
 
 
 #QCD       & {b2j3qcd:8.0f} $\pm$ {b2j3qcdUnc:5.0f} & {b2j4qcd:>20} & {b3j3qcd:>20} & {b3j4qcd:>20} & {b4j4qcd:>20} \\\\ \hline
 #QCD       & {b2j3qcd:>20} & {b2j4qcd:>20} & {b3j3qcd:>20} & {b3j4qcd:>20} & {b4j4qcd:>20} \\\\ \hline
+
 
     table = """
     \\begin{{tabular}}{{|l|c|c|c|c|c|}}
@@ -62,9 +64,15 @@ for coupling in couplings:
         b2j3qcdUnc=nums['b2j3qcdUnc'],
         b2j3totalUnc=nums['b2j3TotalBkgUnc'], b2j4totalUnc=nums['b2j4TotalBkgUnc'], b3j3totalUnc=nums['b3j3TotalBkgUnc'], b3j4totalUnc=nums['b3j4TotalBkgUnc'], b4j4totalUnc=nums['b4j4TotalBkgUnc'],
         )
-    table_filename = os.path.join(limitfolder, coupling + "_postfit_table.tex")
-    with open(table_filename, 'w') as table_file:
-        table_file.write(table)
     print coupling + ':'
     print table
 
+    table = re.sub(" \d{5} ", lambda m: str(' ' + m.group().rstrip(' ').lstrip(' ')[0:2] + '\,' + m.group().rstrip(' ').lstrip(' ')[2:] + ' '), table)
+    table = re.sub(" \d{6} ", lambda m: str(' ' + m.group().rstrip(' ').lstrip(' ')[0:3] + '\,' + m.group().rstrip(' ').lstrip(' ')[3:] + ' '), table)
+    table = re.sub(" \d{7} ", lambda m: str(' ' + m.group().rstrip(' ').lstrip(' ')[0:1] + '\,' + m.group().rstrip(' ').lstrip(' ')[1:4] + '\,' + m.group().rstrip(' ').lstrip(' ')[4:] + ' '), table)
+    table = re.sub(" \d{8} ", lambda m: str(' ' + m.group().rstrip(' ').lstrip(' ')[0:2] + '\,' + m.group().rstrip(' ').lstrip(' ')[2:5] + '\,' + m.group().rstrip(' ').lstrip(' ')[5:] + ' '), table)
+    print table
+
+    table_filename = os.path.join(limitfolder, coupling + "_postfit_table.tex")
+    with open(table_filename, 'w') as table_file:
+        table_file.write(table)

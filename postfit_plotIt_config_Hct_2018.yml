@@ -7,7 +7,7 @@ configuration:
   root: 'postfit_shapes_FCNC_Hct_Discriminant_DNN_Hct_all_forPlotIt/'
   luminosity: 1
   luminosity-error: 0
-  error-fill-style: 3154
+  error-fill-style: 3254
   error-fill-color: "#ee556270"
   ratio-fit-error-fill-style: 1001
   ratio-fit-error-fill-color: "#aa556270"

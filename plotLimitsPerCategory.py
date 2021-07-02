@@ -10,6 +10,7 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 doLogy = True
+#doLogy = False
 
 parser = argparse.ArgumentParser(description='Store limits inside a json file and plot them if required (one bin per category).')
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
@@ -115,10 +116,14 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     xAxis.SetTitleFont(42)
     yAxis = th1_for_canvas_layout.GetYaxis()
     #yAxis.SetNdivisions(010)
-    yAxis.SetTitle("95% CL upper limit on #sigma #times BR [pb]")
+    #yAxis.SetTitle("95% CL upper limit on #sigma #times BR [pb]")
+    #yAxis.SetTitle("95% CL upper limit on #sigma #times B [pb]")
+    yAxis.SetTitle("#sigma [pb]")
     yAxis.SetLabelFont(42)
     yAxis.SetTitleFont(42)
-    yAxis.SetTitleSize(0.039)
+    #yAxis.SetTitleSize(0.039)
+    yAxis.SetTitleSize(0.05)
+    yAxis.SetTitleOffset(1.2)
     expected_lines = {}
     observed_lines = {}
     one_sigma_rectangles = {}
@@ -174,7 +179,7 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     legend.SetLineColor(ROOT.kWhite)
     legend.SetShadowColor(ROOT.kWhite)
     legend.AddEntry(expected_lines[limit_dict.keys()[0]], 'Expected', 'l')
-    legend.AddEntry(one_sigma_rectangles[limit_dict.keys()[0]], 'Expected #pm 1 std. deviation', 'f')
+    legend.AddEntry(one_sigma_rectangles[limit_dict.keys()[0]], 'Expected #pm 1 std. deviations', 'f')
     legend.AddEntry(two_sigma_rectangles[limit_dict.keys()[0]], 'Expected #pm 2 std. deviations', 'f')
     legend.AddEntry(observed_lines[limit_dict.keys()[0]], 'Observed', 'l')
     legend.Draw('same')
