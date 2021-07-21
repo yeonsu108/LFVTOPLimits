@@ -94,6 +94,8 @@ def br(Hut_limit, Hct_limit, pos, arrX, arrY):
     br_y = 0.19 * pow(coupling, 2) / 1.32158
     arrX.append(100 * br_x)
     arrY.append(100 * br_y)
+    #arrX.append(br_x)
+    #arrY.append(br_y)
 
 
 for i in xrange(20000):
@@ -187,6 +189,7 @@ latexLabel.SetTextFont(61) # helvetica bold face
 #latexLabel.DrawLatex(0.78, 0.85, 'Hct')
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.DrawLatex(0.13, 0.96, "CMS")
+#latexLabel.DrawLatex(0.14, 0.96, "CMS")
 latexLabel.SetTextFont(52) # helvetica italics
 latexLabel.DrawLatex(0.22, 0.96, progress)
 
@@ -223,6 +226,10 @@ c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+".pdf")
 #####################################################
 c2 = TCanvas("c2","extrapolate",450,400)
 p2 = c2.DrawFrame(0, 0.001, 0.25, 0.25)
+#p2 = c2.DrawFrame(0, 0.00001, 0.0021, 0.0017)
+#TGaxis.SetMaxDigits(2)
+#TGaxis.SetExponentOffset(-0.03, -0.04, "x");
+#TGaxis.SetExponentOffset(-0.07, 0.0, "y");
 
 # Create TGraph
 g_br_exp = TGraph(len(x_br_exp), x_br_exp, y_br_exp)
@@ -282,7 +289,7 @@ yAxis.SetTitleSize(0.05)
 
 
 # Some text
-progress = 'Work in progress'
+progress = 'Preliminary'
 latexLabel = TLatex()
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.SetNDC()
@@ -293,6 +300,7 @@ latexLabel.SetTextFont(61) # helvetica bold face
 #latexLabel.DrawLatex(0.78, 0.85, 'Hct')
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.DrawLatex(0.13, 0.96, "CMS")
+#latexLabel.DrawLatex(0.14, 0.96, "CMS")
 latexLabel.SetTextFont(52) # helvetica italics
 latexLabel.DrawLatex(0.22, 0.96, progress)
 
