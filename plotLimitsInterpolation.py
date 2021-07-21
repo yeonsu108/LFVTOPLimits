@@ -121,6 +121,8 @@ p1 = c1.DrawFrame(0, 0.001, 0.15, 0.15)
 # Create TGraph
 g_coup_exp = TGraph(len(x_coup_exp), x_coup_exp, y_coup_exp)
 g_coup_obs = TGraph(len(x_coup_obs), x_coup_obs, y_coup_obs)
+print 'Hut obs kappa ',  x_coup_obs[-1], 'Hct obs kappa', y_coup_obs[0]
+print 'Hut exp kappa ',  x_coup_exp[-1], 'Hct exp kappa', y_coup_exp[0]
 #g_coup_one_up = TGraph(len(x_coup_one_up), x_coup_one_up, y_coup_one_up)
 #g_coup_one_dn = TGraph(len(x_coup_one_dn), x_coup_one_dn, y_coup_one_dn)
 #g_coup_two_up = TGraph(len(x_coup_two_up), x_coup_two_up, y_coup_two_up)
@@ -174,7 +176,7 @@ yAxis.SetTitleSize(0.05)
 
 
 # Some text
-progress = 'Work in progress'
+progress = 'Preliminary'
 latexLabel = TLatex()
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.SetNDC()
@@ -262,14 +264,16 @@ g_br_two_band.SetLineColor(5)
 
 # Axis style
 xAxis = p2.GetXaxis()
-xAxis.SetTitle("BR_{Hut}[%]")
+#xAxis.SetTitle("BR_{Hut}[%]")
+xAxis.SetTitle("B(t#rightarrow Hu) (%)")
 xAxis.SetLabelSize(0.04)
 xAxis.SetLabelFont(42)
 xAxis.SetTitleFont(42)
 xAxis.SetTitleOffset(1.0)
 xAxis.SetTitleSize(0.05)
 yAxis = p2.GetYaxis()
-yAxis.SetTitle("BR_{Hct}[%]")
+#yAxis.SetTitle("BR_{Hct}[%]")
+yAxis.SetTitle("B(t#rightarrow Hc) (%)")
 yAxis.SetLabelSize(0.04)
 yAxis.SetLabelFont(42)
 yAxis.SetTitleFont(42)

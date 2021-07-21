@@ -1,6 +1,7 @@
 'DNN_Hut_b2j3':
-  y-axis: "Entries"
-  y-axis-format: "%1% / %2$.2f"
+  y-axis: "Events"
+  #y-axis-format: "%1% / %2$.2f"
+  y-axis-format: "%1% / bin"
   save-extensions: ['pdf', 'png']
   for-yields: true
   yields-table-order: 0
@@ -14,7 +15,7 @@
         size: 18
 ##  signal-normalize-data: false
 #'DNN_Hut_b3j3':
-#  y-axis: "Entries"
+#  y-axis: "Events"
 #  y-axis-format: "%1% / %2$.2f"
 #  save-extensions: ['pdf', 'png']
 #  for-yields: true
@@ -30,7 +31,7 @@
 ##  signal-normalize-data: false
 #
 #'DNN_Hut_b2j4':
-#  y-axis: "Entries"
+#  y-axis: "Events"
 #  y-axis-format: "%1% / %2$.2f"
 #  save-extensions: ['pdf', 'png']
 #  for-yields: true
@@ -45,7 +46,7 @@
 #        size: 18
 ##  signal-normalize-data: false
 #'DNN_Hut_b3j4':
-#  y-axis: "Entries"
+#  y-axis: "Events"
 #  y-axis-format: "%1% / %2$.2f"
 #  save-extensions: ['pdf', 'png']
 #  for-yields: true
@@ -60,7 +61,7 @@
 #        size: 18
 ##  signal-normalize-data: false
 #'DNN_Hut_b4j4':
-#  y-axis: "Entries"
+#  y-axis: "Events"
 #  y-axis-format: "%1% / %2$.2f"
 #  save-extensions: ['pdf', 'png']
 #  for-yields: true
