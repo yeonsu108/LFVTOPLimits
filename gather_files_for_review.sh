@@ -15,8 +15,10 @@ do
 
   cp $folder/Hut/*.dat $outname/$folder/Hut
   cp $folder/Hct/*.dat $outname/$folder/Hct
-  cp $folder/Hut/*shapes.root $outname/$folder/Hut
-  cp $folder/Hct/*shapes.root $outname/$folder/Hct
+  if [[ $folder == "datacard"* ]]; then
+    cp $folder/Hut/*shapes.root $outname/$folder/Hut
+    cp $folder/Hct/*shapes.root $outname/$folder/Hct
+  fi
   #cp $folder/Hut/forCombine*.root $outname/$folder/Hut
   #cp $folder/Hct/forCombine*.root $outname/$folder/Hct
 done

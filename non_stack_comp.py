@@ -5,7 +5,8 @@ from ROOT import *
 
 gROOT.SetBatch(kTRUE)
 
-input_path = 'datacards_200101_2017v45/'
+#input_path = 'datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp/'
+input_path = 'datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp/'
 
 couplings = ['Hct', 'Hut']
 jet_bins = ['b2j3', 'b3j3', 'b2j4', 'b3j4', 'b4j4']

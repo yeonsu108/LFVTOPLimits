@@ -1,8 +1,5 @@
 datacardFolder=$1
-#python prepareShapesAndCards.py -p histos_suitable_for_limits_201215v1_2018/training_0101010101/ -dataYear 2018 -l 59741 -le 1.025 -xsecfile xsec_2018_200101.yml --sysToAvoid prefire elzvtx -o $datacardFolder
-#python prepareShapesAndCards.py -p histos_suitable_for_limits_201215v2_2018/training_0102010201/ -dataYear 2018 -l 59741 -le 1.025 -xsecfile xsec_2018_200101.yml --sysToAvoid prefire elzvtx -o $datacardFolder
-#python prepareShapesAndCards.py -p histos_suitable_for_limits_201215v3_2018/training_0101010103/ -dataYear 2018 -l 59741 -le 1.025 -xsecfile xsec_2018_200101.yml --sysToAvoid prefire elzvtx -o $datacardFolder
-python prepareShapesAndCards.py -p histos_suitable_for_limits_201215v4_2018/training_0102010203/ -dataYear 2018 -l 59741 -le 1.025 -xsecfile xsec_2018_200101.yml --sysToAvoid prefire elzvtx -o $datacardFolder  #--nosys True
+python prepareShapesAndCards.py -p histos_suitable_for_limits_201215v6_2018/training_0102010203/ -dataYear 2018 -l 59741 -le 1.025 -xsecfile xsec_2018_200101.yml --sysToAvoid prefire elzvtx -o $datacardFolder #--nosys True
 python run_all_limits.py $datacardFolder
 python plotLimitsPerCategory.py -lumi 59.7 -limitfolder $datacardFolder
 python printLimitLatexTable.py $datacardFolder False unblind

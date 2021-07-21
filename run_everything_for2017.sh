@@ -1,8 +1,5 @@
 datacardFolder=$1 
-#python prepareShapesAndCards.py -o $datacardFolder -p histos_suitable_for_limits_201215v1_2017/training_0101010101/
-#python prepareShapesAndCards.py -o $datacardFolder -p histos_suitable_for_limits_201215v2_2017/training_0102010201/
-#python prepareShapesAndCards.py -o $datacardFolder -p histos_suitable_for_limits_201215v3_2017/training_0101010103/
-python prepareShapesAndCards.py -o $datacardFolder -p histos_suitable_for_limits_201215v4_2017/training_0102010203/
+python prepareShapesAndCards.py -o $datacardFolder -p histos_suitable_for_limits_201215v6_2017/training_0102010203/
 python run_all_limits.py $datacardFolder
 python plotLimitsPerCategory.py -limitfolder $datacardFolder 
 python printLimitLatexTable.py $datacardFolder False unblind

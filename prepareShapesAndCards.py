@@ -459,6 +459,22 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
                 elif systematic_only_for_SMtt and not systematic_only_for_Sig:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
+                    #if 'hdamp' in systematic:
+                    #    for i in xrange(len(discriminant)):
+                    #        if 'b2j3' in discriminant[i][1]:
+                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttlf'], 1.00))
+                    #            cb.cp().AddSyst(cb, systematic, 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb','ttcc'], 1.05))
+                    #        elif 'b2j4' in discriminant[i][1]:
+                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], smTTlist, 1.00))
+                    #        elif 'b3j3' in discriminant[i][1]:
+                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttlf'], 1.00))
+                    #            cb.cp().AddSyst(cb, systematic, 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb','ttcc'], 1.05))
+                    #        elif 'b3j4' in discriminant[i][1]:
+                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], smTTlist, 1.00))
+                    #        elif 'b4j4' in discriminant[i][1]:
+                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.00))
+                    #            cb.cp().AddSyst(cb, systematic, 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc','ttlf'], 1.05))
+                    #else: cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
                 elif not systematic_only_for_SMtt and systematic_only_for_Sig:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')([signal], 1.00))
                 else:
