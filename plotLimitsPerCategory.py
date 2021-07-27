@@ -22,6 +22,7 @@ parser.add_argument('-unblind', dest='unblind', type=str2bool, default="True", h
 parser.add_argument('-lumi', dest='lumi', type=str, default='41.5', help='Luminosity to display on the plot.')
 parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
 parser.add_argument('-printlimits', dest='printlimits', type=str2bool, default="False", help='Print b2j3 and b2j4 to check run2 combination')
+parser.add_argument('-pas', dest='pas', type=bool, default=False, help='To present Preliminary label')
 
 options = parser.parse_args()
 postfix = ''
@@ -93,7 +94,7 @@ def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms=
     latexLabel.SetTextSize(0.75 * canvas.GetTopMargin())
     latexLabel.DrawLatex(0.13, 0.96, "CMS")
     latexLabel.SetTextFont(52) # helvetica italics
-    latexLabel.DrawLatex(0.22, 0.96, cms)
+    if options.pas: latexLabel.DrawLatex(0.22, 0.96, cms)
 
 
 def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
@@ -186,8 +187,12 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     add_labels(canvas, signal_name)
     th1_for_canvas_layout.Draw('sameaxis')#reprint ticks on top of rectangles
     if doLogy: canvas.SetLogy()
-    canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.pdf'))
-    canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.png'))
+    if options.pas:
+      canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_pas.pdf'))
+      canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_pas.png'))
+    else:
+      canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.pdf'))
+      canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits.png'))
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.pdf'))
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
     if options.printlimits:

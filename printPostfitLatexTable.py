@@ -38,15 +38,15 @@ for coupling in couplings:
 
 
     table = """
-    \\begin{{tabular}}{{|l|c|c|c|c|c|}}
+    \\begin{{tabular}}{{lccccc}}
       \hline
       Category  & b2j3 & b2j4 & b3j3 & b3j4 & b4j4 \\\\ \hline
-      Data      & {b2j3data:8.0f} & {b2j4data:8.0f} & {b3j3data:8.0f} & {b3j4data:8.0f} & {b4j4data:8.0f} \\\\ \hline
+      Data      & {b2j3data:8.0f} & {b2j4data:8.0f} & {b3j3data:8.0f} & {b3j4data:8.0f} & {b4j4data:8.0f} \\\\ [1mm]
       \\ttbb     & {b2j3ttbb:8.0f} $\pm$ {b2j3ttbbUnc:5.0f} & {b2j4ttbb:8.0f} $\pm$ {b2j4ttbbUnc:5.0f} & {b3j3ttbb:8.0f} $\pm$ {b3j3ttbbUnc:5.0f} & {b3j4ttbb:8.0f} $\pm$ {b3j4ttbbUnc:5.0f} & {b4j4ttbb:8.0f} $\pm$ {b4j4ttbbUnc:5.0f} \\\\
       \\ttcc     & {b2j3ttcc:8.0f} $\pm$ {b2j3ttccUnc:5.0f} & {b2j4ttcc:8.0f} $\pm$ {b2j4ttccUnc:5.0f} & {b3j3ttcc:8.0f} $\pm$ {b3j3ttccUnc:5.0f} & {b3j4ttcc:8.0f} $\pm$ {b3j4ttccUnc:5.0f} & {b4j4ttcc:8.0f} $\pm$ {b4j4ttccUnc:5.0f} \\\\
       \\ttbar LF & {b2j3ttlf:8.0f} $\pm$ {b2j3ttlfUnc:5.0f} & {b2j4ttlf:8.0f} $\pm$ {b2j4ttlfUnc:5.0f} & {b3j3ttlf:8.0f} $\pm$ {b3j3ttlfUnc:5.0f} & {b3j4ttlf:8.0f} $\pm$ {b3j4ttlfUnc:5.0f} & {b4j4ttlf:8.0f} $\pm$ {b4j4ttlfUnc:5.0f} \\\\
       Other     & {b2j3other:8.0f} $\pm$ {b2j3otherUnc:5.0f} & {b2j4other:8.0f} $\pm$ {b2j4otherUnc:5.0f} & {b3j3other:8.0f} $\pm$ {b3j3otherUnc:5.0f} & {b3j4other:8.0f} $\pm$ {b3j4otherUnc:5.0f} & {b4j4other:8.0f} $\pm$ {b4j4otherUnc:5.0f} \\\\
-      QCD       & {b2j3qcd:8.0f} $\pm$ {b2j3qcdUnc:5.0f} & {b2j4qcd:>20} & {b3j3qcd:>20} & {b3j4qcd:>20} & {b4j4qcd:>20} \\\\ \hline
+      QCD       & {b2j3qcd:8.0f} $\pm$ {b2j3qcdUnc:5.0f} & {b2j4qcd:>20} & {b3j3qcd:>20} & {b3j4qcd:>20} & {b4j4qcd:>20} \\\\ [1mm]
       Total     & {b2j3total:8.0f} $\pm$ {b2j3totalUnc:5.0f} & {b2j4total:8.0f} $\pm$ {b2j4totalUnc:5.0f} & {b3j3total:8.0f} $\pm$ {b3j3totalUnc:5.0f} & {b3j4total:8.0f} $\pm$ {b3j4totalUnc:5.0f} & {b4j4total:8.0f} $\pm$ {b4j4totalUnc:5.0f} \\\\ \hline
    \end{{tabular}}
     """.format(

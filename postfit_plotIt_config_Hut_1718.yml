@@ -1,9 +1,9 @@
 configuration:
   width: 450
   height: 450
-  luminosity-label: '101.3 fb^{-1} at #sqrt{s} = 13 TeV'
+  luminosity-label: '101 fb^{-1} at #sqrt{s} = 13 TeV'
   experiment: " CMS"
-  extra-label: "Preliminary"
+  #extra-label: "Preliminary"
   root: './postfit_shapes_FCNC_Hut_Discriminant_DNN_Hut_1718_all_forPlotIt'
   luminosity: 1
   luminosity-error: 0

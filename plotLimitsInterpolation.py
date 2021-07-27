@@ -17,7 +17,8 @@ parser = argparse.ArgumentParser(description='Store limits inside a json file an
 parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where Hct and Hut combine output folders are stored')
 parser.add_argument('-category', dest='category', type=str, default='all', help='Bin name to draw. all, 1718_all, etc.')
 parser.add_argument('-unblind', dest='unblind', type=str2bool, default="True", help='Display or not the observed limit.')
-parser.add_argument('-lumi', dest='lumi', type=str, default='137.2', help='Luminosity to display on the plot.')
+parser.add_argument('-lumi', dest='lumi', type=str, default='137', help='Luminosity to display on the plot.')
+parser.add_argument('-pas', dest='pas', type=bool, default=False, help='To present Preliminary label')
 
 options = parser.parse_args()
 
@@ -191,7 +192,8 @@ latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.DrawLatex(0.13, 0.96, "CMS")
 #latexLabel.DrawLatex(0.14, 0.96, "CMS")
 latexLabel.SetTextFont(52) # helvetica italics
-latexLabel.DrawLatex(0.22, 0.96, progress)
+if options.pas: latexLabel.DrawLatex(0.22, 0.96, progress)
+latexLabel.Clear()
 
 
 # Legend
@@ -221,7 +223,8 @@ g_coup_exp.Draw("c same")
 gPad.RedrawAxis();
 legend.Draw('same')
 c1.cd()
-c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+".pdf")
+if options.pas: c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+"_pas.pdf")
+else:           c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+".pdf")
 
 #####################################################
 c2 = TCanvas("c2","extrapolate",450,400)
@@ -302,7 +305,8 @@ latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.DrawLatex(0.13, 0.96, "CMS")
 #latexLabel.DrawLatex(0.14, 0.96, "CMS")
 latexLabel.SetTextFont(52) # helvetica italics
-latexLabel.DrawLatex(0.22, 0.96, progress)
+if options.pas: latexLabel.DrawLatex(0.22, 0.96, progress)
+latexLabel.Clear()
 
 
 # Draw
@@ -318,4 +322,5 @@ g_br_exp.Draw("c same")
 gPad.RedrawAxis();
 legend.Draw('same')
 
-c2.Print(options.limitfolder + "/interpolated_br"+postfix+".pdf")
+if options.pas: c2.Print(options.limitfolder + "/interpolated_br"+postfix+"_pas.pdf")
+else:           c2.Print(options.limitfolder + "/interpolated_br"+postfix+".pdf")
