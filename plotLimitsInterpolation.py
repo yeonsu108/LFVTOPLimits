@@ -183,21 +183,22 @@ progress = 'Preliminary'
 latexLabel = TLatex()
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.SetNDC()
-latexLabel.SetTextFont(42) # helvetica
-latexLabel.DrawLatex(0.69, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
-latexLabel.SetTextFont(61) # helvetica bold face
-#latexLabel.SetTextSize(1.15 * c1.GetTopMargin())
-#latexLabel.DrawLatex(0.78, 0.85, 'Hct')
-latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.13, 0.96, "CMS")
-#latexLabel.DrawLatex(0.14, 0.96, "CMS")
-latexLabel.SetTextFont(52) # helvetica italics
-if options.pas: latexLabel.DrawLatex(0.22, 0.96, progress)
+#Lumi
+latexLabel.SetTextFont(62) # helvetica
+latexLabel.DrawLatex(0.72, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
+#CMS
+latexLabel.SetTextFont(62) # helvetica bold face
+latexLabel.SetTextSize(1.00 * c1.GetTopMargin())
+latexLabel.DrawLatex(0.17, 0.87, "CMS")
+if options.pas:
+    latexLabel.SetTextFont(52) # helvetica italics
+    latexLabel.SetTextSize(0.7 * c1.GetTopMargin())
+    latexLabel.DrawLatex(0.28, 0.87, progress)
 latexLabel.Clear()
 
 
 # Legend
-legend = TLegend(0.55, 0.75, 0.9, 0.9, "95% CL upper limits")
+legend = TLegend(0.5, 0.75, 0.9, 0.91, "95% CL upper limits")
 legend.SetTextFont(42)
 legend.SetTextSize(0.035)
 legend.SetFillStyle(0)
@@ -296,16 +297,17 @@ progress = 'Preliminary'
 latexLabel = TLatex()
 latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
 latexLabel.SetNDC()
-latexLabel.SetTextFont(42) # helvetica
-latexLabel.DrawLatex(0.69, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
-latexLabel.SetTextFont(61) # helvetica bold face
-#latexLabel.SetTextSize(1.15 * c1.GetTopMargin())
-#latexLabel.DrawLatex(0.78, 0.85, 'Hct')
-latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.13, 0.96, "CMS")
-#latexLabel.DrawLatex(0.14, 0.96, "CMS")
-latexLabel.SetTextFont(52) # helvetica italics
-if options.pas: latexLabel.DrawLatex(0.22, 0.96, progress)
+#Lumi
+latexLabel.SetTextFont(62) # helvetica
+latexLabel.DrawLatex(0.72, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
+#CMS
+latexLabel.SetTextFont(62) # helvetica bold face
+latexLabel.SetTextSize(1.00 * c1.GetTopMargin())
+latexLabel.DrawLatex(0.17, 0.87, "CMS")
+if options.pas:
+    latexLabel.SetTextFont(52) # helvetica italics
+    latexLabel.SetTextSize(0.7 * c1.GetTopMargin())
+    latexLabel.DrawLatex(0.28, 0.87, progress)
 latexLabel.Clear()
 
 

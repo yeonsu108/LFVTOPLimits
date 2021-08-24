@@ -86,18 +86,24 @@ def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms=
     latexLabel = ROOT.TLatex()
     latexLabel.SetTextSize(0.75 * canvas.GetTopMargin())
     latexLabel.SetNDC()
-    latexLabel.SetTextFont(42) # helvetica
+    #Lumi
+    latexLabel.SetTextFont(62) # helvetica
     latexLabel.DrawLatex(0.69, 0.96, lumi + ' fb^{-1} (%s TeV)'%energy)
-    latexLabel.SetTextFont(61) # helvetica bold face
-    latexLabel.SetTextSize(1.15 * canvas.GetTopMargin())
-    latexLabel.DrawLatex(0.78, 0.85, additional_label)
-    latexLabel.SetTextSize(0.75 * canvas.GetTopMargin())
-    latexLabel.DrawLatex(0.13, 0.96, "CMS")
-    latexLabel.SetTextFont(52) # helvetica italics
-    if options.pas: latexLabel.DrawLatex(0.22, 0.96, cms)
+    #Channel
+    latexLabel.SetTextFont(41) # helvetica bold face
+    latexLabel.SetTextSize(0.9 * canvas.GetTopMargin())
+    latexLabel.DrawLatex(0.17, 0.81, additional_label)
+    #CMS
+    latexLabel.SetTextFont(62) # helvetica
+    latexLabel.SetTextSize(1.00 * canvas.GetTopMargin())
+    latexLabel.DrawLatex(0.17, 0.87, "CMS")
+    if options.pas:
+        latexLabel.SetTextFont(52) # helvetica italics
+        latexLabel.SetTextSize(0.7 * canvas.GetTopMargin())
+        latexLabel.DrawLatex(0.28, 0.87, cms)
 
 
-def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
+def plot_limits(signal_name, limit_dict, legend_position=[0.5, 0.75, 0.9, 0.91]):
     cat_order = options.category_order[:] #copy by value not to modify original options
     cat_label = options.category_labels[:]
     if options.removeHutb4j4 and signal_name == 'Hut':
@@ -175,13 +181,14 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.2, 0.7, 0.65, 0.9]):
     # Legend
     legend = ROOT.TLegend(legend_position[0], legend_position[1], legend_position[2], legend_position[3], "95% CL upper limits")
     legend.SetTextFont(42)
+    legend.SetTextSize(0.03)
     legend.SetFillStyle(0)
     legend.SetFillColor(ROOT.kWhite)
     legend.SetLineColor(ROOT.kWhite)
     legend.SetShadowColor(ROOT.kWhite)
     legend.AddEntry(expected_lines[limit_dict.keys()[0]], 'Expected', 'l')
-    legend.AddEntry(one_sigma_rectangles[limit_dict.keys()[0]], 'Expected #pm 1 std. deviations', 'f')
-    legend.AddEntry(two_sigma_rectangles[limit_dict.keys()[0]], 'Expected #pm 2 std. deviations', 'f')
+    legend.AddEntry(one_sigma_rectangles[limit_dict.keys()[0]], 'Expected #pm 1 std. dev.', 'f')
+    legend.AddEntry(two_sigma_rectangles[limit_dict.keys()[0]], 'Expected #pm 2 std. dev.', 'f')
     legend.AddEntry(observed_lines[limit_dict.keys()[0]], 'Observed', 'l')
     legend.Draw('same')
     add_labels(canvas, signal_name)
