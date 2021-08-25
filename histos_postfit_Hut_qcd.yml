@@ -11,72 +11,9 @@
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
-      - position: [0.778, 0.8]
-        text: 'b2j3'
-        size: 18
-##  signal-normalize-data: false
-#'DNN_Hut_b3j3':
-#  y-axis: "Events"
-#  y-axis-format: "%1% / %2$.2f"
-#  save-extensions: ['pdf', 'png']
-#  for-yields: true
-#  yields-table-order: 1
-#  yields-title: '$b3j3$'
-#  x-axis: 'BDT Score'
-#  ratio-y-axis-range: [0.8, 1.2]
-#  ratio-y-axis-auto-range: true
-#  post-fit: true
-#  labels:
-#      - position: [0.778, 0.8]
-#        text: 'b3j3'
-#        size: 18
-##  signal-normalize-data: false
-#
-#'DNN_Hut_b2j4':
-#  y-axis: "Events"
-#  y-axis-format: "%1% / %2$.2f"
-#  save-extensions: ['pdf', 'png']
-#  for-yields: true
-#  yields-table-order: 2
-#  yields-title: '$b2j4$'
-#  x-axis: 'BDT Score'
-#  ratio-y-axis-range: [0.8, 1.2]
-#  ratio-y-axis-auto-range: true
-#  post-fit: true
-#  labels:
-#      - position: [0.778, 0.8]
-#        text: 'b2j4'
-#        size: 18
-##  signal-normalize-data: false
-#'DNN_Hut_b3j4':
-#  y-axis: "Events"
-#  y-axis-format: "%1% / %2$.2f"
-#  save-extensions: ['pdf', 'png']
-#  for-yields: true
-#  yields-table-order: 3
-#  yields-title: '$b3j4$'
-#  x-axis: 'BDT Score'
-#  ratio-y-axis-range: [0.8, 1.2]
-#  ratio-y-axis-auto-range: true
-#  post-fit: true
-#  labels:
-#      - position: [0.778, 0.8]
-#        text: 'b3j4'
-#        size: 18
-##  signal-normalize-data: false
-#'DNN_Hut_b4j4':
-#  y-axis: "Events"
-#  y-axis-format: "%1% / %2$.2f"
-#  save-extensions: ['pdf', 'png']
-#  for-yields: true
-#  yields-table-order: 4
-#  yields-title: '$b4j4$'
-#  x-axis: 'BDT Score'
-#  ratio-y-axis-range: [0.8, 1.2]
-#  ratio-y-axis-auto-range: true
-#  post-fit: true
-#  labels:
-#      - position: [0.778, 0.8]
-#        text: 'b4j4'
-#        size: 18
-##  signal-normalize-data: false
+    #- {text: 'b2j3', position: [0.778, 0.8], size: 18}
+    - {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
+  #change-legend: true
+  #legend-name-org: 'Hut'
+  #legend-name-new: 'Hut (#kappa_{Hut}=1)#times 6.62'
+#  signal-normalize-data: false

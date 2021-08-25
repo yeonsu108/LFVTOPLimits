@@ -11,9 +11,8 @@
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
-      - position: [0.778, 0.8]
-        text: 'b2j3'
-        size: 18
+    #- {text: 'b2j3', position: [0.778, 0.8] size: 18}
+    - {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hct_b3j3':
@@ -29,9 +28,8 @@
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
-      - position: [0.778, 0.8]
-        text: 'b3j3'
-        size: 18
+    #- {text: 'b3j3', position: [0.778, 0.8] size: 18}
+    - {text: 'b3j3', position: [0.2, 0.832], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hct_b2j4':
@@ -47,9 +45,8 @@
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
-      - position: [0.778, 0.8]
-        text: 'b2j4'
-        size: 18
+    #- {text: 'b2j4', position: [0.778, 0.8] size: 18}
+    - {text: 'b2j4', position: [0.2, 0.832], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hct_b3j4':
@@ -65,9 +62,8 @@
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
-      - position: [0.778, 0.8]
-        text: 'b3j4'
-        size: 18
+    #- {text: 'b3j4', position: [0.778, 0.8] size: 18}
+    - {text: 'b3j4', position: [0.2, 0.832], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hct_b4j4':
@@ -83,7 +79,6 @@
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
-      - position: [0.778, 0.8]
-        text: 'b4j4'
-        size: 18
+    #- {text: 'b4j4', position: [0.778, 0.8] size: 18}
+    - {text: 'b4j4', position: [0.2, 0.832], size: 18, font: 44}
 #  signal-normalize-data: false
