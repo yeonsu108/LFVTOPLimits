@@ -47,6 +47,7 @@ print "Detected channels: ", channels
 # Naming is 'category/bkg_name'
 
 processs = set()
+total_unc = ['ttbb_postfit_histos__totalup','ttbb_postfit_histos__totaldown']
 
 #for proc in file.Get('%s_prefit' % channels[0]).GetListOfKeys():
 for proc in file.Get('%sb2j3_prefit' % channels[0][:-4]).GetListOfKeys():
@@ -94,6 +95,37 @@ for process in processs:
         except: pass
 
     plot_file.Close()
+
+    if 'TotalBkg' in process:
+        for t in total_unc:
+            print "Process: ", str(t.split('__')[1])
+
+            output_filename = "%s.root" % (t)
+            plot_file = TFile.Open(os.path.join(output_dir, output_filename), 'recreate')
+            for channel in channels:
+                print "    Channel : ", channel
+                if 'up' in t:
+                    tot = file.Get('%s_postfit/%s' % (channel, process))
+                    nom = file.Get('%s_postfit/%s' % (channel, 'ttbb'))
+                    var = tot.Clone()
+                    var.SetName(channel)
+                    shift_hist(var, 1)
+                    var.Add(tot, -1)
+                    var.Add(nom, 1)
+                    var.Write()
+                elif 'down' in t:
+                    tot = file.Get('%s_postfit/%s' % (channel, process))
+                    nom = file.Get('%s_postfit/%s' % (channel, 'ttbb'))
+                    var = tot.Clone()
+                    var.SetName(channel)
+                    shift_hist(var, -1)
+                    var.Add(tot, -1)
+                    var.Add(nom, 1)
+                    var.Write()
+
+            plot_file.Close()
+
+
 
 if options.signals:
     f = TFile.Open(options.signals)

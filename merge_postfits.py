@@ -17,7 +17,7 @@ for fname in files:
     histos = list(dict.fromkeys([i.GetName()[10:] for i in f_org.GetListOfKeys()]))
     histos = [x for x in histos if not '__' in x]
     year_list = [years[i:i+2] for i in range(0, len(years), 2)]
-    if 'data' not in fname: vars = ['', '__postfitup', '__postfitdown']
+    if not any(i in fname for i in ['data', 'totalup', 'totaldown']): vars = ['', '__postfitup', '__postfitdown']
     else: vars = ['']
  
     hist_list = []

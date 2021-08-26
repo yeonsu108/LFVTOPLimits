@@ -26,7 +26,8 @@ files:
   include: ['postfit_file_Hut_qcd.yml']
 
 systematics:
-  - postfit
+  #- postfit
+  - total: {type: shape, on: 'ttbb_postfit_histos.root'}
 
 plots:
   include: ['histos_postfit_Hut_qcd.yml']
