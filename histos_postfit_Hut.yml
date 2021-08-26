@@ -7,7 +7,7 @@
   yields-table-order: 1
   yields-title: '$b3j3$'
   x-axis: 'BDT Score'
-  ratio-y-axis-range: [0.8, 1.2]
+  ratio-y-axis-range: [0.945, 1.055]
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
@@ -27,7 +27,7 @@
   yields-table-order: 2
   yields-title: '$b2j4$'
   x-axis: 'BDT Score'
-  ratio-y-axis-range: [0.8, 1.2]
+  ratio-y-axis-range: [0.945, 1.055]
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
@@ -47,7 +47,7 @@
   yields-table-order: 3
   yields-title: '$b3j4$'
   x-axis: 'BDT Score'
-  ratio-y-axis-range: [0.8, 1.2]
+  ratio-y-axis-range: [0.945, 1.055]
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
@@ -67,8 +67,7 @@
   yields-table-order: 4
   yields-title: '$b4j4$'
   x-axis: 'BDT Score'
-  #ratio-y-axis-range: [0.8, 1.2]
-  ratio-y-axis-range: [0.6, 1.4]
+  ratio-y-axis-range: [0.945, 1.055]
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:

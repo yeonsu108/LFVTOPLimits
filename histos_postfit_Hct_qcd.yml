@@ -7,7 +7,7 @@
   yields-table-order: 0
   yields-title: '$b2j3$'
   x-axis: 'BDT Score'
-  ratio-y-axis-range: [0.8, 1.2]
+  ratio-y-axis-range: [0.945, 1.055]
   ratio-y-axis-auto-range: true
   post-fit: true
   labels:
