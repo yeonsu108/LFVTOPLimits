@@ -82,13 +82,14 @@ Hct_one_dn = Hct_limits[options.category]['one_sigma'][0]
 Hct_two_up = Hct_limits[options.category]['two_sigma'][1]
 Hct_two_dn = Hct_limits[options.category]['two_sigma'][0]
 
-def coupl(Hut_limit, Hct_limit, pos, arrX, arrY):
+def coupl(Hut_limit, Hct_limit, pos, arrX, arrY, to_print):
   if pos <= sqrt(Hut_limit/signal_Xsec_couplingOneForBR['Hut']):
     coupling = sqrt(Hct_limit/signal_Xsec_couplingOneForBR['Hct']) * sqrt(1-pow(pos/sqrt(Hut_limit/signal_Xsec_couplingOneForBR['Hut']), 2))
     arrX.append(pos)
     arrY.append(coupling)
+    if to_print: print pos, coupling
 
-def br(Hut_limit, Hct_limit, pos, arrX, arrY):
+def br(Hut_limit, Hct_limit, pos, arrX, arrY, to_print):
   if 0.19 * pow(pos, 2) / 1.32158 <= 0.19 * Hut_limit / (signal_Xsec_couplingOneForBR['Hut'] * 1.32158):
     coupling = sqrt(Hct_limit/signal_Xsec_couplingOneForBR['Hct']) * sqrt(1-pow(pos/sqrt(Hut_limit/signal_Xsec_couplingOneForBR['Hut']), 2))
     br_x = 0.19 * pow(pos, 2) / 1.32158
@@ -97,23 +98,28 @@ def br(Hut_limit, Hct_limit, pos, arrX, arrY):
     arrY.append(100 * br_y)
     #arrX.append(br_x)
     #arrY.append(br_y)
+    if to_print: print pos, ' : ', 100 * br_x, 100 * br_y
 
 
 for i in xrange(20000):
   x_pos = 0.00001 * i
-  coupl(Hut_exp, Hct_exp, x_pos, x_coup_exp, y_coup_exp)
-  coupl(Hut_obs, Hct_obs, x_pos, x_coup_obs, y_coup_obs)
-  coupl(Hut_one_up, Hct_one_up, x_pos, x_coup_one_up, y_coup_one_up)
-  coupl(Hut_one_dn, Hct_one_dn, x_pos, x_coup_one_dn, y_coup_one_dn)
-  coupl(Hut_two_up, Hct_two_up, x_pos, x_coup_two_up, y_coup_two_up)
-  coupl(Hut_two_dn, Hct_two_dn, x_pos, x_coup_two_dn, y_coup_two_dn)
 
-  br(Hut_exp, Hct_exp, x_pos, x_br_exp, y_br_exp)
-  br(Hut_obs, Hct_obs, x_pos, x_br_obs, y_br_obs)
-  br(Hut_one_up, Hct_one_up, x_pos, x_br_one_up, y_br_one_up)
-  br(Hut_one_dn, Hct_one_dn, x_pos, x_br_one_dn, y_br_one_dn)
-  br(Hut_two_up, Hct_two_up, x_pos, x_br_two_up, y_br_two_up)
-  br(Hut_two_dn, Hct_two_dn, x_pos, x_br_two_dn, y_br_two_dn)
+  to_print = False
+  #if (x_pos * 400).is_integer(): to_print = True
+
+  coupl(Hut_exp, Hct_exp, x_pos, x_coup_exp, y_coup_exp, to_print)
+  coupl(Hut_obs, Hct_obs, x_pos, x_coup_obs, y_coup_obs, to_print)
+  coupl(Hut_one_up, Hct_one_up, x_pos, x_coup_one_up, y_coup_one_up, to_print)
+  coupl(Hut_one_dn, Hct_one_dn, x_pos, x_coup_one_dn, y_coup_one_dn, to_print)
+  coupl(Hut_two_up, Hct_two_up, x_pos, x_coup_two_up, y_coup_two_up, to_print)
+  coupl(Hut_two_dn, Hct_two_dn, x_pos, x_coup_two_dn, y_coup_two_dn, to_print)
+
+  br(Hut_exp, Hct_exp, x_pos, x_br_exp, y_br_exp, to_print)
+  br(Hut_obs, Hct_obs, x_pos, x_br_obs, y_br_obs, to_print)
+  br(Hut_one_up, Hct_one_up, x_pos, x_br_one_up, y_br_one_up, to_print)
+  br(Hut_one_dn, Hct_one_dn, x_pos, x_br_one_dn, y_br_one_dn, to_print)
+  br(Hut_two_up, Hct_two_up, x_pos, x_br_two_up, y_br_two_up, to_print)
+  br(Hut_two_dn, Hct_two_dn, x_pos, x_br_two_dn, y_br_two_dn, to_print)
 
 
 # Create Canvas
@@ -126,6 +132,10 @@ g_coup_exp = TGraph(len(x_coup_exp), x_coup_exp, y_coup_exp)
 g_coup_obs = TGraph(len(x_coup_obs), x_coup_obs, y_coup_obs)
 print 'Hut obs kappa ',  x_coup_obs[-1], 'Hct obs kappa', y_coup_obs[0]
 print 'Hut exp kappa ',  x_coup_exp[-1], 'Hct exp kappa', y_coup_exp[0]
+print 'Hut exp +1sig kappa ',  x_coup_one_up[-1], 'Hct exp kappa', y_coup_one_up[0]
+print 'Hut exp -1sig kappa ',  x_coup_one_dn[-1], 'Hct exp kappa', y_coup_one_dn[0]
+print 'Hut exp +2sig kappa ',  x_coup_two_up[-1], 'Hct exp kappa', y_coup_two_up[0]
+print 'Hut exp -2sig kappa ',  x_coup_two_dn[-1], 'Hct exp kappa', y_coup_two_dn[0]
 #g_coup_one_up = TGraph(len(x_coup_one_up), x_coup_one_up, y_coup_one_up)
 #g_coup_one_dn = TGraph(len(x_coup_one_dn), x_coup_one_dn, y_coup_one_dn)
 #g_coup_two_up = TGraph(len(x_coup_two_up), x_coup_two_up, y_coup_two_up)

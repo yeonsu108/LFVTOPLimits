@@ -215,6 +215,8 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.5, 0.75, 0.9, 0.91])
       print "Expected limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
       print "Expected limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
       print "Expected limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Expected limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['two_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      print "Expected limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['two_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
 if not signal_folders:

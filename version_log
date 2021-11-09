@@ -80,9 +80,10 @@
     - 2017v3: 0101010103 - new reco DNN for b4j4
     - 2017v4: 0102010203 - remove inputs from b3j3, b3j4 + new reco DNN for b4j4
     - 2018v5: 0104010203 - remove inputs from b3j3 (+jet12dr), b3j4 + new reco DNN for b4j4,
-    - 2017v6: 0102010203 - v4 + ttbbscaled. ttbb/cc unc updated (uncorr. 2016, lower magnitude(1.3) in 2017-8) (2016: uncUpdate)
+    - 2017v6: 0102010203 - v4 + ttbbscaled. ttbb/cc unc updated (uncorr. 2016, lower magnitude(1.3) in 2017-8) (2016: uncUpdate) (post_process_v2)
       - ttbbUnc: lower ttbb unc concerning error of scaling factor (2016: uncUpdate2)
       - uncUpdate2 (2016): uncorr 16 and 17/18 ttbb (but corr for ttcc!)
       - combination:
         - ttbbUnc_smoothTuneHdamp: uncUpdate + ttbbUnc_smoothTuneHdamp + ttbbUnc_smoothTuneHdamp
         - ttbbUnc_smoothTuneHdamp2: uncUpdate2 + ttbbUnc_smoothTuneHdamp + ttbbUnc_smoothTuneHdamp
+    - 2017v7: 0102010203 - v6, but no rebin (post_process_v2_norebin)

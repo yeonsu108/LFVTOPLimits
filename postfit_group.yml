@@ -24,7 +24,7 @@ Gttlf:
 
 Gother:
   fill-color: '#ff9933'
-  legend: 'Other bkg'
+  legend: 'Other bkg.'
 
 Gqcd:
   fill-color: '#d0cfd4'
