@@ -124,6 +124,7 @@ for i in xrange(20000):
 
 # Create Canvas
 c1 = TCanvas("c1","extrapolate",450,400)
+c1.SetLeftMargin(0.15)
 p1 = c1.DrawFrame(0, 0.001, 0.15, 0.15)
 
 
@@ -156,7 +157,7 @@ for i in xrange(len(x_coup_two_up)):
 
 # Change style
 g_coup_exp.SetLineWidth(3)
-g_coup_exp.SetLineStyle(7)
+g_coup_exp.SetLineStyle(2)
 g_coup_obs.SetLineWidth(3)
 g_coup_obs.SetLineColor(2)
 if not options.unblind:
@@ -167,35 +168,35 @@ if not options.unblind:
 #g_coup_two_dn.SetLineWidth(5)
 g_coup_one_band.SetFillColor(3)
 g_coup_one_band.SetLineColor(3)
-g_coup_two_band.SetFillColor(5)
-g_coup_two_band.SetLineColor(5)
+g_coup_two_band.SetFillColor(kOrange)
+g_coup_two_band.SetLineColor(kOrange)
 
 
 # Axis style
 xAxis = p1.GetXaxis()
 xAxis.SetTitle("#kappa_{Hut}")
-xAxis.SetLabelSize(0.04)
+xAxis.SetLabelSize(0.05)
 xAxis.SetLabelFont(42)
 xAxis.SetTitleFont(42)
-xAxis.SetTitleOffset(1.0)
-xAxis.SetTitleSize(0.05)
+xAxis.SetTitleOffset(0.9)
+xAxis.SetTitleSize(0.07)
 yAxis = p1.GetYaxis()
 yAxis.SetTitle("#kappa_{Hct}")
-yAxis.SetLabelSize(0.04)
+yAxis.SetLabelSize(0.05)
 yAxis.SetLabelFont(42)
 yAxis.SetTitleFont(42)
-yAxis.SetTitleOffset(1.3)
-yAxis.SetTitleSize(0.05)
+yAxis.SetTitleOffset(1.1)
+yAxis.SetTitleSize(0.07)
 
 
 # Some text
 progress = 'Preliminary'
 latexLabel = TLatex()
-latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
+latexLabel.SetTextSize(0.8 * c1.GetTopMargin())
 latexLabel.SetNDC()
 #Lumi
 latexLabel.SetTextFont(62) # helvetica
-latexLabel.DrawLatex(0.72, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
+latexLabel.DrawLatex(0.71, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
 #CMS
 latexLabel.SetTextFont(62) # helvetica bold face
 latexLabel.SetTextSize(1.00 * c1.GetTopMargin())
@@ -208,7 +209,7 @@ latexLabel.Clear()
 
 
 # Legend
-legend = TLegend(0.5, 0.75, 0.9, 0.91, "95% CL upper limits")
+legend = TLegend(0.5, 0.73, 0.9, 0.91, "95% CL upper limits")
 legend.SetTextFont(42)
 legend.SetTextSize(0.035)
 legend.SetFillStyle(0)
@@ -239,6 +240,7 @@ else:           c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+
 
 #####################################################
 c2 = TCanvas("c2","extrapolate",450,400)
+c2.SetLeftMargin(0.15)
 p2 = c2.DrawFrame(0, 0.001, 0.25, 0.25)
 #p2 = c2.DrawFrame(0, 0.00001, 0.0021, 0.0017)
 #TGaxis.SetMaxDigits(2)
@@ -279,37 +281,37 @@ if not options.unblind:
 #g_br_two_dn.SetLineWidth(5)
 g_br_one_band.SetFillColor(3)
 g_br_one_band.SetLineColor(3)
-g_br_two_band.SetFillColor(5)
-g_br_two_band.SetLineColor(5)
+g_br_two_band.SetFillColor(kOrange)
+g_br_two_band.SetLineColor(kOrange)
 
 
 # Axis style
 xAxis = p2.GetXaxis()
 #xAxis.SetTitle("BR_{Hut}[%]")
 xAxis.SetTitle("B(t#rightarrow Hu) (%)")
-xAxis.SetLabelSize(0.04)
+xAxis.SetLabelSize(0.05)
 xAxis.SetLabelFont(42)
 xAxis.SetTitleFont(42)
 xAxis.SetTitleOffset(1.0)
-xAxis.SetTitleSize(0.05)
+xAxis.SetTitleSize(0.055)
 yAxis = p2.GetYaxis()
 #yAxis.SetTitle("BR_{Hct}[%]")
 yAxis.SetTitle("B(t#rightarrow Hc) (%)")
-yAxis.SetLabelSize(0.04)
+yAxis.SetLabelSize(0.05)
 yAxis.SetLabelFont(42)
 yAxis.SetTitleFont(42)
 yAxis.SetTitleOffset(1.3)
-yAxis.SetTitleSize(0.05)
+yAxis.SetTitleSize(0.055)
 
 
 # Some text
 progress = 'Preliminary'
 latexLabel = TLatex()
-latexLabel.SetTextSize(0.75 * c1.GetTopMargin())
+latexLabel.SetTextSize(0.8 * c1.GetTopMargin())
 latexLabel.SetNDC()
 #Lumi
 latexLabel.SetTextFont(62) # helvetica
-latexLabel.DrawLatex(0.72, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
+latexLabel.DrawLatex(0.71, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
 #CMS
 latexLabel.SetTextFont(62) # helvetica bold face
 latexLabel.SetTextSize(1.00 * c1.GetTopMargin())
