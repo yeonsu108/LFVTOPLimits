@@ -55,7 +55,7 @@ for coupling in couplings:
         b2j3ttcc=nums['b2j3ttcc'], b2j4ttcc=nums['b2j4ttcc'], b3j3ttcc=nums['b3j3ttcc'], b3j4ttcc=nums['b3j4ttcc'], b4j4ttcc=nums['b4j4ttcc'],
         b2j3ttlf=nums['b2j3ttlf'], b2j4ttlf=nums['b2j4ttlf'], b3j3ttlf=nums['b3j3ttlf'], b3j4ttlf=nums['b3j4ttlf'], b4j4ttlf=nums['b4j4ttlf'],
         b2j3other=nums['b2j3other'], b2j4other=nums['b2j4other'], b3j3other=nums['b3j3other'], b3j4other=nums['b3j4other'], b4j4other=nums['b4j4other'],
-        b2j3qcd=nums['b2j3qcd'], b2j4qcd='-', b3j3qcd='-', b3j4qcd='-', b4j4qcd='-',
+        b2j3qcd=nums['b2j3qcd'], b2j4qcd='\\NA', b3j3qcd='\\NA', b3j4qcd='\\NA', b4j4qcd='\\NA',
         b2j3total=nums['b2j3TotalBkg'], b2j4total=nums['b2j4TotalBkg'], b3j3total=nums['b3j3TotalBkg'], b3j4total=nums['b3j4TotalBkg'], b4j4total=nums['b4j4TotalBkg'],
         b2j3ttbbUnc=nums['b2j3ttbbUnc'], b2j4ttbbUnc=nums['b2j4ttbbUnc'], b3j3ttbbUnc=nums['b3j3ttbbUnc'], b3j4ttbbUnc=nums['b3j4ttbbUnc'], b4j4ttbbUnc=nums['b4j4ttbbUnc'],
         b2j3ttccUnc=nums['b2j3ttccUnc'], b2j4ttccUnc=nums['b2j4ttccUnc'], b3j3ttccUnc=nums['b3j3ttccUnc'], b3j4ttccUnc=nums['b3j4ttccUnc'], b4j4ttccUnc=nums['b4j4ttccUnc'],

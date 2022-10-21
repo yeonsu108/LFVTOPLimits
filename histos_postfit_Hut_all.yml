@@ -12,7 +12,8 @@
   post-fit: true
   labels:
     #- {text: 'b2j3', position: [0.778, 0.8] size: 18}
-    - {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
+    #- {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
+    - {text: 'b2j3', position: [0.2, 0.806], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hut_b3j3':
@@ -29,7 +30,8 @@
   post-fit: true
   labels:
     #- {text: 'b3j3', position: [0.778, 0.8] size: 18}
-    - {text: 'b3j3', position: [0.2, 0.832], size: 18, font: 44}
+    #- {text: 'b3j3', position: [0.2, 0.832], size: 18, font: 44}
+    - {text: 'b3j3', position: [0.2, 0.806], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hut_b2j4':
@@ -46,7 +48,8 @@
   post-fit: true
   labels:
     #- {text: 'b2j4', position: [0.778, 0.8] size: 18}
-    - {text: 'b2j4', position: [0.2, 0.832], size: 18, font: 44}
+    #- {text: 'b2j4', position: [0.2, 0.832], size: 18, font: 44}
+    - {text: 'b2j4', position: [0.2, 0.806], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hut_b3j4':
@@ -63,7 +66,8 @@
   post-fit: true
   labels:
     #- {text: 'b3j4', position: [0.778, 0.8] size: 18}
-    - {text: 'b3j4', position: [0.2, 0.832], size: 18, font: 44}
+    #- {text: 'b3j4', position: [0.2, 0.832], size: 18, font: 44}
+    - {text: 'b3j4', position: [0.2, 0.806], size: 18, font: 44}
 #  signal-normalize-data: false
 
 'DNN_Hut_b4j4':
@@ -80,5 +84,6 @@
   post-fit: true
   labels:
     #- {text: 'b4j4', position: [0.778, 0.8] size: 18}
-    - {text: 'b4j4', position: [0.2, 0.832], size: 18, font: 44}
+    #- {text: 'b4j4', position: [0.2, 0.832], size: 18, font: 44}
+    - {text: 'b4j4', position: [0.2, 0.806], size: 18, font: 44}
 #  signal-normalize-data: false

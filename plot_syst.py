@@ -3,12 +3,12 @@ import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
-#input_path = 'datacards_201215_2017v2_mergeHighBins_3binsb3'
-#input_path = 'datacards_201215_2017v2_nosymm'
-#input_path = 'datacards_201215_2018v2_mergeHighBins_3binsb3'
-input_path = 'datacards_201215_2018v2_nosymm'
-drawNom = False
-#drawNom = True
+#input_path = 'datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp'
+#input_path = 'datacards_201215_2017v6_noSymmSmooth'
+#input_path = 'datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp'
+input_path = 'datacards_201215_2018v6_noSymmSmooth'
+#drawNom = False
+drawNom = True
 logy = False
 #logy = True
 

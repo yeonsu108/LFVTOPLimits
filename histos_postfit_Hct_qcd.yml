@@ -12,5 +12,6 @@
   post-fit: true
   labels:
     #- {text: 'b2j3', position: [0.778, 0.8] size: 18}
-    - {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
+    #- {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
+    - {text: 'b2j3', position: [0.2, 0.806], size: 18, font: 44}
 #  signal-normalize-data: false

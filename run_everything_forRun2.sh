@@ -1,5 +1,6 @@
 datacardFolder=$1
 #python prepareRun2Combine.py -o $datacardFolder
+#python prepareRun2Combine.py -o $datacardFolder -p16 datacards_201215_2016v1_uncUpdate2_allComb -p17 datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp_allComb -p18 datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp_allComb
 python prepareRun2Combine.py -o $datacardFolder -p16 datacards_201215_2016v1_uncUpdate2 -p17 datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp -p18 datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp
 python run_all_limits.py $datacardFolder
 python plotLimitsPerCategory.py -lumi 137 -limitfolder $datacardFolder #For 161718  b2j3-b4j4

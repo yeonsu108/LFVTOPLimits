@@ -12,7 +12,8 @@
   post-fit: true
   labels:
     #- {text: 'b2j3', position: [0.778, 0.8], size: 18}
-    - {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
+    #- {text: 'b2j3', position: [0.2, 0.832], size: 18, font: 44}
+    - {text: 'b2j3', position: [0.2, 0.806], size: 18, font: 44}
   #change-legend: true
   #legend-name-org: 'Hut'
   #legend-name-new: 'Hut (#kappa_{Hut}=1)#times 6.62'

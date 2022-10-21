@@ -1,4 +1,5 @@
 datacardFolder=$1 
+#python prepareShapesAndCards.py -p $CMSSW_BASE/src/UserCode/tHFCNC/Limit/FinalFits/suitable_for_prepareShapeAndCards_201215/ -dataYear 2016 -l 1 -le 1.025 -xsecfile xsec_2016_allComb.yml -rebinning 1 -o $datacardFolder --sysForSig [] #--sysToAvoid jec hdamp scale lepton pdf pu TuneCUETP
 python prepareShapesAndCards.py -p $CMSSW_BASE/src/UserCode/tHFCNC/Limit/FinalFits/suitable_for_prepareShapeAndCards_201215/ -dataYear 2016 -l 1 -le 1.025 -xsecfile xsec_2016.yml -rebinning 1 -o $datacardFolder --sysForSig [] #--sysToAvoid jec hdamp scale lepton pdf pu TuneCUETP
 ##Need to change cross sections from plotLimitsPerCategory.py to reproduce numbers!##
 #python prepareShapesAndCards.py -p $CMSSW_BASE/src/UserCode/tHFCNC/Limit/FinalFits/suitable_for_prepareShapeAndCards_201215/ -dataYear 2016 -l 1 -le 1.025 -xsecfile xsec_2016_TOP-17-003.yml -rebinning 1 -o $datacardFolder --sysToAvoid jec hdamp scale lepton pdf pu TuneCUETP -removeHutb4j4 True #Reproducing 2016
