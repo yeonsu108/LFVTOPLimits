@@ -1,5 +1,6 @@
-# FCNCLimits
-Toolbox to derive upper limits for 2017/2018 FCNC tH(bb) analysis
+# LFVLimits
+We base the toolbox on FCNC analysis limit toolbox
+Toolbox to derive upper limits for 2016/2017/2018  LFV TOP analysis
 # Installation
 ```
 export SCRAM_ARCH=slc6_amd64_gcc530
