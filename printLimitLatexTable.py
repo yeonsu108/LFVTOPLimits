@@ -32,20 +32,55 @@ def calcBr(op, limits):
     else: result = str(out)
     return result
 
-
-
 ################
+for_table = []
 for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
 	op = signal.split("_")[2]
 	limits = json.loads(open(os.path.join(limitfolder, 'st_lfv_'+op+'_limits.json')).read())
 	limits = limits[""]
-	print(signal , op)
-	print(" & ".join([calcXsec(signal,[limits['expected']]),calcWilson([limits['expected']]),calcBr(op, [limits['expected']])]))
-	print("\\\\")
-	print(" & & ")
-	print(" & ".join([calcXsec(signal,limits['one_sigma']),calcWilson(limits['one_sigma']),calcBr(op, limits['one_sigma'])]))
-	print("\\cline{3-6} ")
+	#print(signal , op)
+	nom = " & ".join([calcXsec(signal,[limits['expected']]),calcWilson([limits['expected']]),calcBr(op, [limits['expected']])])
+	for_table.append(nom)
+	unc = " & ".join([calcXsec(signal,limits['one_sigma']),calcWilson(limits['one_sigma']),calcBr(op, limits['one_sigma'])]) 
+	for_table.append(unc)
 
+#print(len(for_table),for_table)
+
+
+lfv_table = """
+\\begin{{table}}[!hp] 
+    \\centering 
+    \\renewcommand{{\\arraystretch}}{{1.1}}
+    \\begin{{tabular}}{{c|c|c|c|c|c}} 
+        \\hline\\hline 
+        Category & Interaction & Type & $\\sigma$ [fb] & $C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$TeV^{{-2}}$] & $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
+        \\multirow{{12}}{{*}}{{Combined}} & \\multirow{{6}}{{*}}{{$tc\\mu\\tau$}}  & \\multirow{{2}}{{*}}{{Scalar}} &
+        {lim0}\\\\& & & {lim1}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Vector}} & {lim2}\\\\ & & & {lim3}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Tensor}} & {lim4}\\\\ & & & {lim5}\\\\\\cline{{2-6}} 
+         & \\multirow{{6}}{{*}}{{$tu\\mu\\tau$}} & \\multirow{{2}}{{*}}{{Scalar}}
+        &  {lim6}\\\\ & & & {lim7}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Vector}} & {lim8}\\\\ & & & {lim9}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Tensor}} &{lim10}\\\\ & & & {lim11}\\\\\\cline{{3-6}} 
+        \\hline\\hline
+    \\end{{tabular}}
+    \\caption{{Table for Run 2017 upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}} 
+    \\label{{tab:run2limit}} 
+\\end{{table}}
+""".format(
+lim0=for_table[0],
+lim1=for_table[1],
+lim2=for_table[2],
+lim3=for_table[3],
+lim4=for_table[4],
+lim5=for_table[5],
+lim6=for_table[6],
+lim7=for_table[7],
+lim8=for_table[8],
+lim9=for_table[9],
+lim10=for_table[10],
+lim11=for_table[11])
+print(lfv_table)
 
 
 
