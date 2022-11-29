@@ -1,5 +1,6 @@
 import os, sys, argparse, json
 import ROOT
+import math
 
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
@@ -26,11 +27,14 @@ parser.add_argument('-pas', dest='pas', type=bool, default=False, help='To prese
 
 options = parser.parse_args()
 postfix = ''
+print("options.printlimits" , options.printlimits)
 if options.printlimits:
     #options.category_order = ['161718_all', '1617_all', '1718_all']
     options.category_order = ['1718_all']
     options.category_labels = options.category_order
     postfix = '_add'
+
+options.category_order = ['']
 
 ROOT.gROOT.SetBatch()
 
@@ -38,10 +42,24 @@ ROOT.gROOT.SetBatch()
 #    Excluded couping ---> ExcBr: BR(t --> Hq) = Width(t --> Hq)* Khqt^2/TotalWidth = 0.19*Khqt^2/1.32158
 #    <--> BR(t --> Hq) < XsecExcl*0.19/(sigXsecDivK2 * 1.32158)
 
-signal_Xsec_couplingOne = {"Hut": 1, "Hct": 1}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
-#signal_Xsec_couplingOne = {"Hut": 1.527, "Hct": 1.527}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
-signal_Xsec_couplingOneForBR = {"Hut": 60.34, "Hct": 48.4} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158)
-#signal_Xsec_couplingOneForBR = {'Hut': 50.82, 'Hct': 38.88} # to extract limit on BR: BR(t --> Hq) < XsecExcl*Width(t-->Hq)/(sigXsec * TotalWidth) = XsecExcl*0.19/(sigXsec * 1.32158)
+signal_Xsec = {'st_lfv_cs':10.09,'st_lfv_ct':307.4,'st_lfv_cv':58.3,'st_lfv_uv':414.5,'st_lfv_ut':1925,'st_lfv_us':86.49}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+
+def calcXsec(signal,limits):
+    return list(np.array(limits) * signal_Xsec[signal])
+
+def calcWilson(limits):
+    return list(np.sqrt(limits))
+
+def calcBr(op, limits):
+    out = []
+    if op == "cs" or op == "us":
+        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(6144*(math.pi**3))
+    elif op == "cv" or op == "uv":
+        out = np.array(limits)*(172.5**5)*10**(-6)/(1536*(math.pi**3))
+    elif op == "ct" or op == "ut":
+        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(128*(math.pi**3))
+    return list(out)
+
 
 def getLimitsFromFile(input_file):
     """
@@ -106,9 +124,6 @@ def add_labels(canvas, additional_label='', lumi=options.lumi, energy='13', cms=
 def plot_limits(signal_name, limit_dict, legend_position=[0.5, 0.75, 0.9, 0.91]):
     cat_order = options.category_order[:] #copy by value not to modify original options
     cat_label = options.category_labels[:]
-    if options.removeHutb4j4 and signal_name == 'Hut':
-      cat_order.remove('b4j4')
-      cat_label.remove('b4j4')
     nBins = len(limit_dict)
     bin_low_edges = array('d', range(nBins+1))
     #canvas = ROOT.TCanvas(signal_name + "_limits_per_category", signal_name + "_limits_per_category", 600, 450)
@@ -205,20 +220,12 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.5, 0.75, 0.9, 0.91])
     if options.printlimits:
       for cat in options.category_order:
         print "Limit on Xsec for %s %s jet cat: %f"%(signal_name, cat, limit_dict[cat]['expected'])
-        print "Limit on BR for %s %s jet cat: %f %%"%(signal_name, cat, 100*limit_dict[cat]['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-        print "Limit on BR for %s %s jet cat one sigma up: %f %%"%(signal_name, cat, 100*limit_dict[cat]['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-        print "Limit on BR for %s %s jet cat one sigma down: %f %%"%(signal_name, cat, 100*limit_dict[cat]['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
     else:
-      if options.unblind: print "Observed limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['observed'])
-      print "Expected limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['all']['expected'])
-      if options.unblind: print "Observed limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['observed']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Expected limit on BR for %s all jet cat: %f %%"%(signal_name, 100*limit_dict['all']['expected']*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Expected limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Expected limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['one_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Expected limit on BR for %s all jet cat one sigma up: %f %%"%(signal_name, 100*limit_dict['all']['two_sigma'][1]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
-      print "Expected limit on BR for %s all jet cat one sigma down: %f %%"%(signal_name, 100*limit_dict['all']['two_sigma'][0]*0.19/(signal_Xsec_couplingOneForBR[signal_name]*1.32158))
+      if options.unblind: print "Observed limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['']['observed'])
+      print "Expected limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['']['expected'])
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
+print("signal folders :" , signal_folders)
 if not signal_folders:
     print "Found no folder inside %s"%options.limitfolder
     sys.exit(1)
@@ -228,29 +235,29 @@ for signal_folder in signal_folders:
     signal_folder_path = os.path.join(options.limitfolder, signal_folder)
     dict_cat_limits = {}
     for category in options.category_order:
+	print("CAtegory : " , category)
         limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and category in rootfile and ( (not options.printlimits and not any(t in rootfile for t in ['_1617_', '_1718_'])) or (options.printlimits and any(t in rootfile for t in [signal_folder+'_'+category])) )]
+	print("LIMIT ROOT FILES : " , limit_rootfiles)
         found_category = False
-        if options.removeHutb4j4 and 'Hut/' in signal_folder_path and category == 'b4j4': continue
         for limit_rootfile in limit_rootfiles:
             limit_rootfile_path = os.path.join(signal_folder_path, limit_rootfile)
+            print("limit_rootfile_path : " ,limit_rootfile_path)
 
             #special treat for full  run2
-            if options.printlimits: category_tmp = limit_rootfile.split('.')[0].split('_')[-2] + '_' + 'all'
+            if options.printlimits: category_tmp = limit_rootfile.split('.')[0].split('_')[-2] + '_' + ''
             else: category_tmp = limit_rootfile.split('.')[0].split('_')[-1]
-
-            if category_tmp == category:
-                if found_category:
-                    print "Error: two rootfiles match category name %s in %s, don't know which one to choose. Please move one of them."%(category, signal_folder_path)
-                    sys.exit(1)
-                found_category = True
-                limits = getLimitsFromFile(limit_rootfile_path)
-                for number_type in limits:
-                    if isinstance(limits[number_type], list):
-                        limits[number_type][0] = limits[number_type][0]*signal_Xsec_couplingOne[signal_folder]
-                        limits[number_type][1] = limits[number_type][1]*signal_Xsec_couplingOne[signal_folder]
-                    else:
-                        limits[number_type] = limits[number_type]*signal_Xsec_couplingOne[signal_folder]
-                dict_cat_limits[category] = limits
+            print("category_tmp : " , category_tmp)
+            if found_category:
+                print "Error: two rootfiles match category name %s in %s, don't know which one to choose. Please move one of them."%(category, signal_folder_path)
+                sys.exit(1)
+            found_category = True
+            limits = getLimitsFromFile(limit_rootfile_path)
+            print("signal_folder : " , signal_folder)
+            print("limits : " , limits)
+            pre_limits = limits
+            dict_cat_limits[category] = pre_limits
+            print("After calc : " , limits)
+            print("FINAL JSON :" , dict_cat_limits[category])
         if not found_category:
             print "Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form e.g. higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path)
     json_limit_filepath = os.path.join(options.limitfolder, signal_folder + '_limits'+postfix+'.json')
@@ -260,7 +267,7 @@ for signal_folder in signal_folders:
         json.dump(dict_cat_limits, limit_json)
     print "%s written with limits inside"%json_limit_filepath
 
-    if options.doPlot and not options.printlimits:
-        from array import array
-        ROOT.gROOT.ProcessLine(".x setTDRStyle.C")
-        plot_limits(signal_folder, dict_cat_limits)
+    #if options.doPlot and not options.printlimits:
+    #    from array import array
+    #    ROOT.gROOT.ProcessLine(".x setTDRStyle.C")
+    #    plot_limits(signal_folder, dict_cat_limits)

@@ -1,6 +1,6 @@
 import os, sys
 import numpy as np
-import statsmodels.api as sm
+#import statsmodels.api as sm
 from ROOT import *
 import ROOT
 
@@ -41,9 +41,9 @@ def smoothing(hin, hnom, fwhm):
   #  #hin.SetBinContent(x_position+1, max(0, sum(y_vals * kernel)*hnom.GetBinContent(x_position+1)))
 
   #local linear regression (locally weighted polynomial regression)
-  lowess = sm.nonparametric.lowess
+  #lowess = sm.nonparametric.lowess
   smoothed_vals = np.zeros(y_vals.shape)
-  smoothed_vals = lowess(y_vals, x_vals, frac=2./3, return_sorted=False)
+  #smoothed_vals = lowess(y_vals, x_vals, frac=2./3, return_sorted=False)
 
   for x_position in x_vals:
     #hin.SetBinContent(x_position+1, max(0, smoothed_vals[x_position]))
@@ -84,7 +84,7 @@ dir_list = []
 dir_list = [x.GetName() for x in f.GetListOfKeys()]
 
 for dir_ in dir_list:
-  print dir_, year
+  print("In symmetrize :",dir_, year)
   f_dir = f.Get(dir_)
   f_new.mkdir(dir_)
   f_new.cd(dir_)

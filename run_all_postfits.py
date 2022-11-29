@@ -15,10 +15,10 @@ if not signal_folders:
     print "Found no signal directory inside %s"%datacard_path
 for signal_folder in signal_folders:
     os.chdir(os.path.join(datacard_path, signal_folder))
-    postfit_scripts = [postfit_script for postfit_script in os.listdir(".") if postfit_script.endswith('_all_run_postfit.sh')]
+    postfit_scripts = [postfit_script for postfit_script in os.listdir(".") if postfit_script.endswith('_run_postfit.sh')]
     if len(years) > 1:
         postfit_scripts = [x for x in postfit_scripts if '_'+years+'_' in x]
-        limit_scripts = [limit_script for limit_script in os.listdir(".") if limit_script.endswith('_all_run_limits.sh')]
+        limit_scripts = [limit_script for limit_script in os.listdir(".") if limit_script.endswith('_run_limits.sh')]
         limit_scripts = [x for x in limit_scripts if '_'+years+'_' in x]
         for limit_script in limit_scripts:
             print "Executing %s"%limit_script

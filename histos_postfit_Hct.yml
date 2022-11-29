@@ -1,21 +1,3 @@
-'DNN_Hct_b3j3':
-  y-axis: "Events"
-  #y-axis-format: "%1% / %2$.2f"
-  y-axis-format: "%1% / bin"
-  save-extensions: ['pdf', 'png']
-  for-yields: true
-  yields-table-order: 1
-  yields-title: '$b3j3$'
-  x-axis: 'BDT Score'
-  ratio-y-axis-range: [0.945, 1.055]
-  ratio-y-axis-auto-range: true
-  post-fit: true
-  labels:
-    #- {text: 'b3j3', position: [0.778, 0.8], size: 18}
-    #- {text: 'b3j3', position: [0.2, 0.832], size: 18, font: 44}
-    - {text: 'b3j3', position: [0.2, 0.806], size: 18, font: 44}
-#  signal-normalize-data: false
-
 'DNN_Hct_b2j4':
   y-axis: "Events"
   #y-axis-format: "%1% / %2$.2f"
@@ -32,40 +14,4 @@
     #- {text: 'b2j4', position: [0.778, 0.8] size: 18}
     #- {text: 'b2j4', position: [0.2, 0.832], size: 18, font: 44}
     - {text: 'b2j4', position: [0.2, 0.806], size: 18, font: 44}
-#  signal-normalize-data: false
-
-'DNN_Hct_b3j4':
-  y-axis: "Events"
-  #y-axis-format: "%1% / %2$.2f"
-  y-axis-format: "%1% / bin"
-  save-extensions: ['pdf', 'png']
-  for-yields: true
-  yields-table-order: 3
-  yields-title: '$b3j4$'
-  x-axis: 'BDT Score'
-  ratio-y-axis-range: [0.945, 1.055]
-  ratio-y-axis-auto-range: true
-  post-fit: true
-  labels:
-    #- {text: 'b3j4', position: [0.778, 0.8] size: 18}
-    #- {text: 'b3j4', position: [0.2, 0.832], size: 18, font: 44}
-    - {text: 'b3j4', position: [0.2, 0.806], size: 18, font: 44}
-#  signal-normalize-data: false
-
-'DNN_Hct_b4j4':
-  y-axis: "Events"
-  #y-axis-format: "%1% / %2$.2f"
-  y-axis-format: "%1% / bin"
-  save-extensions: ['pdf', 'png']
-  for-yields: true
-  yields-table-order: 4
-  yields-title: '$b4j4$'
-  x-axis: 'BDT Score'
-  ratio-y-axis-range: [0.945, 1.055]
-  ratio-y-axis-auto-range: true
-  post-fit: true
-  labels:
-    #- {text: 'b4j4', position: [0.778, 0.8] size: 18}
-    #- {text: 'b4j4', position: [0.2, 0.832], size: 18, font: 44}
-    - {text: 'b4j4', position: [0.2, 0.806], size: 18, font: 44}
 #  signal-normalize-data: false

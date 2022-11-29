@@ -1,109 +1,86 @@
 import json, sys, os
+import numpy as np
+import math
 
 limitfolder = sys.argv[1]
-removeHutb4j4 = False
-if len(sys.argv) > 2:
-  removeHutb4j4 = not (sys.argv[2] == "False")
 
-if any('unblind' in i for i in sys.argv): unblind = True
-else: unblind = False
 
-print removeHutb4j4
-#Hct_cross_sec = 48.4
-#Hut_cross_sec = 60.34
+signal_Xsec = {'st_lfv_cs':10.09,'st_lfv_cv':58.3,'st_lfv_ct':307.4,'st_lfv_us':86.49,'st_lfv_uv':414.5,'st_lfv_ut':1925}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 
-Hct_cross_sec = 1
-Hut_cross_sec = 1
+def calcXsec(signal,limits):
+    xsec= list(np.around(np.array(limits) * signal_Xsec[signal],decimals=3))
+    if len(xsec)==1: result = str(xsec[0])
+    else: result = str(xsec)
+    return result
 
-Hut_limits = json.loads(open(os.path.join(limitfolder, 'Hut_limits.json')).read())
-for key in Hut_limits:
-    for number_type in Hut_limits[key]:
-        if isinstance(Hut_limits[key][number_type], list):
-            Hut_limits[key][number_type][0] = round(Hut_limits[key][number_type][0]*Hut_cross_sec, 2)
-            Hut_limits[key][number_type][1] = round(Hut_limits[key][number_type][1]*Hut_cross_sec, 2)
-        else:
-            Hut_limits[key][number_type] = round(Hut_limits[key][number_type]*Hut_cross_sec, 2)
-        if number_type == 'observed' and not unblind:
-            Hut_limits[key][number_type] = 'X'#*Hut_cross_sec
+def calcWilson(limits):
+    wilson = list(np.around(np.sqrt(limits),decimals=3))
+    if len(wilson)==1: result = str(wilson[0])
+    else: result = str(wilson)
+    return result
 
-if removeHutb4j4:
-  Hut_table = """
-    \\begin{{tabular}}{{|l|c|c|c|c|c|c|}}
-      \hline
-      Category & $\sigma_{{exp}} - 2\sigma$ & $\sigma_{{exp}} - 1\sigma$ & $\sigma_{{exp}}$ & $\sigma_{{obs}}$ & $\sigma_{{exp}} + 1\sigma$ & $\sigma_{{exp}} + 2\sigma$ \\\\ \hline
-      $b2j3$ & {j3b2M2sig} & {j3b2M1sig} & {j3b2Exp} & {j3b2Obs} & {j3b2P1sig} & {j3b2P2sig} \\\\
-      $b2j4$ & {j4b2M2sig} & {j4b2M1sig} & {j4b2Exp} & {j4b2Obs} & {j4b2P1sig} & {j4b2P2sig} \\\\
-      $b3j3$ & {j3b3M2sig} & {j3b3M1sig} & {j3b3Exp} & {j3b3Obs} & {j3b3P1sig} & {j3b3P2sig} \\\\
-      $b3j4$ & {j4b3M2sig} & {j4b3M1sig} & {j4b3Exp} & {j4b3Obs} & {j4b3P1sig} & {j4b3P2sig} \\\\
-      all & {allM2sig} & {allM1sig} & {allExp} & {allObs} & {allP1sig} & {allP2sig} \\\\ \hline
-   \end{{tabular}}
+def calcBr(op, limits):
+    out = []
+    if op == "cs" or op == "us":
+        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(6144*(math.pi**3))
+    elif op == "cv" or op == "uv":
+        out = np.array(limits)*(172.5**5)*10**(-6)/(1536*(math.pi**3))
+    elif op == "ct" or op == "ut":
+        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(128*(math.pi**3))
+    out = list(np.around(out,decimals=3))
+    if len(out)==1: result = str(out[0])
+    else: result = str(out)
+    return result
+
+################
+for_table = []
+for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
+	op = signal.split("_")[2]
+	limits = json.loads(open(os.path.join(limitfolder, 'st_lfv_'+op+'_limits.json')).read())
+	limits = limits[""]
+	#print(signal , op)
+	nom = " & ".join([calcXsec(signal,[limits['expected']]),calcWilson([limits['expected']]),calcBr(op, [limits['expected']])])
+	for_table.append(nom)
+	unc = " & ".join([calcXsec(signal,limits['one_sigma']),calcWilson(limits['one_sigma']),calcBr(op, limits['one_sigma'])]) 
+	for_table.append(unc)
+
+#print(len(for_table),for_table)
+
+
+lfv_table = """
+\\begin{{table}}[!hp] 
+    \\centering 
+    \\renewcommand{{\\arraystretch}}{{1.1}}
+    \\begin{{tabular}}{{c|c|c|c|c|c}} 
+        \\hline\\hline 
+        Category & Interaction & Type & $\\sigma$ [fb] & $C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$TeV^{{-2}}$] & $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
+        \\multirow{{12}}{{*}}{{Combined}} & \\multirow{{6}}{{*}}{{$tc\\mu\\tau$}}  & \\multirow{{2}}{{*}}{{Scalar}} &
+        {lim0}\\\\& & & {lim1}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Vector}} & {lim2}\\\\ & & & {lim3}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Tensor}} & {lim4}\\\\ & & & {lim5}\\\\\\cline{{2-6}} 
+         & \\multirow{{6}}{{*}}{{$tu\\mu\\tau$}} & \\multirow{{2}}{{*}}{{Scalar}}
+        &  {lim6}\\\\ & & & {lim7}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Vector}} & {lim8}\\\\ & & & {lim9}\\\\\\cline{{3-6}} 
+         & & \\multirow{{2}}{{*}}{{Tensor}} &{lim10}\\\\ & & & {lim11}\\\\\\cline{{3-6}} 
+        \\hline\\hline
+    \\end{{tabular}}
+    \\caption{{Table for Run 2017 upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}} 
+    \\label{{tab:run2limit}} 
+\\end{{table}}
 """.format(
-        j3b2M2sig=Hut_limits['b2j3']['two_sigma'][0], j3b2M1sig=Hut_limits['b2j3']['one_sigma'][0], j3b2Exp=Hut_limits['b2j3']['expected'], j3b2Obs=Hut_limits['b2j3']['observed'], j3b2P1sig=Hut_limits['b2j3']['one_sigma'][1], j3b2P2sig=Hut_limits['b2j3']['two_sigma'][1], 
-        j4b2M2sig=Hut_limits['b2j4']['two_sigma'][0], j4b2M1sig=Hut_limits['b2j4']['one_sigma'][0], j4b2Exp=Hut_limits['b2j4']['expected'], j4b2Obs=Hut_limits['b2j4']['observed'], j4b2P1sig=Hut_limits['b2j4']['one_sigma'][1], j4b2P2sig=Hut_limits['b2j4']['two_sigma'][1], 
-        j3b3M2sig=Hut_limits['b3j3']['two_sigma'][0], j3b3M1sig=Hut_limits['b3j3']['one_sigma'][0], j3b3Exp=Hut_limits['b3j3']['expected'], j3b3Obs=Hut_limits['b3j3']['observed'], j3b3P1sig=Hut_limits['b3j3']['one_sigma'][1], j3b3P2sig=Hut_limits['b3j3']['two_sigma'][1], 
-        j4b3M2sig=Hut_limits['b3j4']['two_sigma'][0], j4b3M1sig=Hut_limits['b3j4']['one_sigma'][0], j4b3Exp=Hut_limits['b3j4']['expected'], j4b3Obs=Hut_limits['b3j4']['observed'], j4b3P1sig=Hut_limits['b3j4']['one_sigma'][1], j4b3P2sig=Hut_limits['b3j4']['two_sigma'][1],
-        #j4b4M2sig=Hut_limits['b4j4']['two_sigma'][0], j4b4M1sig=Hut_limits['b4j4']['one_sigma'][0], j4b4Exp=Hut_limits['b4j4']['expected'], j4b4Obs=Hut_limits['b4j4']['observed'], j4b4P1sig=Hut_limits['b4j4']['one_sigma'][1], j4b4P2sig=Hut_limits['b4j4']['two_sigma'][1],
-        allM2sig=Hut_limits['all']['two_sigma'][0], allM1sig=Hut_limits['all']['one_sigma'][0], allExp=Hut_limits['all']['expected'], allObs=Hut_limits['all']['observed'], allP1sig=Hut_limits['all']['one_sigma'][1], allP2sig=Hut_limits['all']['two_sigma'][1], 
-    )
-else:
-  Hut_table = """
-    \\begin{{tabular}}{{|l|c|c|c|c|c|c|}}
-      \hline
-      Category & $\sigma_{{exp}} - 2\sigma$ & $\sigma_{{exp}} - 1\sigma$ & $\sigma_{{exp}}$ & $\sigma_{{obs}}$ & $\sigma_{{exp}} + 1\sigma$ & $\sigma_{{exp}} + 2\sigma$ \\\\ \hline
-      $b2j3$ & {j3b2M2sig} & {j3b2M1sig} & {j3b2Exp} & {j3b2Obs} & {j3b2P1sig} & {j3b2P2sig} \\\\
-      $b2j4$ & {j4b2M2sig} & {j4b2M1sig} & {j4b2Exp} & {j4b2Obs} & {j4b2P1sig} & {j4b2P2sig} \\\\
-      $b3j3$ & {j3b3M2sig} & {j3b3M1sig} & {j3b3Exp} & {j3b3Obs} & {j3b3P1sig} & {j3b3P2sig} \\\\
-      $b3j4$ & {j4b3M2sig} & {j4b3M1sig} & {j4b3Exp} & {j4b3Obs} & {j4b3P1sig} & {j4b3P2sig} \\\\
-      $b4j4$ & {j4b4M2sig} & {j4b4M1sig} & {j4b4Exp} & {j4b4Obs} & {j4b4P1sig} & {j4b4P2sig} \\\\ \hline
-      all & {allM2sig} & {allM1sig} & {allExp} & {allObs} & {allP1sig} & {allP2sig} \\\\ \hline
-   \end{{tabular}}
-""".format(
-        j3b2M2sig=Hut_limits['b2j3']['two_sigma'][0], j3b2M1sig=Hut_limits['b2j3']['one_sigma'][0], j3b2Exp=Hut_limits['b2j3']['expected'], j3b2Obs=Hut_limits['b2j3']['observed'], j3b2P1sig=Hut_limits['b2j3']['one_sigma'][1], j3b2P2sig=Hut_limits['b2j3']['two_sigma'][1],
-        j4b2M2sig=Hut_limits['b2j4']['two_sigma'][0], j4b2M1sig=Hut_limits['b2j4']['one_sigma'][0], j4b2Exp=Hut_limits['b2j4']['expected'], j4b2Obs=Hut_limits['b2j4']['observed'], j4b2P1sig=Hut_limits['b2j4']['one_sigma'][1], j4b2P2sig=Hut_limits['b2j4']['two_sigma'][1],
-        j3b3M2sig=Hut_limits['b3j3']['two_sigma'][0], j3b3M1sig=Hut_limits['b3j3']['one_sigma'][0], j3b3Exp=Hut_limits['b3j3']['expected'], j3b3Obs=Hut_limits['b3j3']['observed'], j3b3P1sig=Hut_limits['b3j3']['one_sigma'][1], j3b3P2sig=Hut_limits['b3j3']['two_sigma'][1],
-        j4b3M2sig=Hut_limits['b3j4']['two_sigma'][0], j4b3M1sig=Hut_limits['b3j4']['one_sigma'][0], j4b3Exp=Hut_limits['b3j4']['expected'], j4b3Obs=Hut_limits['b3j4']['observed'], j4b3P1sig=Hut_limits['b3j4']['one_sigma'][1], j4b3P2sig=Hut_limits['b3j4']['two_sigma'][1],
-        j4b4M2sig=Hut_limits['b4j4']['two_sigma'][0], j4b4M1sig=Hut_limits['b4j4']['one_sigma'][0], j4b4Exp=Hut_limits['b4j4']['expected'], j4b4Obs=Hut_limits['b4j4']['observed'], j4b4P1sig=Hut_limits['b4j4']['one_sigma'][1], j4b4P2sig=Hut_limits['b4j4']['two_sigma'][1],
-        allM2sig=Hut_limits['all']['two_sigma'][0], allM1sig=Hut_limits['all']['one_sigma'][0], allExp=Hut_limits['all']['expected'], allObs=Hut_limits['all']['observed'], allP1sig=Hut_limits['all']['one_sigma'][1], allP2sig=Hut_limits['all']['two_sigma'][1],
-    )
-Hut_table_filename = os.path.join(limitfolder, "Hut_limits_table.tex")
-with open(Hut_table_filename, 'w') as table_file:
-    table_file.write(Hut_table)
-print "Hut:"
-print Hut_table
+lim0=for_table[0],
+lim1=for_table[1],
+lim2=for_table[2],
+lim3=for_table[3],
+lim4=for_table[4],
+lim5=for_table[5],
+lim6=for_table[6],
+lim7=for_table[7],
+lim8=for_table[8],
+lim9=for_table[9],
+lim10=for_table[10],
+lim11=for_table[11])
+print(lfv_table)
 
-Hct_limits = json.loads(open(os.path.join(limitfolder, 'Hct_limits.json')).read())
-for key in Hct_limits:
-    for number_type in Hct_limits[key]:
-        if isinstance(Hct_limits[key][number_type], list):
-            Hct_limits[key][number_type][0] = round(Hct_limits[key][number_type][0]*Hct_cross_sec, 2)
-            Hct_limits[key][number_type][1] = round(Hct_limits[key][number_type][1]*Hct_cross_sec, 2)
-        else:
-            Hct_limits[key][number_type] = round(Hct_limits[key][number_type]*Hct_cross_sec, 2)
-        if number_type == 'observed' and not unblind:
-            Hct_limits[key][number_type] = 'X'#*Hct_cross_sec
 
-Hct_table = """
-    \\begin{{tabular}}{{|l|c|c|c|c|c|c|}}
-      \hline
-      Category & $\sigma_{{exp}} - 2\sigma$ & $\sigma_{{exp}} - 1\sigma$ & $\sigma_{{exp}}$ & $\sigma_{{obs}}$ & $\sigma_{{exp}} + 1\sigma$ & $\sigma_{{exp}} + 2\sigma$ \\\\ \hline
-      $b2j3$ & {j3b2M2sig} & {j3b2M1sig} & {j3b2Exp} & {j3b2Obs} & {j3b2P1sig} & {j3b2P2sig} \\\\
-      $b2j4$ & {j4b2M2sig} & {j4b2M1sig} & {j4b2Exp} & {j4b2Obs} & {j4b2P1sig} & {j4b2P2sig} \\\\
-      $b3j3$ & {j3b3M2sig} & {j3b3M1sig} & {j3b3Exp} & {j3b3Obs} & {j3b3P1sig} & {j3b3P2sig} \\\\
-      $b3j4$ & {j4b3M2sig} & {j4b3M1sig} & {j4b3Exp} & {j4b3Obs} & {j4b3P1sig} & {j4b3P2sig} \\\\
-      $b4j4$ & {j4b4M2sig} & {j4b4M1sig} & {j4b4Exp} & {j4b4Obs} & {j4b4P1sig} & {j4b4P2sig} \\\\ \hline
-      all & {allM2sig} & {allM1sig} & {allExp} & {allObs} & {allP1sig} & {allP2sig} \\\\ \hline
-   \end{{tabular}}
-""".format(
-        j3b2M2sig=Hct_limits['b2j3']['two_sigma'][0], j3b2M1sig=Hct_limits['b2j3']['one_sigma'][0], j3b2Exp=Hct_limits['b2j3']['expected'], j3b2Obs=Hct_limits['b2j3']['observed'], j3b2P1sig=Hct_limits['b2j3']['one_sigma'][1], j3b2P2sig=Hct_limits['b2j3']['two_sigma'][1], 
-        j4b2M2sig=Hct_limits['b2j4']['two_sigma'][0], j4b2M1sig=Hct_limits['b2j4']['one_sigma'][0], j4b2Exp=Hct_limits['b2j4']['expected'], j4b2Obs=Hct_limits['b2j4']['observed'], j4b2P1sig=Hct_limits['b2j4']['one_sigma'][1], j4b2P2sig=Hct_limits['b2j4']['two_sigma'][1], 
-        j3b3M2sig=Hct_limits['b3j3']['two_sigma'][0], j3b3M1sig=Hct_limits['b3j3']['one_sigma'][0], j3b3Exp=Hct_limits['b3j3']['expected'], j3b3Obs=Hct_limits['b3j3']['observed'], j3b3P1sig=Hct_limits['b3j3']['one_sigma'][1], j3b3P2sig=Hct_limits['b3j3']['two_sigma'][1], 
-        j4b3M2sig=Hct_limits['b3j4']['two_sigma'][0], j4b3M1sig=Hct_limits['b3j4']['one_sigma'][0], j4b3Exp=Hct_limits['b3j4']['expected'], j4b3Obs=Hct_limits['b3j4']['observed'], j4b3P1sig=Hct_limits['b3j4']['one_sigma'][1], j4b3P2sig=Hct_limits['b3j4']['two_sigma'][1], 
-        j4b4M2sig=Hct_limits['b4j4']['two_sigma'][0], j4b4M1sig=Hct_limits['b4j4']['one_sigma'][0], j4b4Exp=Hct_limits['b4j4']['expected'], j4b4Obs=Hct_limits['b4j4']['observed'], j4b4P1sig=Hct_limits['b4j4']['one_sigma'][1], j4b4P2sig=Hct_limits['b4j4']['two_sigma'][1],
-        allM2sig=Hct_limits['all']['two_sigma'][0], allM1sig=Hct_limits['all']['one_sigma'][0], allExp=Hct_limits['all']['expected'], allObs=Hct_limits['all']['observed'], allP1sig=Hct_limits['all']['one_sigma'][1], allP2sig=Hct_limits['all']['two_sigma'][1], 
-    )
-Hct_table_filename = os.path.join(limitfolder, "Hct_limits_table.tex")
-with open(Hct_table_filename, 'w') as table_file:
-    table_file.write(Hct_table)
 
-print 'Hct:'
-print Hct_table

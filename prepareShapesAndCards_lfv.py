@@ -71,18 +71,14 @@ channel_mapping = {
     }
 
 #Hct_j4_h_DNN_b2_Ch2__TuneCP5up
+DNN_Hct_hist_name = 'Hct'
 channel = options.channel 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
-        'DNN': get_hist_regex('h_dnn_pred'),
+        'DNN_Hct_b2j4': get_hist_regex('{0}_h_DNN_j4b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
         }
 
 discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
-    "DNN_st_lfv_cs" : [ (1, 'DNN')],
-    "DNN_st_lfv_ct" : [ (1, 'DNN')],
-    "DNN_st_lfv_cv" : [ (1, 'DNN')],
-    "DNN_st_lfv_us" : [ (1, 'DNN')],
-    "DNN_st_lfv_ut" : [ (1, 'DNN')],
-    "DNN_st_lfv_uv" : [ (1, 'DNN')],
+    "DNN_Hct_all" : [ (2, 'DNN_Hct_b2j4')],
     #key does matter when removeing qcd-relavant discriminant below
     }
 
@@ -92,31 +88,22 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
                       # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
         # Background
         ## TT Semileptonic 
-        'tt': ['hist_TTToSemiLeptonic.root','hist_TTToHadronic.root','hist_TTTo2L2Nu.root'],
+        'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTLLpowhegttlf.root', 'hist_TTHadpowhegttlf.root'],
+        'ttcc': ['hist_TTpowhegttcc.root', 'hist_TTLLpowhegttcc.root', 'hist_TTHadpowhegttcc.root'],
+        'ttbb': ['hist_TTpowhegttbb.root', 'hist_TTLLpowhegttbb.root', 'hist_TTHadpowhegttbb.root'],
         ## Other Bkg
-        'wJets' : ['hist_WJetsToLNu*'],
-        'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
-        'DY' : ['hist_DYJetsToLL_M-50_amcatnlo.root','hist_DYJetsToLL_M-10to50.root'],
-        'TTV' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root'],
-        'ST_t-channel' : ['hist_ST_t-channel*'],
-        'ST_tW' : ['hist_ST_tW_*'],
-	# QCD
-        'qcd': ['hist_QCD*'],
+        'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root', '.*SingleT.*'],
         # Signal
-        'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TToCMuTau_Scalar.root'],
-        'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TToCMuTau_Tensor.root'],
-        'st_lfv_cv': ['hist_ST_LFV_TCMuTau_Vector.root','hist_TT_LFV_TToCMuTau_Vector.root'],
-        'st_lfv_us': ['hist_ST_LFV_TUMuTau_Scalar.root','hist_TT_LFV_TToUMuTau_Scalar.root'],
-        'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TToUMuTau_Tensor.root'],
-        'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TToUMuTau_Vector.root'],
+        'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
+        'qcd': ['hist_QCD*'],
         # Data
-        'data_all' : ['hist_Run17.root'],
+        'data_all' : ['Single.*Run%s'%options.dataYear],
         }
-processes_mapping['data_obs'] = processes_mapping['data_all']
+processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
 processes_mapping.pop('data_all')
 
 
-smTTlist = ['tt'] # for systematics affecting only SM tt
+smTTlist = ['ttlf', 'ttcc', 'ttbb'] # for systematics affecting only SM tt
 
 if options.applyxsec:
     # Read Xsec file
@@ -128,16 +115,13 @@ if options.applyxsec:
     
 def main():
     """Main function"""
-    signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
-    #signals = ['st_lfv_ut']
-    backgrounds = ['tt', 'wJets','vv','DY','TTV','ST_t-channel','ST_tW'] #, 'qcd']
+    signals = ['Hct']
+    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other', 'qcd']
+    #backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other']
     print("Background considered: ", backgrounds)
 
     for signal in signals:
-	for key, value in discriminants.iteritems():
-		print(key, value)
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
-	print("dicriminants_per_signal : ", dicriminants_per_signal)
         for discriminant in dicriminants_per_signal.keys() :
             print("signal :" , signal , "discrimanant :", discriminant)
             prepareShapes(backgrounds, [signal], dicriminants_per_signal[discriminant], discriminant)
@@ -167,8 +151,7 @@ def merge_histograms(process, histogram, destination):
     if not 'data' in process:
         histogram.Scale(options.luminosity)
     import array
-    #arr = array.array('d',[0, 0.1, 0.3, 0.7, 0.9, 1.0])
-    arr = array.array('d',[0,10,20,30,40,50,60,70,80,90,100.0,200.0])
+    if 'j4b2' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0])
     histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
@@ -225,11 +208,13 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
         discriminant_name = discriminant_tuple[1]
         r = re.compile(individual_discriminants[discriminant_name], re.IGNORECASE)
         #f = ROOT.TFile.Open(processes_files.values()[0][0])
-        f = ROOT.TFile.Open(processes_files['tt'][0])
+        f = ROOT.TFile.Open(processes_files['ttlf'][0])
         histogram_names[discriminant_name] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
         f.Close()
 
 
+    print("histogram names : " , histogram_names)
+    print("****")
     # Extract list of systematics from the list of histograms derived above
     # This code assumes that *all* categories contains the same systematics (as it should)
     # The systematics list is extracted from the histogram list of the first category
@@ -237,10 +222,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     systematics = set()
     histograms = {}
     systematics_regex = re.compile('__(.*)(up|down)$', re.IGNORECASE)
-    #print("Histogram names :", histogram_names)
     for category, histogram_names in histogram_names.items():
         for histogram_name in histogram_names:
-            #print("Histogram name :" , histogram_name)
+            print("histogram names : " , histogram_name)
             m = systematics_regex.search(histogram_name)
             if m:
                 # It's a systematic histogram
@@ -254,9 +238,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 histograms[category] = nominal_name
     print("Found the following systematics in rootfiles: ", systematics)
     if options.sysToAvoid:
-	print("***" , options.sysToAvoid)
         for sysToAvoid in options.sysToAvoid:
-            systematics.remove(sysToAvoid)
+            systematics.discard(sysToAvoid)
         print("After ignoring the one mentioned with sysToAvoid option: ", systematics)
 
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
@@ -291,12 +274,12 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     for systematic in systematics:
                         if systematic in [item for item in options.sysForSMtt if item not in options.sysForSig] \
                             and not process in smTTlist: continue
-                        if systematic in options.sysForSig and not process in ['st_lfv']+smTTlist: continue
+                        if systematic in options.sysForSig and not process in ['Hct']+smTTlist: continue
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             if not TH1_syst:
-                                print "No histo named %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename)
+                                print "No histo named %s in %s"%(original_histogram_name + '__' + systematic + variation, process_file_basename)
                                 sys.exit()
                             if options.applyxsec and not 'data' in process:
                                 TH1_syst.Scale(xsec/float(nevt))
@@ -337,7 +320,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 
         # Systematics
         if not options.nosys:
-            print("systematics just before datacards : " , systematics)
             for systematic in systematics:
                 systematic_only_for_SMtt = False
                 systematic_only_for_Sig = False
@@ -364,7 +346,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
             cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
 
-            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['tt'], 1.055))
+            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.055))
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')(['other'], 1.1))
             #cb.cp().AddSyst(cb, 'hdamp', 'lnN', ch.SystMap('process')(smTTlist, 1.05))
             #cb.cp().AddSyst(cb, 'TuneCP5', 'lnN', ch.SystMap('process')(smTTlist, 1.03))
@@ -403,9 +385,9 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
 #combine -M AsymptoticLimits -n {name} {workspace_root} #--run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
@@ -470,7 +452,7 @@ PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o pos
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
 $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
 $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}_qcd.yml -y
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("st_lfv"), year=options.dataYear)
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("Hct"), year=options.dataYear)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
             f.write(script)
