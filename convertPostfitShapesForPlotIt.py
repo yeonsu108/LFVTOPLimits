@@ -49,8 +49,8 @@ print "Detected channels: ", channels
 processs = set()
 total_unc = ['ttbb_postfit_histos__totalup','ttbb_postfit_histos__totaldown']
 
-#for proc in file.Get('%s_prefit' % channels[0]).GetListOfKeys():
-for proc in file.Get('%sb2j3_prefit' % channels[0][:-4]).GetListOfKeys():
+#for proc in file.Get('%sb2j3_prefit' % channels[0][:-4]).GetListOfKeys():
+for proc in file.Get('%s_prefit' % channels[0]).GetListOfKeys():
     processs.add(proc.GetName())
 
 print 'Detected processes: ', processs

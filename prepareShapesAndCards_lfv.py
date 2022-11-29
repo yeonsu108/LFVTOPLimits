@@ -213,6 +213,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
         f.Close()
 
 
+    print("histogram names : " , histogram_names)
+    print("****")
     # Extract list of systematics from the list of histograms derived above
     # This code assumes that *all* categories contains the same systematics (as it should)
     # The systematics list is extracted from the histogram list of the first category
@@ -222,6 +224,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     systematics_regex = re.compile('__(.*)(up|down)$', re.IGNORECASE)
     for category, histogram_names in histogram_names.items():
         for histogram_name in histogram_names:
+            print("histogram names : " , histogram_name)
             m = systematics_regex.search(histogram_name)
             if m:
                 # It's a systematic histogram
@@ -313,6 +316,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         cb = ch.CombineHarvester()
         cb.AddObservations(['*'], [''], ['_%s'%options.dataYear], [''], discriminant)
         cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], [signal], discriminant, True)
+        cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
 
         # Systematics
         if not options.nosys:
@@ -381,10 +385,10 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run blind #-v +2
-#combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run blind #-v +2
-#combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
+echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} #--run expected #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
+#combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
         with open(script_file, 'w') as f:

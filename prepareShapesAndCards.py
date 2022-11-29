@@ -60,132 +60,86 @@ parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', 
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lepton', 'scale', 'ps', 'TuneCP5', 'TuneCUETP', 'hdamp', 'pdf', 'lf', 'hf', 'cferr1', 'cferr2'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
-parser.add_argument('-removeHutb4j4', dest='removeHutb4j4', type=str2bool, default="False", help='Remove Hut b4j4 from plots')
 
 options = parser.parse_args()
 
-print options.removeHutb4j4
 correlatedSys = options.correlatedSys
 correlatedSys.extend(['jecAbsolute', 'jecAbsolute'+options.dataYear, 'jecBBEC1', 'jecBBEC1'+options.dataYear, 'jecFlavorQCD', 'jecRelativeBal', 'jecRelativeSample'+options.dataYear])
 
 channel_mapping = {
-    "mu" : 'Ch0',
-    "el" : 'Ch1',
     "all" : 'Ch2'
     }
 
-selection_mapping = {
-    'b2j3' : 'S2',
-    'b2j4' : 'S6',
-    'b3j3' : 'S3',
-    'b3j4' : 'S7',
-    'b4j4' : 'S11'
-    }
-
 #Hct_j4_h_DNN_b2_Ch2__TuneCP5up
-DNN_Hct_hist_name = 'Hct'
-DNN_Hut_hist_name = 'Hut'
 channel = options.channel 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
-        'DNN_Hct_b2j3': get_hist_regex('{0}_h_DNN_j3b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b3j3': get_hist_regex('{0}_h_DNN_j3b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-
-        'DNN_Hct_b2j4': get_hist_regex('{0}_h_DNN_j4b2_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b3j4': get_hist_regex('{0}_h_DNN_j4b3_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-        'DNN_Hct_b4j4': get_hist_regex('{0}_h_DNN_j4b4_{1}'.format(DNN_Hct_hist_name, channel_mapping[channel])),
-
-        'DNN_Hut_b2j3': get_hist_regex('{0}_h_DNN_j3b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b3j3': get_hist_regex('{0}_h_DNN_j3b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-
-        'DNN_Hut_b2j4': get_hist_regex('{0}_h_DNN_j4b2_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b3j4': get_hist_regex('{0}_h_DNN_j4b3_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
-        'DNN_Hut_b4j4': get_hist_regex('{0}_h_DNN_j4b4_{1}'.format(DNN_Hut_hist_name, channel_mapping[channel])),
+        'DNN': get_hist_regex('h_dnn_pred'),
         }
 
 discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
-    "DNN_Hct_b2j3" : [(1, 'DNN_Hct_b2j3')],
-    "DNN_Hct_b2j4" : [(1, 'DNN_Hct_b2j4')],
-    "DNN_Hct_b3j3" : [(1, 'DNN_Hct_b3j3')],
-    "DNN_Hct_b3j4" : [(1, 'DNN_Hct_b3j4')],
-    "DNN_Hct_b4j4" : [(1, 'DNN_Hct_b4j4')],
-    "DNN_Hct_all" : [(1, 'DNN_Hct_b2j3'), (2, 'DNN_Hct_b2j4'), (3, 'DNN_Hct_b3j3'), (4, 'DNN_Hct_b3j4'), (5, 'DNN_Hct_b4j4')],
-    "DNN_Hut_b2j3" : [(1, 'DNN_Hut_b2j3')],
-    "DNN_Hut_b2j4" : [(1, 'DNN_Hut_b2j4')],
-    "DNN_Hut_b3j3" : [(1, 'DNN_Hut_b3j3')],
-    "DNN_Hut_b3j4" : [(1, 'DNN_Hut_b3j4')],
-    "DNN_Hut_b4j4" : [(1, 'DNN_Hut_b4j4')],
-    "DNN_Hut_all" : [(1, 'DNN_Hut_b2j3'), (2, 'DNN_Hut_b2j4'), (3, 'DNN_Hut_b3j3'), (4, 'DNN_Hut_b3j4'), (5, 'DNN_Hut_b4j4')],
+    "DNN_st_lfv_cs" : [ (1, 'DNN')],
+    "DNN_st_lfv_ct" : [ (1, 'DNN')],
+    "DNN_st_lfv_cv" : [ (1, 'DNN')],
+    "DNN_st_lfv_us" : [ (1, 'DNN')],
+    "DNN_st_lfv_ut" : [ (1, 'DNN')],
+    "DNN_st_lfv_uv" : [ (1, 'DNN')],
     #key does matter when removeing qcd-relavant discriminant below
     }
-if options.removeHutb4j4:
-    del individual_discriminants['DNN_Hut_b4j4']
-    del discriminants['DNN_Hut_b4j4']
-    discriminants["DNN_Hut_all"].remove((5, 'DNN_Hut_b4j4'))
 
 # IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
 # ~Kirill definition of Bkg
-if options.dataYear != '2016':
-    processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
-                          # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
-            # Background
-            ## TT Semileptonic 
-            'ttlf': ['hist_TTpowhegttlf.root', 'hist_TTLLpowhegttlf.root', 'hist_TTHadpowhegttlf.root'],
-            'ttcc': ['hist_TTpowhegttcc.root', 'hist_TTLLpowhegttcc.root', 'hist_TTHadpowhegttcc.root'],
-            'ttbb': ['hist_TTpowhegttbb.root', 'hist_TTLLpowhegttbb.root', 'hist_TTHadpowhegttbb.root'],
-            ## Other Bkg
-            'other' : ['hist_TTWJetsToLNu.root', 'hist_TTWJetsToQQ.root', 'hist_TTZToLLNuNu.root', 'hist_TTZToQQ.root', 'hist_W1JetsToLNu.root', 'hist_W2JetsToLNu.root', 'hist_W3JetsToLNu.root', 'hist_W4JetsToLNu.root', 'hist_DYJets*', 'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root', 'hist_ttHTobb.root', 'hist_ttHToNonbb.root', '.*SingleT.*'],
-            # Signal
-            'Hut': ['TTTH1L3BaTLepHut', 'TTTH1L3BTLepHut', 'STTH1L3BHut'],
-            'Hct': ['TTTH1L3BaTLepHct', 'TTTH1L3BTLepHct', 'STTH1L3BHct'],
-            'qcd': ['hist_QCD*'],
-            # Data
-            'data_el' : ['SingleElectronRun%s'%options.dataYear],
-            'data_mu' : ['SingleMuonRun%s'%options.dataYear],
-            'data_all' : ['Single.*Run%s'%options.dataYear],
-            }
-    processes_mapping['data_obs'] = processes_mapping['data_%s'%channel]
-    processes_mapping.pop('data_el')
-    processes_mapping.pop('data_mu')
-    processes_mapping.pop('data_all')
-else:
-    processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
-                          # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
-            # Background
-            ## TT Semileptonic 
-            'ttlf': ['ttlf.root'],
-            'ttcc': ['ttcc.root'],
-            'ttbb': ['ttbb.root'],
-            ## Other Bkg
-            'other' : ['other.root'],
-            # Signal
-            'Hut': ['sig_stop_Hut.root', 'sig_ttbar_Hut.root'],
-            'Hct': ['sig_stop_Hct.root', 'sig_ttbar_Hct.root'],
-            # Data
-            'data_obs' : ['data_obs.root'],
-            }
+processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
+                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
+        # Background
+        ## TT Semileptonic 
+        'tt': ['hist_TTToSemiLeptonic.root','hist_TTToHadronic.root','hist_TTTo2L2Nu.root'],
+        ## Other Bkg
+        'wJets' : ['hist_WJetsToLNu*'],
+        'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
+        'DY' : ['hist_DYJetsToLL_M-50_amcatnlo.root','hist_DYJetsToLL_M-10to50.root'],
+        'TTV' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root'],
+        'ST_t-channel' : ['hist_ST_t-channel*'],
+        'ST_tW' : ['hist_ST_tW_*'],
+	# QCD
+        'qcd': ['hist_QCD*'],
+        # Signal
+        'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TToCMuTau_Scalar.root'],
+        'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TToCMuTau_Tensor.root'],
+        'st_lfv_cv': ['hist_ST_LFV_TCMuTau_Vector.root','hist_TT_LFV_TToCMuTau_Vector.root'],
+        'st_lfv_us': ['hist_ST_LFV_TUMuTau_Scalar.root','hist_TT_LFV_TToUMuTau_Scalar.root'],
+        'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TToUMuTau_Tensor.root'],
+        'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TToUMuTau_Vector.root'],
+        # Data
+        'data_all' : ['hist_Run17.root'],
+        }
+processes_mapping['data_obs'] = processes_mapping['data_all']
+processes_mapping.pop('data_all')
 
 
-smTTlist = ['ttlf', 'ttcc', 'ttbb'] # for systematics affecting only SM tt
+smTTlist = ['tt'] # for systematics affecting only SM tt
 
 if options.applyxsec:
     # Read Xsec file
     with open(options.xsecfile, 'r') as xsec_file:
         xsec_data = yaml.load(xsec_file)
     if not xsec_data:
-        print "Error loading the cross section file %s"%options.xsecfile
+        print("Error loading the cross section file %s"%options.xsecfile)
         sys.exit(1)
     
 def main():
     """Main function"""
-    signals = ['Hut', 'Hct']
-    backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other', 'qcd']
-    #backgrounds = ['ttlf', 'ttcc', 'ttbb', 'other']
-    if options.dataYear == '2016': backgrounds.remove('qcd')
-    print "Background considered: ", backgrounds
+    signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
+    #signals = ['st_lfv_ut']
+    backgrounds = ['tt', 'wJets','vv','DY','TTV','ST_t-channel','ST_tW'] #, 'qcd']
+    print("Background considered: ", backgrounds)
 
     for signal in signals:
+	for key, value in discriminants.iteritems():
+		print(key, value)
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
+	print("dicriminants_per_signal : ", dicriminants_per_signal)
         for discriminant in dicriminants_per_signal.keys() :
+            print("signal :" , signal , "discrimanant :", discriminant)
             prepareShapes(backgrounds, [signal], dicriminants_per_signal[discriminant], discriminant)
 
 def merge_histograms(process, histogram, destination):
@@ -211,41 +165,11 @@ def merge_histograms(process, histogram, destination):
 
     # Rescale histogram to luminosity, if it's not data
     if not 'data' in process:
-        #print "Rescaleing %s to lumi: "%process, options.luminosity
         histogram.Scale(options.luminosity)
-    #print process, " ", histogram.GetTitle(), " ", destination, " ", histogram.GetNbinsX()
-    if options.rebinning <= 40: #We have 40 bins!
-        #histogram.Rebin(options.rebinning)
-        #pass
-
-        #import array
-        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
-        #arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
-        #if 'j3b3' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 1.0])
-        #if 'j3b3' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
-        #else: arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 1.0])
-        #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
-
-        #if any(h_ in histogram.GetName() for h_ in ['j3b2','j4b2']): histogram.Rebin(options.rebinning)
-        #if any(h_ in histogram.GetName() for h_ in ['j3b2','j4b2']): histogram.Rebin(4)
-        #else: histogram.Rebin(options.rebinning)
-
-        if options.dataYear != '2016':
-          import array
-          if   'j3b2' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0])
-          elif 'j4b2' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1.0])
-          elif 'j3b3' in histogram.GetName(): arr = array.array('d',[-1., -0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.5, 1.0])
-          elif 'j4b3' in histogram.GetName(): arr = array.array('d',[-1., -0.7, -0.5, -0.3, -0.1, 0.1, 0.3, 0.5, 0.75, 1.0])
-          elif 'j4b4' in histogram.GetName(): arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 1.0])
-          histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
-
-    else:
-        import array
-        arr = array.array('d',[-1., -0.8, -0.6, -0.4, -0.2, 0., 0.2, 0.4, 0.6, 0.8, 1.0])
-        histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
-
-    #if 'ttbb' in process: histogram.Scale(1.23)
-    #elif 'ttcc' in process: histogram.Scale(0.81)
+    import array
+    #arr = array.array('d',[0, 0.1, 0.3, 0.7, 0.9, 1.0])
+    arr = array.array('d',[0,10,20,30,40,50,60,70,80,90,100.0,200.0])
+    histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
     if not d:
@@ -288,9 +212,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             r = re.compile(path, re.IGNORECASE)
             process_files += [f for f in files if r.search(f)]
         if len(process_files) == 0:
-          print 'Warning: no file found for %s'%process
+          print('Warning: no file found for %s'%process)
         processes_files[process] = process_files
-        print "Files found for %s: "%(process), [os.path.basename(filename) for filename in process_files]
+        print("Files found for %s: "%(process), [os.path.basename(filename) for filename in process_files])
 
     # Create the list of histograms (nominal + systematics) for each category
     # we are interested in.
@@ -301,15 +225,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
         discriminant_name = discriminant_tuple[1]
         r = re.compile(individual_discriminants[discriminant_name], re.IGNORECASE)
         #f = ROOT.TFile.Open(processes_files.values()[0][0])
-        f = ROOT.TFile.Open(processes_files['ttlf'][0])
+        f = ROOT.TFile.Open(processes_files['tt'][0])
         histogram_names[discriminant_name] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
         f.Close()
 
-    #for category, histogram_name in categories_map.items():
-    #    r = re.compile(histogram_name, re.IGNORECASE)
-    #    f = ROOT.TFile.Open(processes_files.values()[0][0])
-    #    histogram_names[category] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
-    #    f.Close()
 
     # Extract list of systematics from the list of histograms derived above
     # This code assumes that *all* categories contains the same systematics (as it should)
@@ -318,8 +237,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     systematics = set()
     histograms = {}
     systematics_regex = re.compile('__(.*)(up|down)$', re.IGNORECASE)
+    #print("Histogram names :", histogram_names)
     for category, histogram_names in histogram_names.items():
         for histogram_name in histogram_names:
+            #print("Histogram name :" , histogram_name)
             m = systematics_regex.search(histogram_name)
             if m:
                 # It's a systematic histogram
@@ -331,11 +252,12 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     if histograms[category] != nominal_name:
                         raise Exception("The regular expression used for category %r matches more than one histogram: %r and %r" % (category, nominal_name, histograms[category]))
                 histograms[category] = nominal_name
-    print "Found the following systematics in rootfiles: ", systematics
+    print("Found the following systematics in rootfiles: ", systematics)
     if options.sysToAvoid:
+	print("***" , options.sysToAvoid)
         for sysToAvoid in options.sysToAvoid:
-            systematics.discard(sysToAvoid)
-        print "After ignoring the one mentioned with sysToAvoid option: ", systematics
+            systematics.remove(sysToAvoid)
+        print("After ignoring the one mentioned with sysToAvoid option: ", systematics)
 
     cms_systematics = [CMSNamingConvention(s) for s in systematics]
 
@@ -369,22 +291,14 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     for systematic in systematics:
                         if systematic in [item for item in options.sysForSMtt if item not in options.sysForSig] \
                             and not process in smTTlist: continue
-                        if systematic in options.sysForSig and not process in ['Hut','Hct']+smTTlist: continue
+                        if systematic in options.sysForSig and not process in ['st_lfv']+smTTlist: continue
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic) + variation.capitalize()
-                            #print "Key: ", key
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
-                            #if systematic in options.sysForSMtt and not process in smTTlist:
-                            #    # Copy nominal TH1 in non SMtt processes for systematics affecting only SMtt (already scaled)
-                            #    shapes[category][process][key] = merge_histograms(process, TH1, dict_get(shapes[category][process], key))
-                            #    continue
                             if not TH1_syst:
-                                print "No histo named %s in %s"%(original_histogram_name + '__' + systematic + variation, process_file_basename)
+                                print "No histo named %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename)
                                 sys.exit()
                             if options.applyxsec and not 'data' in process:
-                                #process_file_basename = os.path.basename(process_file)
-                                #xsec = xsec_data[process_file_basename]['cross-section']
-                                #nevt = xsec_data[process_file_basename]['generated-events']
                                 TH1_syst.Scale(xsec/float(nevt))
                             shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
@@ -413,37 +327,17 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
-    if options.dataYear != '2016':
-        call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
+    call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
     
     for signal in signals :
         cb = ch.CombineHarvester()
         cb.AddObservations(['*'], [''], ['_%s'%options.dataYear], [''], discriminant)
         cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], [signal], discriminant, True)
-        #cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
-        if options.dataYear == '2016':
-            cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
-        else:
-            if not 'b2j3' in discriminantName:
-                try: backgrounds.remove('qcd')
-                except: pass
-            else:
-                if not 'qcd' in backgrounds: backgrounds.append('qcd')
-            if 'all' in discriminantName:
-                if signal == 'Hut':
-                    discriminant.remove((1, 'DNN_Hut_b2j3'))
-                    cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds+['qcd'], [(1,'DNN_Hut_b2j3')], False)
-                else:
-                    discriminant.remove((1, 'DNN_Hct_b2j3'))
-                    cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds+['qcd'], [(1,'DNN_Hct_b2j3')], False)
-                cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
-                if signal == 'Hut': discriminant.append((1, 'DNN_Hut_b2j3'))
-                else:               discriminant.append((1, 'DNN_Hct_b2j3'))
-            else:
-                cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
+        cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], backgrounds, discriminant, False)
 
         # Systematics
         if not options.nosys:
+            print("systematics just before datacards : " , systematics)
             for systematic in systematics:
                 systematic_only_for_SMtt = False
                 systematic_only_for_Sig = False
@@ -459,22 +353,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
                 elif systematic_only_for_SMtt and not systematic_only_for_Sig:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
-                    #if 'hdamp' in systematic:
-                    #    for i in xrange(len(discriminant)):
-                    #        if 'b2j3' in discriminant[i][1]:
-                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttlf'], 1.00))
-                    #            cb.cp().AddSyst(cb, systematic, 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb','ttcc'], 1.05))
-                    #        elif 'b2j4' in discriminant[i][1]:
-                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], smTTlist, 1.00))
-                    #        elif 'b3j3' in discriminant[i][1]:
-                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttlf'], 1.00))
-                    #            cb.cp().AddSyst(cb, systematic, 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb','ttcc'], 1.05))
-                    #        elif 'b3j4' in discriminant[i][1]:
-                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], smTTlist, 1.00))
-                    #        elif 'b4j4' in discriminant[i][1]:
-                    #            cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.00))
-                    #            cb.cp().AddSyst(cb, systematic, 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc','ttlf'], 1.05))
-                    #else: cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist, 1.00))
                 elif not systematic_only_for_SMtt and systematic_only_for_Sig:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')([signal], 1.00))
                 else:
@@ -482,103 +360,28 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
             #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
-            if options.dataYear == '2016':
-                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
-                #reproducing 2016
-                #cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.027))
-            elif options.dataYear == '2017':
-                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
-            elif options.dataYear == '2018':
-                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
+            cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
+            cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
+            cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
 
-            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.055))
+            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['tt'], 1.055))
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')(['other'], 1.1))
             #cb.cp().AddSyst(cb, 'hdamp', 'lnN', ch.SystMap('process')(smTTlist, 1.05))
             #cb.cp().AddSyst(cb, 'TuneCP5', 'lnN', ch.SystMap('process')(smTTlist, 1.03))
 
+
             for i in xrange(len(discriminant)):
-                if 'b2j3' in discriminant[i][1]:
-                    cb.cp().AddSyst(cb, '$PROCESS_norm', 'lnN', ch.SystMap('process')(['qcd'], 1.5))
-                #reproducing 2016 ### comment out Other_xsec above!
-                #if 'b2j3' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b2j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
-                #if 'b2j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b2j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
-                #if 'b3j3' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b3j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
-                #if 'b3j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b3j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
-                #if 'b4j4' in discriminant[i][1]: cb.cp().AddSyst(cb, 'Other_xsec_b4j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['other'], 1.1))
-
-            if options.dataYear == '2016':
-                #reproducing 2016
-                #cb.cp().AddSyst(cb, 'hdamp_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.05))
-                #cb.cp().AddSyst(cb, 'scale_2016', 'lnN', ch.SystMap('process')(['ttbb', 'ttcc', 'ttlf'], 1.15))
-                #for i in xrange(len(discriminant)):
-                #    if 'j3' in discriminant[i][1]:
-                #        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
-                #        cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.01))
-                #    else:
-                #        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
-                #        cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #        cb.cp().AddSyst(cb, 'jec_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb', 'ttcc', 'ttlf', 'other', signal], 1.05))#1.05 for j4
-                for i in xrange(len(discriminant)):
-                    if 'b2' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b2_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                        #cb.cp().AddSyst(cb, '$PROCESS_norm_b2_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                    elif 'b3' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b3_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                        #cb.cp().AddSyst(cb, '$PROCESS_norm_b3_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                    elif 'b4' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b4_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                        #cb.cp().AddSyst(cb, '$PROCESS_norm_b4_2016', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-            else:
-                for i in xrange(len(discriminant)):
-                    if 'b2' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.2))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                    elif 'b3' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.22))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                    elif 'b4' in discriminant[i][1]:
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.2))
-                        cb.cp().AddSyst(cb, '$PROCESS_norm_b4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-
-                #if 'j3' in discriminant[i][1]:
-                #    #cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j3', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
-                #else:
-                #    #cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.5))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.3))
-                #    cb.cp().AddSyst(cb, '$PROCESS_norm_j4', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
+		#print(discriminant[i])
+                cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttbb'], 1.2))
+                cb.cp().AddSyst(cb, '$PROCESS_norm_b2', 'lnN', ch.SystMap('bin', 'process')([discriminant[i][1]], ['ttcc'], 1.5))
 
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
         cb.cp().signals().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
 
-        #reproducing 2016 - comment out
-        if options.dataYear == '2016':
-            rebin = ch.AutoRebin().SetBinThreshold(100).SetBinUncertFraction(0.1)
-            rebin.Rebin(cb.cp(), cb)
-
-        #elif options.dataYear == '2017':
-        #    #rebin_b2j3 = ch.AutoRebin().SetBinThreshold(5400)#.SetBinUncertFraction(0.1)
-        #    #rebin_b2j3.Rebin(cb.cp().bin(["DNN_Hut_b2j3", "DNN_Hct_b2j3"]), cb)
 
         #AutoMCStat
         cb.SetAutoMCStats(cb, 0.1)
-        #reproducing 2016
-        #print "Treating bbb"
-        #bbb = ch.BinByBinFactory()
-        #bbb.SetAddThreshold(0.0001)
-        #bbb.AddBinByBin(cb.cp().backgrounds(), cb)
-        #bbb.AddBinByBin(cb.cp().signals(), cb)
 
         output_prefix = 'FCNC_%s_Discriminant_%s' % (signal, discriminantName)
 
@@ -600,10 +403,10 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run blind #-v +2
-#combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} -S {systematics} #--run blind #-v +2
-#combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} -S {systematics} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
+echo combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} #--run expected #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
+#combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
         with open(script_file, 'w') as f:
@@ -667,7 +470,7 @@ PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o pos
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
 $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
 $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}_qcd.yml -y
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("Hut" if "Hut" in output_prefix else "Hct"), year=options.dataYear)
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("st_lfv"), year=options.dataYear)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
             f.write(script)
