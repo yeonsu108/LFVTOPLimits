@@ -6,16 +6,14 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 #input_path = 'datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp'
 #input_path = 'datacards_201215_2017v6_noSymmSmooth'
 #input_path = 'datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp'
-input_path = 'datacards_201215_2018v6_noSymmSmooth'
-#drawNom = False
-drawNom = True
+input_path = 'datacards_top_lfv_multiClass_16post_Apr2023_3'
+drawNom = False
+#drawNom = True
 logy = False
 #logy = True
-
-couplings = ['Hct', 'Hut']
-jet_bins = ['b2j3', 'b3j3', 'b2j4', 'b3j4', 'b4j4']
-rootfile_template = 'FCNC_COUPLING_Discriminant_DNN_COUPLING_JETBIN_shapes.root'
-process_list_org = ['ttlf', 'ttcc', 'ttbb', 'other','qcd']
+couplings = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
+rootfile_template = 'FCNC_COUPLING_Discriminant_DNN_COUPLING_shapes.root'
+process_list_org = ['tt', 'wJets', 'vv', 'DY', 'TTV' ,'qcd']
 
 plot_dir = 'systematics_plots_' + input_path
 if drawNom: plot_dir = plot_dir.rstrip('/') + '_nom/'
@@ -138,32 +136,32 @@ def drawComp(c, nom, up, dn, lowstat):
 for coupling in couplings:
     process_list = process_list_org[:]
     process_list.append(coupling)
-    for jet_bin in jet_bins:
-        rootfile_name = rootfile_template.replace("COUPLING", coupling).replace("JETBIN", jet_bin)
-        rootfile_path = os.path.join(input_path, coupling, rootfile_name)
-        print rootfile_path
-        rootfile = ROOT.TFile(rootfile_path)
-        dir_in_rootfile = "DNN_" + coupling + "_" + jet_bin
-        rootdir = rootfile.GetDirectory(dir_in_rootfile)
-        hist_list_org = [x.GetName() for x in rootdir.GetListOfKeys()]
-        syst_list = []
-        for it in hist_list_org:
-            if 'Up' in it: syst_list.append(it[it.find('_')+1:-2])
-        for syst in list(set(syst_list)):
-            #if not 'pdf' in syst: continue
-            #if not any(s in syst for s in ['TuneCP5','hdamp'] ): continue
-            print syst
-            syst_name = syst + "_" + coupling + "_" + jet_bin
-            for proc in process_list:
-                plot_name = syst_name + "_" + proc 
-                canvas = ROOT.TCanvas(plot_name, plot_name)
-                nominal_th1 = rootfile.Get(dir_in_rootfile + "/" + proc)
-                shape_up = rootfile.Get(dir_in_rootfile + "/" + proc + "_" + syst + "Up")
-                if not shape_up:
-                    print "No TH1 for " + syst + " " + proc
-                    continue
-                shape_dn = rootfile.Get(dir_in_rootfile + "/" + proc + "_" + syst + "Down")
+    rootfile_name = rootfile_template.replace("COUPLING", coupling)
+    rootfile_path = os.path.join(input_path, coupling, rootfile_name)
+    print(rootfile_path)
+    rootfile = ROOT.TFile(rootfile_path)
+    dir_in_rootfile = "DNN"
+    rootdir = rootfile.GetDirectory(dir_in_rootfile)
+    hist_list_org = [x.GetName() for x in rootdir.GetListOfKeys()]
+    syst_list = []
+    for it in hist_list_org:
+        if 'Up' in it: syst_list.append(it)
+    for syst in list(set(syst_list)):
+        #if not 'pdf' in syst: continue
+        #if not any(s in syst for s in ['TuneCP5','hdamp'] ): continue
+        print(syst)
+        syst_name = syst + "_" + coupling
+        for proc in process_list:
+            plot_name = syst_name + "_" + proc 
+            canvas = ROOT.TCanvas(plot_name, plot_name)
+            nominal_th1 = rootfile.Get(dir_in_rootfile + "/" + proc)
+            shape_up = rootfile.Get(dir_in_rootfile + "/" + proc + "_" + syst + "Up")
+            if shape_up: print("I found one for " + syst + " " + proc)
+            if not shape_up:
+                print("No TH1 for " + syst + " " + proc)
+                continue
+            shape_dn = rootfile.Get(dir_in_rootfile + "/" + proc + "_" + syst + "Down")
 
-                if drawNom: drawComp(canvas, nominal_th1, shape_up, shape_dn, any(s in syst for s in ['TuneCP5','hdamp']))
-                else: drawRatio(canvas, nominal_th1, shape_up, shape_dn)
-                canvas.Clear()
+            if drawNom: drawComp(canvas, nominal_th1, shape_up, shape_dn, any(s in syst for s in ['TuneCP5','hdamp']))
+            else: drawRatio(canvas, nominal_th1, shape_up, shape_dn)
+            canvas.Clear()

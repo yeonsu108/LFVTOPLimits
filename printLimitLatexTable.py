@@ -35,13 +35,16 @@ def calcBr(op, limits):
 ################
 for_table = []
 for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
+#for signal in ['st_lfv_cs']: #, 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
 	op = signal.split("_")[2]
 	limits = json.loads(open(os.path.join(limitfolder, 'st_lfv_'+op+'_limits.json')).read())
 	limits = limits[""]
-	#print(signal , op)
+	print(signal , op)
 	nom = " & ".join([calcXsec(signal,[limits['expected']]),calcWilson([limits['expected']]),calcBr(op, [limits['expected']])])
+	print("nom : ", nom)
 	for_table.append(nom)
 	unc = " & ".join([calcXsec(signal,limits['one_sigma']),calcWilson(limits['one_sigma']),calcBr(op, limits['one_sigma'])]) 
+	print("unc : ", unc)
 	for_table.append(unc)
 
 #print(len(for_table),for_table)
