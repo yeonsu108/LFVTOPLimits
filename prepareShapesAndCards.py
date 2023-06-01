@@ -51,12 +51,12 @@ parser.add_argument('-le', '--luminosityError', action='store', type=float, dest
 parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_200101_2017', help='Output directory')
 parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
-parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='xsec_2017_200101.yml', help='YAML config file path with Xsec and Nevt.')
+parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='files_17.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'TuneCUETP', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
-parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=['scale', 'ps', 'pdf'], help='Systematics affecting Signals (must be common with SMtt)')
+parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=[], help='Systematics affecting Signals (must be common with SMtt)')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lepton', 'scale', 'ps', 'TuneCP5', 'TuneCUETP', 'hdamp', 'pdf', 'lf', 'hf', 'cferr1', 'cferr2'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
@@ -94,23 +94,25 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         ## TT Semileptonic 
         'tt': ['hist_TTToSemiLeptonic.root','hist_TTToHadronic.root','hist_TTTo2L2Nu.root'],
         ## Other Bkg
-        'wJets' : ['hist_WJetsToLNu*'],
+        'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
         'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
-        'DY' : ['hist_DYJetsToLL_M-50_amcatnlo.root','hist_DYJetsToLL_M-10to50.root'],
-        'TTV' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root'],
-        'ST_t-channel' : ['hist_ST_t-channel*'],
-        'ST_tW' : ['hist_ST_tW_*'],
+        'DY' : ['hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root'],
+        'TTX' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        #'ST_t-channel' : ['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root'],
+        #'ST_tW' : ['hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+	'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+        #'other' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root','hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
 	# QCD
-        'qcd': ['hist_QCD*'],
+        'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
         # Signal
-        'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TToCMuTau_Scalar.root'],
-        'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TToCMuTau_Tensor.root'],
-        'st_lfv_cv': ['hist_ST_LFV_TCMuTau_Vector.root','hist_TT_LFV_TToCMuTau_Vector.root'],
-        'st_lfv_us': ['hist_ST_LFV_TUMuTau_Scalar.root','hist_TT_LFV_TToUMuTau_Scalar.root'],
-        'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TToUMuTau_Tensor.root'],
-        'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TToUMuTau_Vector.root'],
+        'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
+        'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TCMuTau_Tensor.root'],
+        'st_lfv_cv': ['hist_ST_LFV_TCMuTau_Vector.root','hist_TT_LFV_TCMuTau_Vector.root'],
+        'st_lfv_us': ['hist_ST_LFV_TUMuTau_Scalar.root','hist_TT_LFV_TUMuTau_Scalar.root'],
+        'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TUMuTau_Tensor.root'],
+        'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TUMuTau_Vector.root'],
         # Data
-        'data_all' : ['hist_Run17.root'],
+        'data_all' : ['hist_SingleMuon'+options.dataYear+'.root'],
         }
 processes_mapping['data_obs'] = processes_mapping['data_all']
 processes_mapping.pop('data_all')
@@ -129,8 +131,9 @@ if options.applyxsec:
 def main():
     """Main function"""
     signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
-    #signals = ['st_lfv_ut']
-    backgrounds = ['tt', 'wJets','vv','DY','TTV','ST_t-channel','ST_tW'] #, 'qcd']
+    #signals = ['st_lfv_cs']
+    backgrounds = ['tt', 'wJets','vv','DY','TTX','singleTop', 'qcd']
+    #backgrounds = ['tt','TTV','other','qcd']
     print("Background considered: ", backgrounds)
 
     for signal in signals:
@@ -168,7 +171,8 @@ def merge_histograms(process, histogram, destination):
         histogram.Scale(options.luminosity)
     import array
     #arr = array.array('d',[0, 0.1, 0.3, 0.7, 0.9, 1.0])
-    arr = array.array('d',[0,10,20,30,40,50,60,70,80,90,100.0,200.0])
+    #arr = array.array('d',[0,10,20,30,40,50,60,70,80,90,100.0,200.0])
+    arr = array.array('d',[0,5,10,30,60,100])
     histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
@@ -284,7 +288,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 if options.applyxsec and not 'data' in process:
                     xsec = xsec_data[process_file_basename]['cross-section']
                     nevt = xsec_data[process_file_basename]['generated-events']
-                    #print "Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt, " --> ", xsec/float(nevt)
+                    #print("Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt)
                     TH1.Scale(xsec/float(nevt))
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
@@ -364,7 +368,14 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
             cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
 
-            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['tt'], 1.055))
+            cb.cp().AddSyst(cb, 'trigger_eff', 'lnN', ch.SystMap()(1.02))
+
+            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['tt'], 1.044))
+            cb.cp().AddSyst(cb, 'ttX_xsec', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
+            cb.cp().AddSyst(cb, 'vv_xsec', 'lnN', ch.SystMap('process')(['vv'], 1.1))
+            cb.cp().AddSyst(cb, 'dy_xsec', 'lnN', ch.SystMap('process')(['DY'], 1.1))
+            cb.cp().AddSyst(cb, 'wjets_xsec', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
+            cb.cp().AddSyst(cb, 'singleTop_xsec', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
             cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')(['other'], 1.1))
             #cb.cp().AddSyst(cb, 'hdamp', 'lnN', ch.SystMap('process')(smTTlist, 1.05))
             #cb.cp().AddSyst(cb, 'TuneCP5', 'lnN', ch.SystMap('process')(smTTlist, 1.03))
@@ -404,8 +415,7 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 # Run limit
 
 echo combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
-#combine -M AsymptoticLimits -n {name} {workspace_root} #--run expected #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --expectSignal 1 --cminDefaultMinimizerStrategy 0 #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
