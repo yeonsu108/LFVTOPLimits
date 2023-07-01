@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 limitfolder = sys.argv[1]
-
+year = limitfolder.split("_")[-1:]
 
 signal_Xsec = {'st_lfv_cs':10.09,'st_lfv_cv':58.3,'st_lfv_ct':307.4,'st_lfv_us':86.49,'st_lfv_uv':414.5,'st_lfv_ut':1925}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 
@@ -67,7 +67,7 @@ lfv_table = """
          & & \\multirow{{2}}{{*}}{{Tensor}} &{lim10}\\\\ & & & {lim11}\\\\\\cline{{3-6}} 
         \\hline\\hline
     \\end{{tabular}}
-    \\caption{{Table for Run 2017 upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}} 
+    \\caption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}} 
     \\label{{tab:run2limit}} 
 \\end{{table}}
 """.format(
@@ -82,7 +82,8 @@ lim7=for_table[7],
 lim8=for_table[8],
 lim9=for_table[9],
 lim10=for_table[10],
-lim11=for_table[11])
+lim11=for_table[11],
+year = year)
 print(lfv_table)
 
 
