@@ -53,18 +53,21 @@ parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='files_17.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
-parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
+parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['tauidjetHighptstat'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
-parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'TuneCP5', 'TuneCUETP', 'ps', 'pdf','hdamp'], help='Systematics affecting only SM tt.')
+parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['scale', 'tune', 'ps', 'pdf','pdfEnv','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=[], help='Systematics affecting Signals (must be common with SMtt)')
-parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'lepton', 'scale', 'ps', 'TuneCP5', 'TuneCUETP', 'hdamp', 'pdf', 'lf', 'hf', 'cferr1', 'cferr2'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['pu', 'scale', 'ps', 'tune', 'hdamp', 'pdf','pdfEnv'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
 
 options = parser.parse_args()
 
 correlatedSys = options.correlatedSys
-correlatedSys.extend(['jecAbsolute', 'jecAbsolute'+options.dataYear, 'jecBBEC1', 'jecBBEC1'+options.dataYear, 'jecFlavorQCD', 'jecRelativeBal', 'jecRelativeSample'+options.dataYear])
+correlatedSys.extend(['jesAbsolute', 'jesAbsolute'+options.dataYear, 'jesBBEC1', 'jesBBEC1'+options.dataYear, 'jesFlavorQCD', 'jesRelativeBal', 'jesRelativeSample'+options.dataYear, 'jesHEM'])
+
+correlatedSys.extend(['btagcferr1','btagcferr2','btaghf','btaglf'])
+correlatedSys.extend(['tauidjetHighptextrap','tauidjetHighptsyst','tauidjetSystalleras'])
 
 channel_mapping = {
     "all" : 'Ch2'
@@ -103,7 +106,7 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
 	'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
         #'other' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root','hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
 	# QCD
-        'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
+        #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
         # Signal
         'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
         'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TCMuTau_Tensor.root'],
@@ -132,8 +135,7 @@ def main():
     """Main function"""
     signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
     #signals = ['st_lfv_cs']
-    backgrounds = ['tt', 'wJets','vv','DY','TTX','singleTop', 'qcd']
-    #backgrounds = ['tt','TTV','other','qcd']
+    backgrounds = ['tt', 'wJets','vv','DY','TTX','singleTop'] #, 'qcd']
     print("Background considered: ", backgrounds)
 
     for signal in signals:
@@ -284,12 +286,12 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 process_file_basename = os.path.basename(process_file)
                 if not TH1:
                     print "No histo named %s in %s. Exitting..."%(original_histogram_name, process_file)
-                    sys.exit()
+                    sys.exit()  ##UNCOMMETNT ECEEEE
                 if options.applyxsec and not 'data' in process:
                     xsec = xsec_data[process_file_basename]['cross-section']
                     nevt = xsec_data[process_file_basename]['generated-events']
                     #print("Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt)
-                    TH1.Scale(xsec/float(nevt))
+                    TH1.Scale(xsec/float(nevt)) #ECEEEE
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
@@ -301,9 +303,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             if not TH1_syst:
                                 print "No histo named %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename)
-                                sys.exit()
+                                #sys.exit()
+                                sys.exit()  ##UNCOMMETNT ECEEEE
                             if options.applyxsec and not 'data' in process:
-                                TH1_syst.Scale(xsec/float(nevt))
+                                TH1_syst.Scale(xsec/float(nevt)) #REMOVE IF ECEEEE
                             shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
 
@@ -364,19 +367,29 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
             #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
-            cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
-            cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
-            cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
 
-            cb.cp().AddSyst(cb, 'trigger_eff', 'lnN', ch.SystMap()(1.02))
+            if options.dataYear == '2016':
+                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
+                #reproducing 2016
+                #cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.027))
+            elif options.dataYear == '2017':
+                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
+            elif options.dataYear == '2018':
+                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
+                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
 
-            cb.cp().AddSyst(cb, 'tt_xsec', 'lnN', ch.SystMap('process')(['tt'], 1.044))
-            cb.cp().AddSyst(cb, 'ttX_xsec', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
-            cb.cp().AddSyst(cb, 'vv_xsec', 'lnN', ch.SystMap('process')(['vv'], 1.1))
-            cb.cp().AddSyst(cb, 'dy_xsec', 'lnN', ch.SystMap('process')(['DY'], 1.1))
-            cb.cp().AddSyst(cb, 'wjets_xsec', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
-            cb.cp().AddSyst(cb, 'singleTop_xsec', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
-            cb.cp().AddSyst(cb, 'Other_xsec', 'lnN', ch.SystMap('process')(['other'], 1.1))
+            #cb.cp().AddSyst(cb, 'trigger_eff', 'lnN', ch.SystMap()(1.02))
+            cb.cp().AddSyst(cb, 'xsec_tt', 'lnN', ch.SystMap('process')(['tt'], 1.044))
+            cb.cp().AddSyst(cb, 'xsec_ttX', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
+            cb.cp().AddSyst(cb, 'xsec_vv', 'lnN', ch.SystMap('process')(['vv'], 1.1))
+            cb.cp().AddSyst(cb, 'xsec_dy', 'lnN', ch.SystMap('process')(['DY'], 1.1))
+            cb.cp().AddSyst(cb, 'xsec_wjets', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
+            cb.cp().AddSyst(cb, 'xsec_singleTop', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
+            cb.cp().AddSyst(cb, 'xsec_Other', 'lnN', ch.SystMap('process')(['other'], 1.1))
             #cb.cp().AddSyst(cb, 'hdamp', 'lnN', ch.SystMap('process')(smTTlist, 1.05))
             #cb.cp().AddSyst(cb, 'TuneCP5', 'lnN', ch.SystMap('process')(smTTlist, 1.03))
 
@@ -490,7 +503,7 @@ $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_for
 
 def CMSNamingConvention(syst):
     # Taken from https://twiki.cern.ch/twiki/bin/view/CMS/HiggsWG/HiggsCombinationConventions
-    # systlist = ['jec', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
+    # systlist = ['jes', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
     #if syst not in options.correlatedSys:
     if syst not in correlatedSys:
         return 'CMS_' + options.dataYear + '_' + syst
