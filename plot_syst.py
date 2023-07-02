@@ -6,7 +6,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 #input_path = 'datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp'
 #input_path = 'datacards_201215_2017v6_noSymmSmooth'
 #input_path = 'datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp'
-input_path = 'datacards_top_lfv_multiClass_16post_Apr2023_3'
+input_path = 'datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018'
 drawNom = False
 #drawNom = True
 logy = False
