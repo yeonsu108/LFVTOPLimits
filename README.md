@@ -106,3 +106,42 @@ All the `xsec.yml` contain the cross section and number of generated events used
 #Customization for closure check label
 './path_to/HiggsAnalysis/CombinedLimit/test/diffNuisances.py', add 'hist_prefit.LabelsOption("v")' before draw
 
+
+#Detailed Recipe
+`
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2018/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 -xsecfile files_18.yml -dataYear 2018
+
+
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2017/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017 -xsecfile files_17.yml -dataYear 2017
+
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2016pre/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre -xsecfile files_16pre.yml -dataYear 2016pre
+
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2016post/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post -xsecfile files_16post.yml -dataYear 2016post
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2018.tex
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017 > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2017.tex
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre.tex
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post.tex
+
+
+python prepareRun2Combine_lfv.py -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+python run_all_limits.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2 > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2.tex
+
+
+python run_all_impacts.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+
+python run_all_impacts.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018
+`
