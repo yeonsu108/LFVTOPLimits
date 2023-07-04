@@ -29,8 +29,8 @@ options = parser.parse_args()
 postfix = ''
 print("options.printlimits" , options.printlimits)
 if options.printlimits:
-    #options.category_order = ['161718_all', '1617_all', '1718_all']
-    options.category_order = ['1718_all']
+    options.category_order = ['161718_all', '1617_all', '1718_all']
+    #options.category_order = ['1718_all']
     options.category_labels = options.category_order
     postfix = '_add'
 
