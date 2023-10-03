@@ -1,5 +1,8 @@
-# FCNCLimits
-Toolbox to derive upper limits for 2017/2018 FCNC tH(bb) analysis
+# LFVLimits
+
+We base the toolbox on FCNC analysis limit toolbox.
+
+Toolbox to derive upper limits for 2016/2017/2018  LFV TOP analysis
 # Installation
 ```
 export SCRAM_ARCH=slc6_amd64_gcc530
@@ -96,10 +99,49 @@ All the `xsec.yml` contain the cross section and number of generated events used
 
 `update_an.sh` script used to automatize the update of the AN after generating new limits (writes the latex table with limits in the AN, change the limits and psotfit plots, etc). It has to be updated to whatever format will be decided for AN combining 2017 and 2018.
 
-#Run 2 combination
+# Run 2 combination
 `run_everything_for161718.sh` read datacards defined as `-p16/17/17` and generate output folder with merged datacards. Then run limit, pull, impact in the directory
 `correlateUnc.py` changes fully correlated sources across the year to partially correlated sources. For example, to excute the code for JEC, `python ../../correlateUnc.py FCNC_Hct_Discriminant_DNN_Hct_161718_all.dat --process CMS_jec,0.5,2017-2018  --output-txt test_datacard.txt --output-root test_datacard.root` in the datacard folder. In the process option, argument carries source name, correlation and years. Years are divided by '-', so if you want to include 2016 as well, type `2016-2017-2018`. The output card and new root file with histograms will be generated.
 
 #Customization for closure check label
 './path_to/HiggsAnalysis/CombinedLimit/test/diffNuisances.py', add 'hist_prefit.LabelsOption("v")' before draw
 
+
+# Detailed Recipe
+`
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2018/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 -xsecfile files_18.yml -dataYear 2018
+
+
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2017/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017 -xsecfile files_17.yml -dataYear 2017
+
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2016pre/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre -xsecfile files_16pre.yml -dataYear 2016pre
+
+python prepareShapesAndCards.py -p  /afs/cern.ch/work/e/ecasilar/top_lfv_multiClass_June2023_GoingtoPrep_2/2016post/ -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post -xsecfile files_16post.yml -dataYear 2016post
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018 > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2018.tex
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017 > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2017.tex
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre.tex
+
+python run_all_limits.py  datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post.tex
+
+
+python prepareRun2Combine_lfv.py -o datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+python run_all_limits.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+python plotLimitsPerCategory.py -limitfolder datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+python printLimitLatexTable.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2 > limits_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2.tex
+
+
+python run_all_impacts.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_Run2
+
+python run_all_impacts.py datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018
+`

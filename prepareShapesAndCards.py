@@ -53,11 +53,13 @@ parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='files_17.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
-parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=[], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
+parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['tauidjetHighptstat'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
+
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=[ 'isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=['isr','fsr','mescale','renscale','facscale'], help='Systematics affecting Signals (must be common with SMtt)')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['muid','muiso','mutrg','pu', 'isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+
 parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
 
@@ -154,6 +156,7 @@ def main():
     signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
     #signals = ['st_lfv_cs']
     backgrounds = ['tt', 'other' , 'singleTop', 'wJets','vv','DY','TTX'] #,'singleTop'] #, 'qcd']
+
     print("Background considered: ", backgrounds)
 
     for signal in signals:
@@ -308,6 +311,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 process_file_basename = os.path.basename(process_file)
                 if not TH1:
                     print "No histo named %s in %s. ORIGINAL Exitting..."%(original_histogram_name, process_file)
+
                     sys.exit()  ##UNCOMMETNT ECEEEE
                 if options.applyxsec and not 'data' in process:
                     xsec = xsec_data[process_file_basename]['cross-section']
