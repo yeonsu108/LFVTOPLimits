@@ -270,6 +270,73 @@
   yields-group: '4Z+Jets'
   order: 24
 
+
+st_DYJetsToLL_M50_HT70to100.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 158.2 #140.0 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+'hist_DYJetsToLL_M50_HT100to200.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 157.296 #139.2 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+'hist_DYJetsToLL_M50_HT200to400.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 43.392 #38.4 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+'hist_DYJetsToLL_M50_HT400to600.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 5.847 #5.174 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+'hist_DYJetsToLL_M50_HT600to800.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 1.422 #1.258 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+
+'hist_DYJetsToLL_M50_HT800to1200.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 0.6326 #0.5598 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+'hist_DYJetsToLL_M50_HT1200to2500.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 0.1475 #0.1305 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+'hist_DYJetsToLL_M50_HT2500toInf.root':
+  type: mc
+  pretty-name: 'DYJets'
+  cross-section: 0.003387 #0.002997 * 1.13
+  group: GZJets
+  yields-group: '4Z+Jets'
+  order: 24
+
+
 'hist_WJetsToLNu_HT0To100.root':
   type: mc
   pretty-name: 'WJetsToLNu_HT0To100'

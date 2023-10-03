@@ -113,16 +113,16 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         ## TT Semileptonic 
         ## Other Bkg
         #'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
-        'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
-        'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
-        'DY' : ['hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root'],
-        'TTX' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        #'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
+        #'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
+        #'DY' : ['hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root'],
+        #'TTX' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
         #'ST_t-channel' : ['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root'],
         #'ST_tW' : ['hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
         'tt': ['hist_TTToSemiLeptonic.root','hist_TTTo2L2Nu.root'],
 	'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
-        'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        #'other' : ['hist_TTToHadronic.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        #'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        'other' : ['hist_TTToHadronic.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
 	# QCD
         #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
         # Signal
@@ -155,7 +155,7 @@ def main():
     """Main function"""
     signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
     #signals = ['st_lfv_cs']
-    backgrounds = ['tt', 'other' , 'singleTop', 'wJets','vv','DY','TTX'] #,'singleTop'] #, 'qcd']
+    backgrounds = ['tt', 'other' , 'singleTop'] #, 'wJets','vv','DY','TTX'] #,'singleTop'] #, 'qcd']
 
     #print("Background considered: ", backgrounds)
 
@@ -307,19 +307,19 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             for process_file in process_files:
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
-		#print("ORIGINAL : ", original_histogram_name)
+		print("ORIGINAL : ", original_histogram_name)
                 process_file_basename = os.path.basename(process_file)
                 if not TH1:
                     #print "No histo named %s in %s. ORIGINAL Exitting..."%(original_histogram_name, process_file)
-
                     sys.exit()  ##UNCOMMETNT ECEEEE
                 if options.applyxsec and not 'data' in process:
                     xsec = xsec_data[process_file_basename]['cross-section']
-                    nevt = xsec_data[process_file_basename]['generated-events']
+                    histFornevt = f.Get('hcounter')
+                    nevt = histFornevt.GetBinContent(2)
                     #print("Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt)
 		    #print("Nominal Integral Before scale : " , TH1.Integral())
                     TH1.Scale(xsec/float(nevt)) #ECEEEE
-		    #print("Nominal Integral After scale : " , TH1.Integral())
+		    print("Nominal Integral After scale : " , TH1.Integral())
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
@@ -333,12 +333,12 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             key = CMSNamingConvention(systematic,options) + variation.capitalize()
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             if not TH1_syst:
-                                #print "YES YES here ... No histo named %s in %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename, process)
+                                print "YES YES here ... No histo named %s in %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename, process)
                                 sys.exit()
                             if options.applyxsec and not 'data' in process and TH1_syst:
 				#print("systematic : ", systematic , "Inetgral : " , TH1_syst.Integral())
                                 TH1_syst.Scale(xsec/float(nevt)) #REMOVE IF ECEEEE
-				#print("systematic : ", systematic , "Inetgral After scale : " , TH1_syst.Integral())
+				print("systematic : ", systematic , "Inetgral After scale : " , TH1_syst.Integral())
                             #print("SYSTEMTIC to be scaled with LUMI: " , systematic)
                             shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
