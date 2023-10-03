@@ -50,16 +50,6 @@ def calcXsec(signal,limits):
 def calcWilson(limits):
     return list(np.sqrt(limits))
 
-def calcBr(op, limits):
-    out = []
-    if op == "cs" or op == "us":
-        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(6144*(math.pi**3))
-    elif op == "cv" or op == "uv":
-        out = np.array(limits)*(172.5**5)*10**(-6)/(1536*(math.pi**3))
-    elif op == "ct" or op == "ut":
-        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(128*(math.pi**3))
-    return list(out)
-
 
 def getLimitsFromFile(input_file):
     """
@@ -236,7 +226,7 @@ for signal_folder in signal_folders:
     dict_cat_limits = {}
     for category in options.category_order:
 	print("CAtegory : " , category)
-        limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineFCNC') and category in rootfile and ( (not options.printlimits and not any(t in rootfile for t in ['_1617_', '_1718_'])) or (options.printlimits and any(t in rootfile for t in [signal_folder+'_'+category])) )]
+        limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineTOP_LFV') and category in rootfile and ( (not options.printlimits and not any(t in rootfile for t in ['_1617_', '_1718_'])) or (options.printlimits and any(t in rootfile for t in [signal_folder+'_'+category])) )]
 	print("LIMIT ROOT FILES : " , limit_rootfiles)
         found_category = False
         for limit_rootfile in limit_rootfiles:

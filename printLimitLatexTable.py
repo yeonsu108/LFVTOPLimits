@@ -19,14 +19,16 @@ def calcWilson(limits):
     else: result = str(wilson)
     return result
 
+
+#Add /1.3 for top width 
 def calcBr(op, limits):
     out = []
     if op == "cs" or op == "us":
-        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(6144*(math.pi**3))
+        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(1.3*6144*(math.pi**3))
     elif op == "cv" or op == "uv":
-        out = np.array(limits)*(172.5**5)*10**(-6)/(1536*(math.pi**3))
+        out = 4*np.array(limits)*(172.5**5)*10**(-6)/(1.3*1536*(math.pi**3))
     elif op == "ct" or op == "ut":
-        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(128*(math.pi**3))
+        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(1.3*128*(math.pi**3))
     out = list(np.around(out,decimals=3))
     if len(out)==1: result = str(out[0])
     else: result = str(out)

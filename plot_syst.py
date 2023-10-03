@@ -6,13 +6,14 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 #input_path = 'datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp'
 #input_path = 'datacards_201215_2017v6_noSymmSmooth'
 #input_path = 'datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp'
-input_path = 'datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018'
+#input_path = 'datacards_top_lfv_multiClass_Sep19_2023_2018'
+input_path = 'datacards_top_lfv_multiClass_Sep2023_GoingtoPrep_Run2_forGL'
 drawNom = False
 #drawNom = True
 logy = True
 #logy = True
 couplings = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
-rootfile_template = 'FCNC_COUPLING_Discriminant_DNN_COUPLING_shapes.root'
+rootfile_template = 'TOP_LFV_COUPLING_Discriminant_DNN_COUPLING_shapes.root'
 process_list_org = ['tt', 'wJets', 'vv', 'DY', 'TTX' ,'singleTop']
 
 plot_dir = 'systematics_plots_' + input_path
@@ -24,6 +25,9 @@ if not os.path.isdir(plot_dir):
 def drawRatio(c, nom, up, dn):
     print("In drawRatio")
     c.cd()
+    print(nom.GetBinContent(1))
+    print(up.GetBinContent(1))
+    print(dn.GetBinContent(1))
     ratio_up = nom.Clone()
     ratio_up.Divide(up)
     ratio_up.SetLineColor(ROOT.kRed)
@@ -36,21 +40,27 @@ def drawRatio(c, nom, up, dn):
     line = ROOT.TLine(-1, 1, 1, 1)
     line.SetLineStyle(2)
     minmax = [ratio_up.GetMaximum(), ratio_up.GetMinimum(), ratio_dn.GetMaximum(), ratio_dn.GetMinimum()]
+    print(minmax)
     tmp_min = min(minmax)
-    #If min = 0
+    print(tmp_min)
     if tmp_min < 0.01:
         nbins = ratio_up.GetNbinsX()
         contents_org = [ratio_up.GetBinContent(x) for x in xrange(nbins)]
         contents_org.extend([ratio_dn.GetBinContent(x) for x in xrange(nbins)])
         contents = contents_org[:]
-        for i in xrange(len(contents_org)):
-            if contents_org[i] < 0.01: contents.remove(contents_org[i])
+	print(contents)
+	print(contents_org)
+        #for i in xrange(len(contents_org)):
+        #    if contents_org[i] < 0.1: contents.remove(contents_org[i])
         tmp_min = min(contents)
     ratio_up.GetYaxis().SetRangeUser(tmp_min*0.85, max(minmax)*1.15)
+    print(ratio_up.GetBinContent(1),ratio_up.GetBinContent(2))
+    print(ratio_dn.GetBinContent(1),ratio_dn.GetBinContent(2))
     ratio_up.Draw()
     ratio_dn.Draw('same')
     legend.Draw()
     line.Draw()
+    print("we saved the ratios here : " , os.path.join(plot_dir, plot_name + '.png'))
     c.Print(os.path.join(plot_dir, plot_name + '.png'))
 
 
@@ -151,7 +161,8 @@ for coupling in couplings:
 		print("YESS THERE IS UP: ", it,"   " , it[it.find('_')+1:-2])
     for syst in list(set(syst_list)):
         #if not 'pdf' in syst: continue
-        #if not any(s in syst for s in ['TuneCP5','hdamp'] ): continue
+        #if not any(s in syst for s in ['tune','hdamp'] ): continue
+        if "51" in syst : continue
         syst_name = syst + "_" + coupling
         #syst_name = syst
         print("SYST NAME AFTER rEmoval of Up and Down: " , syst_name)
