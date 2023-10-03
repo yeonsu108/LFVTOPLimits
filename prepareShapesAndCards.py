@@ -157,15 +157,15 @@ def main():
     #signals = ['st_lfv_cs']
     backgrounds = ['tt', 'other' , 'singleTop', 'wJets','vv','DY','TTX'] #,'singleTop'] #, 'qcd']
 
-    print("Background considered: ", backgrounds)
+    #print("Background considered: ", backgrounds)
 
     for signal in signals:
 	for key, value in discriminants.iteritems():
 		print(key, value)
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
-	print("dicriminants_per_signal : ", dicriminants_per_signal)
+	#print("dicriminants_per_signal : ", dicriminants_per_signal)
         for discriminant in dicriminants_per_signal.keys() :
-            print("signal :" , signal , "discrimanant :", discriminant)
+            #print("signal :" , signal , "discrimanant :", discriminant)
             prepareShapes(backgrounds, [signal], dicriminants_per_signal[discriminant], discriminant)
 
 def merge_histograms(process, histogram, destination):
@@ -250,11 +250,11 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     histogram_names = {}
     for discriminant_tuple in categories_map[discriminant]:
         discriminant_name = discriminant_tuple[1]
-        print("**** discriminant_name : " , discriminant_name )
+        #print("**** discriminant_name : " , discriminant_name )
         r = re.compile(individual_discriminants[discriminant_name], re.IGNORECASE)
         #f = ROOT.TFile.Open(processes_files.values()[0][0])
         f = ROOT.TFile.Open(processes_files['tt'][0])
-        print("processes_files keys : " , processes_files['tt'])
+        #print("processes_files keys : " , processes_files['tt'])
         histogram_names[discriminant_name] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
         f.Close()
 
@@ -263,7 +263,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     # This code assumes that *all* categories contains the same systematics (as it should)
     # The systematics list is extracted from the histogram list of the first category
     # The list of expanded histogram name is also extract (ie, regex -> full histogram name)
-    print("HIST NAMES : " , histogram_names)
+    #print("HIST NAMES : " , histogram_names)
     systematics = set()
     histograms = {}
     systematics_regex = re.compile('__(.*)(up|down)$', re.IGNORECASE)
@@ -284,10 +284,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 histograms[category] = nominal_name
     print("Found the following systematics in rootfiles: ", systematics)
     if options.sysToAvoid:
-	print("***" , options.sysToAvoid)
+	#print("***" , options.sysToAvoid)
         for sysToAvoid in options.sysToAvoid:
             systematics.remove(sysToAvoid)
-        print("After ignoring the one mentioned with sysToAvoid option: ", systematics)
+        #print("After ignoring the one mentioned with sysToAvoid option: ", systematics)
 
     cms_systematics = [CMSNamingConvention(s,options) for s in systematics]
 
@@ -307,23 +307,23 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             for process_file in process_files:
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
-		print("ORIGINAL : ", original_histogram_name)
+		#print("ORIGINAL : ", original_histogram_name)
                 process_file_basename = os.path.basename(process_file)
                 if not TH1:
-                    print "No histo named %s in %s. ORIGINAL Exitting..."%(original_histogram_name, process_file)
+                    #print "No histo named %s in %s. ORIGINAL Exitting..."%(original_histogram_name, process_file)
 
                     sys.exit()  ##UNCOMMETNT ECEEEE
                 if options.applyxsec and not 'data' in process:
                     xsec = xsec_data[process_file_basename]['cross-section']
                     nevt = xsec_data[process_file_basename]['generated-events']
                     #print("Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt)
-		    print("Nominal Integral Before scale : " , TH1.Integral())
+		    #print("Nominal Integral Before scale : " , TH1.Integral())
                     TH1.Scale(xsec/float(nevt)) #ECEEEE
-		    print("Nominal Integral After scale : " , TH1.Integral())
+		    #print("Nominal Integral After scale : " , TH1.Integral())
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
-			print("SYSTEMATIIC : " , systematic)
+			#print("SYSTEMATIIC : " , systematic)
 			#Accidently count pdfalphas in the rest pdf list 
 			#if "pdf51" in systematic: continue  
                         if systematic in [item for item in sysForSMtt if item not in sysForSig] \
@@ -333,20 +333,20 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             key = CMSNamingConvention(systematic,options) + variation.capitalize()
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             if not TH1_syst:
-                                print "YES YES here ... No histo named %s in %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename, process)
+                                #print "YES YES here ... No histo named %s in %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename, process)
                                 sys.exit()
                             if options.applyxsec and not 'data' in process and TH1_syst:
 				#print("systematic : ", systematic , "Inetgral : " , TH1_syst.Integral())
                                 TH1_syst.Scale(xsec/float(nevt)) #REMOVE IF ECEEEE
 				#print("systematic : ", systematic , "Inetgral After scale : " , TH1_syst.Integral())
-                            print("SYSTEMTIC to be scaled with LUMI: " , systematic)
+                            #print("SYSTEMTIC to be scaled with LUMI: " , systematic)
                             shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
     #print("Shapes :  ", shapes["DNN"]["TTX"].keys())
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
     #print("Writing file here: " , output_filename)
     for category, processes in shapes.items():
-        print("For category : " , category , "Process : ", processes)
+        #print("For category : " , category , "Process : ", processes)
         output_file.mkdir(category).cd()
         for process, systematics_ in processes.items():
             for systematic, histogram in systematics_.items():
@@ -369,7 +369,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
-    #call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
+    call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
     
     for signal in signals :
 	print("Before combine harvester :",signal)
@@ -402,7 +402,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')([signal], 1.00))
                 else:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist+[signal], 1.00))
-		    print("I am adding " ,systematic , "to process ", smTTlist+[signal] )
+		    #print("I am adding " ,systematic , "to process ", smTTlist+[signal] )
 
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
             #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
@@ -432,7 +432,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             #cb.cp().AddSyst(cb, 'hdamp', 'lnN', ch.SystMap('process')(smTTlist, 1.05))
             #cb.cp().AddSyst(cb, 'TuneCP5', 'lnN', ch.SystMap('process')(smTTlist, 1.03))
 
-            print("All good so far")
+            #print("All good so far")
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
 	print("OK got the background")
@@ -503,14 +503,14 @@ combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
 
 # Run impacts
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20 -t -1
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --robustHesse 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 32
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --robustHesse 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
 plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 50
 
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --robustHesse 1 --rMin -20 --rMax 20 --parallel 32
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
-plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --robustHesse 1 --rMin -20 --rMax 20 --parallel 32
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
+#plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
