@@ -35,16 +35,7 @@ def get_hist_regex(r):
 
 cmssw_base = os.environ['CMSSW_BASE']
 
-def str2bool(v):
-    if v.lower() in ('yes', 'true', 't', 'y', '1', 'True'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0', 'False'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
-
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
-
 parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_200101_2017/training_0101010101', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
 parser.add_argument('-le', '--luminosityError', action='store', type=float, dest='luminosityError', default=1.023, help='Error on the integrated luminosity (default is 1.023 /pb)')
@@ -56,7 +47,7 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['tauidjetHighptstat'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
 # Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
 
-parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=[ 'isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics affecting only SM tt.')
+parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=['isr','fsr','mescale','renscale','facscale'], help='Systematics affecting Signals (must be common with SMtt)')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['muid','muiso','mutrg','pu', 'isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 
@@ -66,31 +57,31 @@ parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, def
 options = parser.parse_args()
 
 correlatedSys = options.correlatedSys
-correlatedSys.extend(['jesAbsolute', 'jesAbsolute_'+options.dataYear, 'jesBBEC1', 'jesBBEC1_'+options.dataYear, 'jesFlavorQCD', 'jesRelativeBal', 'jesRelativeSample_'+options.dataYear, 'jesHEM'])
+correlatedSys.extend(['jesAbsolute', 'jesAbsolute_'+options.dataYear, 'jesBBEC1', 'jesBBEC1_'+options.dataYear,
+                      'jesFlavorQCD',
+                      'jesFlavorPureGluon', 'jesFlavorPureQuark', 'jesFlavorPureCharm', 'jesFlavorPureBottom',
+                      'jesRelativeBal', 'jesRelativeSample_'+options.dataYear, 'jesHEM'])
 
 correlatedSys.extend(['btagcferr1','btagcferr2','btaghf','btaglf'])
 correlatedSys.extend(['tauidjetHighptextrap','tauidjetHighptsyst','tauidjetSystalleras'])
-correlatedSys.extend(['pdf'+str(i) for i in range(1,51)])
+correlatedSys.extend(['pdf'+str(i) for i in range(1,101)])
 
 sysForSMtt = options.sysForSMtt
-sysForSMtt.extend(['pdf'+str(i) for i in range(1,51)])
+sysForSMtt.extend(['pdf'+str(i) for i in range(1,101)])
+sysForSMtt.extend(['mescalemu1ta1', 'mescalemu1ta2', 'mescalemu2ta1', 'mescalemu2ta2',
+                   'renscalemu1ta1', 'renscalemu1ta2', 'renscalemu2ta1', 'renscalemu2ta2',
+                   'facscalemu1ta1', 'facscalemu1ta2', 'facscalemu2ta1', 'facscalemu2ta2'])
 
 sysForSig = options.sysForSig
-sysForSig.extend(['pdf'+str(i) for i in range(1,51)])
-
-#print("LIST OF sysForSig : " , sysForSig)
+sysForSig.extend(['pdf'+str(i) for i in range(1,101)])
+sysForSig.extend(['mescalemu1ta1', 'mescalemu1ta2', 'mescalemu2ta1', 'mescalemu2ta2',
+                  'renscalemu1ta1', 'renscalemu1ta2', 'renscalemu2ta1', 'renscalemu2ta2',
+                  'facscalemu1ta1', 'facscalemu1ta2', 'facscalemu2ta1', 'facscalemu2ta2'])
 
 
 years = {'2016pre': 19502, '2016post': 16812, '2017': 41480, '2018':59832}
 luminosity = years[options.dataYear]
 
-
-channel_mapping = {
-    "all" : 'Ch2'
-    }
-
-#Hct_j4_h_DNN_b2_Ch2__TuneCP5up
-channel = options.channel 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
         'DNN': get_hist_regex('h_dnn_pred_S5'),
         }
@@ -106,12 +97,8 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     }
 
 # IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
-# ~Kirill definition of Bkg
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
                       # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
-        # Background
-        ## TT Semileptonic 
-        ## Other Bkg
         #'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
         #'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
         #'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
@@ -160,12 +147,10 @@ def main():
     #print("Background considered: ", backgrounds)
 
     for signal in signals:
-	for key, value in discriminants.iteritems():
+        for key, value in discriminants.iteritems():
             print(key, value)
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
-	#print("dicriminants_per_signal : ", dicriminants_per_signal)
         for discriminant in dicriminants_per_signal.keys() :
-            #print("signal :" , signal , "discrimanant :", discriminant)
             prepareShapes(backgrounds, [signal], dicriminants_per_signal[discriminant], discriminant)
 
 def merge_histograms(process, histogram, destination):
@@ -191,15 +176,10 @@ def merge_histograms(process, histogram, destination):
 
     # Rescale histogram to luminosity, if it's not data
     if not 'data' in process:
-        #print("HISTOGRAMS are being Lumi scaled")
-        #print("HIST TITLE : " , histogram.GetName())
         histogram.Scale(luminosity)
     import array
-    #arr = array.array('d',[0,1,2,5,10,30,60])
-    #arr = array.array('d',[i for i in range(60)])
-    arr = array.array('d',[0,1,2,3,5,10,30,60])
-    #arr = array.array('d',[0,1,2,3,60])
-    histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+    #arr = array.array('d',[0,1,2,5,10,30,100])
+    #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
     if not d:
@@ -253,11 +233,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     histogram_names = {}
     for discriminant_tuple in categories_map[discriminant]:
         discriminant_name = discriminant_tuple[1]
-        #print("**** discriminant_name : " , discriminant_name )
         r = re.compile(individual_discriminants[discriminant_name], re.IGNORECASE)
         #f = ROOT.TFile.Open(processes_files.values()[0][0])
         f = ROOT.TFile.Open(processes_files['tt'][0])
-        #print("processes_files keys : " , processes_files['tt'])
         histogram_names[discriminant_name] = [n.GetName() for n in f.GetListOfKeys() if r.search(n.GetName())]
         f.Close()
 
@@ -266,7 +244,6 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
     # This code assumes that *all* categories contains the same systematics (as it should)
     # The systematics list is extracted from the histogram list of the first category
     # The list of expanded histogram name is also extract (ie, regex -> full histogram name)
-    #print("HIST NAMES : " , histogram_names)
     systematics = set()
     histograms = {}
     systematics_regex = re.compile('__(.*)(up|down)$', re.IGNORECASE)
@@ -287,10 +264,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 histograms[category] = nominal_name
     print("Found the following systematics in rootfiles: ", systematics)
     if options.sysToAvoid:
-	#print("***" , options.sysToAvoid)
         for sysToAvoid in options.sysToAvoid:
             systematics.remove(sysToAvoid)
-        #print("After ignoring the one mentioned with sysToAvoid option: ", systematics)
 
     cms_systematics = [CMSNamingConvention(s,options) for s in systematics]
 
@@ -310,50 +285,36 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             for process_file in process_files:
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
-		#print("ORIGINAL : ", original_histogram_name)
                 process_file_basename = os.path.basename(process_file)
                 if not TH1:
-                    #print "No histo named %s in %s. ORIGINAL Exitting..."%(original_histogram_name, process_file)
-                    sys.exit()  ##UNCOMMETNT ECEEEE
+                    sys.exit()
                 if options.applyxsec and not 'data' in process:
                     xsec = xsec_data[process_file_basename]['cross-section']
+                    #nevt = xsec_data[process_file_basename]['generated-events']
                     histFornevt = f.Get('hcounter')
                     nevt = histFornevt.GetBinContent(2)
-                    #print("Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt)
-		    #print("Nominal Integral Before scale : " , TH1.Integral())
-                    TH1.Scale(xsec/float(nevt)) #ECEEEE
-		    #print("Nominal Integral After scale : " , TH1.Integral())
+                    TH1.Scale(xsec/float(nevt))
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
-			#print("SYSTEMATIIC : " , systematic)
-			#Accidently count pdfalphas in the rest pdf list 
-			#if "pdf51" in systematic: continue  
                         if systematic in [item for item in sysForSMtt if item not in sysForSig] \
                             and not process in smTTlist: continue
-                        if systematic in sysForSMtt and not process in lfvlist+smTTlist: continue
+                        if systematic in sysForSMtt and not process in lfvlist + smTTlist: continue
                         for variation in ['up', 'down']:
                             key = CMSNamingConvention(systematic,options) + variation.capitalize()
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             if not TH1_syst:
-                                print "YES YES here ... No histo named %s in %s in %s"%(original_histogram_name + '__' +  systematic + variation, process_file_basename, process)
                                 sys.exit()
                             if options.applyxsec and not 'data' in process and TH1_syst:
-				#print("systematic : ", systematic , "Inetgral : " , TH1_syst.Integral())
-                                TH1_syst.Scale(xsec/float(nevt)) #REMOVE IF ECEEEE
-				#print("systematic : ", systematic , "Inetgral After scale : " , TH1_syst.Integral())
-                            #print("SYSTEMTIC to be scaled with LUMI: " , systematic)
+                                TH1_syst.Scale(xsec/float(nevt))
                             shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
-    #print("Shapes :  ", shapes["DNN"]["TTX"].keys())
+
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
-    #print("Writing file here: " , output_filename)
     for category, processes in shapes.items():
-        #print("For category : " , category , "Process : ", processes)
         output_file.mkdir(category).cd()
         for process, systematics_ in processes.items():
             for systematic, histogram in systematics_.items():
-                #print("Writing histograms ... ")
                 histogram.SetName(process if systematic == 'nominal' else process + '__' + systematic)
                 histogram.Write()
         output_file.cd()
@@ -375,7 +336,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
     
     for signal in signals :
-	print("Before combine harvester :",signal)
         cb = ch.CombineHarvester()
         cb.AddObservations(['*'], [''], ['_%s'%options.dataYear], [''], discriminant)
         cb.AddProcesses(['*'], [''], ['_%s'%options.dataYear], [''], [signal], discriminant, True)
@@ -383,8 +343,8 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 
         # Systematics
         if not options.nosys:
-            #print("systematics just before datacards : " , systematics)
             for systematic in systematics:
+                if any(s_ == systematic for s_ in ['CMS_mescale', 'CMS_renscale', 'CMS_facscale', 'CMS_jesFlavorQCD']): continue
                 systematic_only_for_SMtt = False
                 systematic_only_for_Sig = False
 
@@ -394,8 +354,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 for systSig in sysForSig:
                     if CMSNamingConvention(systSig,options) == systematic:
                         systematic_only_for_Sig = True
-		#print("signal :", signal ,"systematic_only_for_Sig :", systematic_only_for_Sig )
-		#print("systematic_only_for_SMtt :", systematic_only_for_SMtt )
                 if not systematic_only_for_SMtt and not systematic_only_for_Sig:
                     #print("No tt , no signal")
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap()(1.00))
@@ -405,7 +363,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')([signal], 1.00))
                 else:
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist+[signal], 1.00))
-		    #print("I am adding " ,systematic , "to process ", smTTlist+[signal] )
 
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
             #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
@@ -413,8 +370,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             if '2016' in options.dataYear:
                 cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
                 cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
-                #reproducing 2016
-                #cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.027))
             elif options.dataYear == '2017':
                 cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
                 cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
@@ -424,7 +379,6 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
                 cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
 
-            #cb.cp().AddSyst(cb, 'trigger_eff', 'lnN', ch.SystMap()(1.02))
             cb.cp().AddSyst(cb, 'xsec_tt', 'lnN', ch.SystMap('process')(['tt'], 1.044))
             cb.cp().AddSyst(cb, 'xsec_ttX', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
             cb.cp().AddSyst(cb, 'xsec_vv', 'lnN', ch.SystMap('process')(['vv'], 1.1))
@@ -432,16 +386,13 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             cb.cp().AddSyst(cb, 'xsec_wjets', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
             cb.cp().AddSyst(cb, 'xsec_singleTop', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
             cb.cp().AddSyst(cb, 'xsec_Other', 'lnN', ch.SystMap('process')(['other'], 1.1))
-            #cb.cp().AddSyst(cb, 'hdamp', 'lnN', ch.SystMap('process')(smTTlist, 1.05))
-            #cb.cp().AddSyst(cb, 'TuneCP5', 'lnN', ch.SystMap('process')(smTTlist, 1.03))
 
-            #print("All good so far")
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
-	print("OK got the background")
         cb.cp().signals().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
-	print("OK got the signals")
 
+        #rebin = ch.AutoRebin().SetBinThreshold(50).SetBinUncertFraction(0.10).SetVerbosity(1)
+        #rebin.Rebin(cb.cp(), cb)
 
         #AutoMCStat
         cb.SetAutoMCStats(cb, 0.1)
@@ -540,9 +491,7 @@ $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_for
         st = os.stat(script_file)
         os.chmod(script_file, st.st_mode | stat.S_IEXEC)
 
-def CMSNamingConvention(syst,options):
-    # Taken from https://twiki.cern.ch/twiki/bin/view/CMS/HiggsWG/HiggsCombinationConventions
-    # systlist = ['jes', 'jer', 'elidiso', 'muidiso', 'jjbtag', 'pu', 'trigeff']
+def CMSNamingConvention(syst, options):
     #if syst not in options.correlatedSys:
     syst_year = options.dataYear
     if '2016' in options.dataYear: syst_year = "2016"

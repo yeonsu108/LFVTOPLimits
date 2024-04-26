@@ -10,6 +10,7 @@ signal_folders = [folder for folder in os.listdir(datacard_path) if os.path.isdi
 if not signal_folders:
     print("Found no signal directory inside %s"%datacard_path)
 for signal_folder in signal_folders:
+    if 'st_lfv_cs' not in signal_folder: continue
     os.chdir(os.path.join(datacard_path, signal_folder))
     #limit_scripts = [limit_script for limit_script in os.listdir(".") if limit_script.endswith('all_run_impacts.sh')]
     limit_scripts = [limit_script for limit_script in os.listdir(".") if limit_script.endswith('run_impacts.sh')]

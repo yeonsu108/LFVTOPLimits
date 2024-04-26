@@ -5,7 +5,10 @@ import math
 limitfolder = sys.argv[1]
 year = limitfolder.split("_")[-1:]
 
-signal_Xsec = {'st_lfv_cs':10.09,'st_lfv_cv':58.3,'st_lfv_ct':307.4,'st_lfv_us':86.49,'st_lfv_uv':414.5,'st_lfv_ut':1925}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+# for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+signal_Xsec = {'st_lfv_cs': 10.09, 'st_lfv_cv': 58.3, 'st_lfv_ct': 307.4, 'st_lfv_us': 86.49, 'st_lfv_uv': 414.5, 'st_lfv_ut': 1925}
+# For SMEFTsim cross sections, but TT are always 2.69, 21.5, 129 for s, v, t
+signal_Xsec = {'st_lfv_cs': 6.4, 'st_lfv_cv': 41.0, 'st_lfv_ct': 225.2, 'st_lfv_us': 61.83, 'st_lfv_uv': 297.6, 'st_lfv_ut': 1401}
 
 def calcXsec(signal,limits):
     xsec= list(np.around(np.array(limits) * signal_Xsec[signal],decimals=3))
@@ -37,17 +40,16 @@ def calcBr(op, limits):
 ################
 for_table = []
 for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
-#for signal in ['st_lfv_cs']: #, 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
-	op = signal.split("_")[2]
-	limits = json.loads(open(os.path.join(limitfolder, 'st_lfv_'+op+'_limits.json')).read())
-	limits = limits[""]
-	#print(signal , op)
-	nom = " & ".join([calcXsec(signal,[limits['expected']]),calcWilson([limits['expected']]),calcBr(op, [limits['expected']])])
-	#print("nom : ", nom)
-	for_table.append(nom)
-	unc = " & ".join([calcXsec(signal,limits['one_sigma']),calcWilson(limits['one_sigma']),calcBr(op, limits['one_sigma'])]) 
-	#print("unc : ", unc)
-	for_table.append(unc)
+  op = signal.split("_")[2]
+  limits = json.loads(open(os.path.join(limitfolder, signal+'_limits.json')).read())
+  limits = limits[""]
+  #print(signal , op)
+  nom = " & ".join([calcXsec(signal,[limits['expected']]),calcWilson([limits['expected']]),calcBr(op, [limits['expected']])])
+  #print("nom : ", nom)
+  for_table.append(nom)
+  unc = " & ".join([calcXsec(signal,limits['one_sigma']),calcWilson(limits['one_sigma']),calcBr(op, limits['one_sigma'])]) 
+  #print("unc : ", unc)
+  for_table.append(unc)
 
 #print(len(for_table),for_table)
 
