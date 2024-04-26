@@ -9,6 +9,7 @@ current_dir = os.getcwd()
 datacard_path = sys.argv[1]
 
 signal_folders = [folder for folder in os.listdir(datacard_path) if os.path.isdir(os.path.join(datacard_path, folder))]
+print(signal_folders)
 if not signal_folders:
     print "Found no signal directory inside %s"%datacard_path
 for signal_folder in signal_folders:
@@ -57,11 +58,11 @@ for signal_folder in signal_folders:
             out_str += str(filtered) + '\n'
         except: pass
 
-    out_name_exp = 'FCNC_' + signal_folder + '_Discriminant_DNN_' + signal_folder + '_Impact_expected_MultiDimFit_Failed.txt'
+    out_name_exp = 'TOPLFV_' + signal_folder + '_Discriminant_DNN_' + signal_folder + '_Impact_expected_MultiDimFit_Failed.txt'
     out_file_exp =  open(out_name_exp ,'w')
     print>>out_file_exp, out_str_exp
 
-    out_name = 'FCNC_' + signal_folder + '_Discriminant_DNN_' + signal_folder + '_Impact_MultiDimFit_Failed.txt'
+    out_name = 'TOPLFV_' + signal_folder + '_Discriminant_DNN_' + signal_folder + '_Impact_MultiDimFit_Failed.txt'
     out_file =  open(out_name ,'w')
     print>>out_file, out_str
 

@@ -25,12 +25,33 @@ def smoothing(hin, hnom):
   #local linear regression (locally weighted polynomial regression)
   lowess = sm.nonparametric.lowess
   smoothed_vals = np.zeros(y_vals.shape)
-  smoothed_vals = lowess(y_vals, x_vals, frac=2./3, return_sorted=False)
+  smoothed_vals = lowess(y_vals, x_vals, frac=2.5/3, return_sorted=False)
 
   for x_position in x_vals:
     hin.SetBinContent(x_position+1, max(0, smoothed_vals[x_position]*hnom.GetBinContent(x_position+1)))
 
   return hin
+
+
+def symmetrize(var, var_opp, nom):
+
+  for xbin in xrange(var.GetNbinsX()):
+    if nom.GetBinContent(xbin+1) == 0: ratio = 1.
+    else:
+      ratio = var.GetBinContent(xbin+1) / nom.GetBinContent(xbin+1)
+      ratio_opp = 1.
+      if var_opp.GetBinContent(xbin+1) > 0: ratio_opp = var.GetBinContent(xbin+1) / var_opp.GetBinContent(xbin+1)
+
+      diff = abs(nom.GetBinContent(xbin+1)-var.GetBinContent(xbin+1)) + abs(nom.GetBinContent(xbin+1)-var_opp.GetBinContent(xbin+1))
+      if ratio_opp > 1.:
+        var.SetBinContent(xbin+1, nom.GetBinContent(xbin+1) + diff/2.)
+        if ratio > 1.2: var.SetBinContent(xbin+1, 1.2 * nom.GetBinContent(xbin+1))
+      else:
+        var.SetBinContent(xbin+1, nom.GetBinContent(xbin+1) - diff/2.)
+        if ratio < 0.8: var.SetBinContent(xbin+1, 0.8 * nom.GetBinContent(xbin+1))
+        if nom.GetBinContent(xbin+1) - diff/2. < 0.: var.SetBinContent(xbin+1, 0)
+
+  return var
 
 
 
@@ -54,12 +75,22 @@ for histos in histo_list:
   h = f_dir.Get(histos)
   h.SetDirectory(ROOT.nullptr)
   hname = h.GetName()
-
-  if ('tune' in hname):
+  if ('fsr' in hname or 'tune' in hname or 'hdamp' in hname or 'other__CMS_jes' in hname):
+  #if ('hdamp' in hname or 'other__CMS_jes' in hname):
      h_nom = f_dir.Get(hname[:hname.rfind('__')])
      h_nom.SetDirectory(ROOT.nullptr)
      h = smoothing(h, h_nom)
 
+     if 'Down' in hname:
+       h_opp = f_dir.Get(hname.replace('Down','Up'))
+       h_opp = smoothing(h_opp, h_nom)    
+     elif 'Up' in hname:
+       h_opp = f_dir.Get(hname.replace('Up','Down'))
+       h_opp = smoothing(h_opp, h_nom)    
+     h_opp.SetDirectory(ROOT.nullptr)
+     
+     h = symmetrize(h, h_opp, h_nom)
+     
   h.Write()
 
 f_new.Write()

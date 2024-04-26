@@ -1,4 +1,5 @@
 import os
+import sys
 import ROOT
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
@@ -7,14 +8,15 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 #input_path = 'datacards_201215_2017v6_noSymmSmooth'
 #input_path = 'datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp'
 #input_path = 'datacards_top_lfv_multiClass_Sep19_2023_2018'
-input_path = 'datacards_top_lfv_multiClass_Sep19_2023_2018_test'
-drawNom = False
-#drawNom = True
+#input_path = 'datacards_top_lfv_multiClass_Sep19_2023_2018_test'
+#input_path = 'datacards_top_lfv_multiClass_March_2024_v4_binned_2018'
+input_path = sys.argv[1]
+
+drawNom = True
 logy = True
-#logy = True
-couplings = ['st_lfv_cs']#,'st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
+couplings = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
 rootfile_template = 'TOP_LFV_COUPLING_Discriminant_DNN_COUPLING_shapes.root'
-process_list_org = ['tt']#, 'wJets', 'vv', 'DY', 'TTX' ,'singleTop']
+process_list_org = ['tt', 'other' ,'singleTop']
 
 plot_dir = 'systematics_plots_' + input_path
 if drawNom: plot_dir = plot_dir.rstrip('/') + '_nom/'
