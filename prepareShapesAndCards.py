@@ -26,7 +26,7 @@ def setNegativeBinsToZero(h, process):
     for i in range(1, h.GetNbinsX() + 1):
         if h.GetBinContent(i) < 0.:
             if not hadNegBinForProcess[process]:
-                print 'Remove negative bin in TH1 %s for process %s'%(h.GetTitle(), process)
+                print('Remove negative bin in TH1 %s for process %s'%(h.GetTitle(), process))
             hadNegBinForProcess[process] = True
             h.SetBinContent(i, 0.)
     
@@ -78,7 +78,7 @@ sysForSMtt.extend(['pdf'+str(i) for i in range(1,51)])
 sysForSig = options.sysForSig
 sysForSig.extend(['pdf'+str(i) for i in range(1,51)])
 
-print("LIST OF sysForSig : " , sysForSig)
+#print("LIST OF sysForSig : " , sysForSig)
 
 
 years = {'2016pre': 19502, '2016post': 16812, '2017': 41480, '2018':59832}
@@ -122,7 +122,7 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         'tt': ['hist_TTToSemiLeptonic.root','hist_TTTo2L2Nu.root'],
 	'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
         #'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        'other' : ['hist_TTToHadronic.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        'other' : ['hist_TTToHadronic.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root','hist_TTWJetsToLNu.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
 	# QCD
         #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
         # Signal
@@ -161,7 +161,7 @@ def main():
 
     for signal in signals:
 	for key, value in discriminants.iteritems():
-		print(key, value)
+            print(key, value)
         dicriminants_per_signal = dict((key,value) for key, value in discriminants.iteritems() if signal in key)
 	#print("dicriminants_per_signal : ", dicriminants_per_signal)
         for discriminant in dicriminants_per_signal.keys() :
@@ -195,7 +195,10 @@ def merge_histograms(process, histogram, destination):
         #print("HIST TITLE : " , histogram.GetName())
         histogram.Scale(luminosity)
     import array
-    arr = array.array('d',[0,1,2,5,10,30,60])
+    #arr = array.array('d',[0,1,2,5,10,30,60])
+    #arr = array.array('d',[i for i in range(60)])
+    arr = array.array('d',[0,1,2,3,5,10,30,60])
+    #arr = array.array('d',[0,1,2,3,60])
     histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
@@ -307,7 +310,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
             for process_file in process_files:
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
-		print("ORIGINAL : ", original_histogram_name)
+		#print("ORIGINAL : ", original_histogram_name)
                 process_file_basename = os.path.basename(process_file)
                 if not TH1:
                     #print "No histo named %s in %s. ORIGINAL Exitting..."%(original_histogram_name, process_file)
@@ -319,7 +322,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     #print("Applying cross sec and nevt on %s "%process_file_basename, xsec, " ", nevt)
 		    #print("Nominal Integral Before scale : " , TH1.Integral())
                     TH1.Scale(xsec/float(nevt)) #ECEEEE
-		    print("Nominal Integral After scale : " , TH1.Integral())
+		    #print("Nominal Integral After scale : " , TH1.Integral())
                 shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
@@ -338,7 +341,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             if options.applyxsec and not 'data' in process and TH1_syst:
 				#print("systematic : ", systematic , "Inetgral : " , TH1_syst.Integral())
                                 TH1_syst.Scale(xsec/float(nevt)) #REMOVE IF ECEEEE
-				print("systematic : ", systematic , "Inetgral After scale : " , TH1_syst.Integral())
+				#print("systematic : ", systematic , "Inetgral After scale : " , TH1_syst.Integral())
                             #print("SYSTEMTIC to be scaled with LUMI: " , systematic)
                             shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
@@ -479,17 +482,17 @@ combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --r
         script = """#! /bin/bash
 
 # Run checks
-echo combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly -m 125 --robustHesse 1 --robustFit=1 --rMin -20 --rMax 20 #--plots
-echo python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly -m 125 --robustHesse 1 --robustFit=1 --rMin -20 --rMax 20 #--plots
-python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root --skipFitS > fitDiagnostics_{name}_bkgOnly.log
+echo combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly -m 125 --rMin -20 --rMax 20 #--plots
+echo python ../../diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
+combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly -m 125 --rMin -20 --rMax 20 #--plots
+python ../../diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root --skipFitS > fitDiagnostics_{name}_bkgOnly.log
 python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --robustHesse 1 --robustFit=1 --rMin -20 --rMax 20 #--plots
-python ../../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root --skipFitB > fitDiagnostics_{name}_bkgPlusSig.log
-python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
+#combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --rMin -20 --rMax 20 #--plots
+#python ../../diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root --skipFitB > fitDiagnostics_{name}_bkgPlusSig.log
+#python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
 
 #print NLL for check
-combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
+combineTool.py -M FastScan -w {name}_combine_workspace.root -o {name}_nll
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
         with open(script_file, 'w') as f:
@@ -502,16 +505,16 @@ combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
         script = """#! /bin/bash
 
 # Run impacts
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20 -t -1
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --robustHesse 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 -t -1
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
-plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 50
+plotImpacts.py -i {name}_expected_impacts.json -o {name}_{year}_expected_impacts --per-page 50
 
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --robustHesse 1 --rMin -20 --rMax 20 --parallel 32
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 --parallel 32
 #combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
 #plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, year=options.dataYear, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
             f.write(script)
@@ -523,8 +526,8 @@ plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-
         script = """#! /bin/bash
 
 # Run postfit
-echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 --robustHesse 1 --robustFit=1 -v 1
-combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 --robustHesse 1 --robustFit=1 -v 1 #--plots
+echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 -v 1
+combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 -v 1 #--plots
 PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
 $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y

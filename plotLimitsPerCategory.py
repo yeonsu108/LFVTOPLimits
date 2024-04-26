@@ -209,25 +209,24 @@ def plot_limits(signal_name, limit_dict, legend_position=[0.5, 0.75, 0.9, 0.91])
     #canvas.Print(os.path.join(options.limitfolder, signal_name + '_limits_log.png'))
     if options.printlimits:
       for cat in options.category_order:
-        print "Limit on Xsec for %s %s jet cat: %f"%(signal_name, cat, limit_dict[cat]['expected'])
+          print("Limit on Xsec for %s %s jet cat: %f"%(signal_name, cat, limit_dict[cat]['expected']))
     else:
-      if options.unblind: print "Observed limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['']['observed'])
-      print "Expected limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['']['expected'])
+      if options.unblind: print("Observed limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['']['observed']))
+      print("Expected limit on Xsec for %s all jet cat: %f"%(signal_name, limit_dict['']['expected']))
 
 signal_folders = [folder for folder in os.listdir(options.limitfolder) if os.path.isdir(os.path.join(options.limitfolder, folder))]
 print("signal folders :" , signal_folders)
 if not signal_folders:
-    print "Found no folder inside %s"%options.limitfolder
+    print("Found no folder inside %s"%options.limitfolder)
     sys.exit(1)
 
 for signal_folder in signal_folders:
-    print "Extracting limits for %s"%signal_folder
     signal_folder_path = os.path.join(options.limitfolder, signal_folder)
     dict_cat_limits = {}
     for category in options.category_order:
-	print("CAtegory : " , category)
+        print("CAtegory : " , category)
         limit_rootfiles = [rootfile for rootfile in os.listdir(signal_folder_path) if rootfile.startswith('higgsCombineTOP_LFV') and category in rootfile and ( (not options.printlimits and not any(t in rootfile for t in ['_1617_', '_1718_'])) or (options.printlimits and any(t in rootfile for t in [signal_folder+'_'+category])) )]
-	print("LIMIT ROOT FILES : " , limit_rootfiles)
+        print("LIMIT ROOT FILES : " , limit_rootfiles)
         found_category = False
         for limit_rootfile in limit_rootfiles:
             limit_rootfile_path = os.path.join(signal_folder_path, limit_rootfile)
@@ -238,7 +237,7 @@ for signal_folder in signal_folders:
             else: category_tmp = limit_rootfile.split('.')[0].split('_')[-1]
             print("category_tmp : " , category_tmp)
             if found_category:
-                print "Error: two rootfiles match category name %s in %s, don't know which one to choose. Please move one of them."%(category, signal_folder_path)
+                print("Error: two rootfiles match category name %s in %s, don't know which one to choose. Please move one of them."%(category, signal_folder_path))
                 sys.exit(1)
             found_category = True
             limits = getLimitsFromFile(limit_rootfile_path)
@@ -249,13 +248,13 @@ for signal_folder in signal_folders:
             print("After calc : " , limits)
             print("FINAL JSON :" , dict_cat_limits[category])
         if not found_category:
-            print "Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form e.g. higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path)
+            print("Warning: I do not find rootfile for category %s in %s. The code assumes rootfile name of the form e.g. higgsCombine*_b3j3*.root without underscore after category name."%(category, signal_folder_path))
     json_limit_filepath = os.path.join(options.limitfolder, signal_folder + '_limits'+postfix+'.json')
     if options.verbose:
-        print json.dumps(dict_cat_limits, indent=4)
+        print(json.dumps(dict_cat_limits, indent=4))
     with open(json_limit_filepath, 'w') as limit_json:
         json.dump(dict_cat_limits, limit_json)
-    print "%s written with limits inside"%json_limit_filepath
+    print("%s written with limits inside"%json_limit_filepath)
 
     #if options.doPlot and not options.printlimits:
     #    from array import array

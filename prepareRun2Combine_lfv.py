@@ -20,10 +20,10 @@ cmssw_base = os.environ['CMSSW_BASE']
 
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 
-parser.add_argument('-p16pre', '--path16pre', action='store', dest='path_16pre', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016pre', help='Directory containing data cards of 2016 analysis')
-parser.add_argument('-p16post', '--path16post', action='store', dest='path_16post', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2016post', help='Directory containing data cards of 2016 analysis')
-parser.add_argument('-p17', '--path17', action='store', dest='path_17', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2017', help='Directory containing data cards of 2017 analysis')
-parser.add_argument('-p18', '--path18', action='store', dest='path_18', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/datacards_top_lfv_multiClass_June2023_GoingtoPrep_2_2018', help='Directory containing data cards of 2018 analysis')
+parser.add_argument('-p16pre', '--path16pre', action='store', dest='path_16pre', type=str, default=cmssw_base+'/src/UserCode//datacards_top_lfv_multiClass_Feb22_2023_v2_2016pre', help='Directory containing data cards of 2016 analysis')
+parser.add_argument('-p16post', '--path16post', action='store', dest='path_16post', type=str, default=cmssw_base+'/src/UserCode//datacards_top_lfv_multiClass_Feb22_2023_v2_2016post', help='Directory containing data cards of 2016 analysis')
+parser.add_argument('-p17', '--path17', action='store', dest='path_17', type=str, default=cmssw_base+'/src/UserCode//datacards_top_lfv_multiClass_Feb22_2023_v2_2017', help='Directory containing data cards of 2017 analysis')
+parser.add_argument('-p18', '--path18', action='store', dest='path_18', type=str, default=cmssw_base+'/src/UserCode//datacards_top_lfv_multiClass_Feb22_2023_v2_2018', help='Directory containing data cards of 2018 analysis')
 parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='fullComb_default', help='Output directory, please follow convention to distunguish input cards') 
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
 
@@ -32,15 +32,15 @@ options = parser.parse_args()
 years = ['16pre16post1718']
 
 if cmssw_base not in options.path_16pre:
-  options.path_16pre = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.path_16pre)
+  options.path_16pre = os.path.join(cmssw_base, 'src/UserCode//', options.path_16pre)
 if cmssw_base not in options.path_16post:
-  options.path_16post = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.path_16post)
+  options.path_16post = os.path.join(cmssw_base, 'src/UserCode//', options.path_16post)
 if cmssw_base not in options.path_17:
-  options.path_17 = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.path_17)
+  options.path_17 = os.path.join(cmssw_base, 'src/UserCode//', options.path_17)
 if cmssw_base not in options.path_18:
-  options.path_18 = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.path_18)
+  options.path_18 = os.path.join(cmssw_base, 'src/UserCode//', options.path_18)
 if cmssw_base not in options.output:
-  options.output = os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.output)
+  options.output = os.path.join(cmssw_base, 'src/UserCode//', options.output)
 
 try:
   os.makedirs( options.output )
@@ -51,21 +51,21 @@ except:
   pass
 
 for signal in ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_us','st_lfv_ut','st_lfv_uv']:
-  os.chdir( os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.output, signal) )
-  print(os.path.join(cmssw_base, 'src/UserCode/FCNCLimits/', options.output, signal) )
+  os.chdir( os.path.join(cmssw_base, 'src/UserCode//', options.output, signal) )
+  print(os.path.join(cmssw_base, 'src/UserCode//', options.output, signal) )
   output_prefix_list = []
 
   for year in years:
-    card_name = 'FCNC_{}_Discriminant_DNN_{}.dat'.format(signal, signal)
+    card_name = 'TOP_LFV_{}_Discriminant_DNN_{}.dat'.format(signal, signal)
     print("card name : " , card_name)
     command_string = 'combineCards.py'
     if '16pre' in year: command_string += ' year_2016pre=' + os.path.join(options.path_16pre, signal, card_name)
     if '16post' in year: command_string += ' year_2016post=' + os.path.join(options.path_16post, signal, card_name)
     if '17' in year: command_string += ' year_2017=' + os.path.join(options.path_17, signal, card_name)
     if '18' in year: command_string += ' year_2018=' + os.path.join(options.path_18, signal, card_name)
-    command_string += ' > FCNC_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, year)
+    command_string += ' > TOP_LFV_{}_Discriminant_DNN_{}_{}.dat'.format(signal, signal, year)
     check_call(command_string, shell=True)
-    output_prefix_list.append('FCNC_{}_Discriminant_DNN_{}_{}'.format(signal, signal, year))
+    output_prefix_list.append('TOP_LFV_{}_Discriminant_DNN_{}_{}'.format(signal, signal, year))
   
     # Backgrounds is a list of string of the considered backgrounds corresponding to entries in processes_mapping
     # Signals is a list of string of the considered signals corresponding to entries in processes_mapping
