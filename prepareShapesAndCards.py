@@ -38,23 +38,18 @@ cmssw_base = os.environ['CMSSW_BASE']
 parser = argparse.ArgumentParser(description='Create shape datacards ready for combine')
 parser.add_argument('-p', '--path', action='store', dest='root_path', type=str, default=cmssw_base+'/src/UserCode/FCNCLimits/histos_suitable_for_limits_200101_2017/training_0101010101', help='Directory containing rootfiles with the TH1 used for limit settings')
 parser.add_argument('-l', '--luminosity', action='store', type=float, dest='luminosity', default=41529, help='Integrated luminosity (default is 41529 /pb)')
-parser.add_argument('-le', '--luminosityError', action='store', type=float, dest='luminosityError', default=1.023, help='Error on the integrated luminosity (default is 1.023 /pb)')
 parser.add_argument('-o', '--output', action='store', dest='output', type=str, default='datacards_200101_2017', help='Output directory')
-parser.add_argument('-c' , '--channel', action='store', dest='channel', type=str, default='all', help='Channel: el, mu, or all.')
 parser.add_argument('-applyxsec' , action='store', dest='applyxsec', type=bool, default=True, help='Reweight MC processes by Xsec/Nevt from yml config.')
 parser.add_argument('-xsecfile' , action='store', dest='xsecfile', type=str, default='files_17.yml', help='YAML config file path with Xsec and Nevt.')
 parser.add_argument('--nosys', action='store', dest='nosys', default=False, help='Consider or not systematic uncertainties (NB : bbb uncertainty is with another flag)')
-parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['tauidjetHighptstat'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix')
-# Example to call it: python prepareShapesAndCards.py --sysToAvoid pu hf
-
+parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['tauidjetHighptstat'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix, e.g. --sysToAvoid pu hf')
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=['isr','fsr','mescale','renscale','facscale'], help='Systematics affecting Signals (must be common with SMtt)')
 parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['muid','muiso','mutrg','pu', 'isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
-
-parser.add_argument('-rebinning' , action='store', dest='rebinning', type=int, default=4, help='Rebin the histograms by -rebinning.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
 
 options = parser.parse_args()
+
 
 correlatedSys = options.correlatedSys
 correlatedSys.extend(['jesAbsolute', 'jesAbsolute_'+options.dataYear, 'jesBBEC1', 'jesBBEC1_'+options.dataYear,
@@ -98,7 +93,6 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
 
 # IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
-                      # Data !Must! contain 'data_%channels' in the key and MC must not have data in the key
         #'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
         #'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
         #'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
@@ -110,7 +104,7 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
 	'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
         #'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
         'other' : ['hist_TTToHadronic.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root','hist_TTWJetsToLNu.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-	# QCD
+        # QCD
         #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
         # Signal
         'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
@@ -126,7 +120,6 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
 processes_mapping['data_obs'] = processes_mapping['data_all']
 processes_mapping.pop('data_all')
 
-
 smTTlist = ['tt'] # for systematics affecting only SM tt
 lfvlist = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us'] 
 
@@ -141,7 +134,6 @@ if options.applyxsec:
 def main():
     """Main function"""
     signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
-    #signals = ['st_lfv_cs']
     backgrounds = ['tt', 'other' , 'singleTop'] #, 'wJets','vv','DY','TTX'] #,'singleTop'] #, 'qcd']
 
     #print("Background considered: ", backgrounds)
@@ -333,7 +325,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
-    call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
+    #call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
     
     for signal in signals :
         cb = ch.CombineHarvester()
@@ -344,7 +336,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         # Systematics
         if not options.nosys:
             for systematic in systematics:
-                if any(s_ == systematic for s_ in ['CMS_mescale', 'CMS_renscale', 'CMS_facscale', 'CMS_jesFlavorQCD']): continue
+                if any(s_ == systematic for s_ in ['mescale', 'renscale', 'facscale', 'jesFlavorQCD']): continue
                 systematic_only_for_SMtt = False
                 systematic_only_for_Sig = False
 
@@ -365,19 +357,17 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                     cb.cp().AddSyst(cb, systematic, 'shape', ch.SystMap('process')(smTTlist+[signal], 1.00))
 
             #Lumi corr. https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#LumiComb
-            #cb.cp().AddSyst(cb, 'CMS_lumi', 'lnN', ch.SystMap()(options.luminosityError))
-
             if '2016' in options.dataYear:
-                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
+                cb.cp().AddSyst(cb, 'lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
+                cb.cp().AddSyst(cb, 'lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
             elif options.dataYear == '2017':
-                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
+                cb.cp().AddSyst(cb, 'lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
+                cb.cp().AddSyst(cb, 'lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
+                cb.cp().AddSyst(cb, 'lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
             elif options.dataYear == '2018':
-                cb.cp().AddSyst(cb, 'CMS_lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
-                cb.cp().AddSyst(cb, 'CMS_lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
+                cb.cp().AddSyst(cb, 'lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
+                cb.cp().AddSyst(cb, 'lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
+                cb.cp().AddSyst(cb, 'lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
 
             cb.cp().AddSyst(cb, 'xsec_tt', 'lnN', ch.SystMap('process')(['tt'], 1.044))
             cb.cp().AddSyst(cb, 'xsec_ttX', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
@@ -429,33 +419,12 @@ combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --r
         os.chmod(script_file, st.st_mode | stat.S_IEXEC)
 
 
-        # Write small script for datacard checks
-        script = """#! /bin/bash
-
-# Run checks
-echo combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n fitDiagnostics_{name}_bkgOnly -m 125 --rMin -20 --rMax 20 #--plots
-echo python ../../diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root
-combine -M FitDiagnostics -t -1 --expectSignal 0 {datacard} -n _{name}_bkgOnly -m 125 --rMin -20 --rMax 20 #--plots
-python ../../diffNuisances.py -a fitDiagnostics_{name}_bkgOnly.root -g fitDiagnostics_{name}_bkgOnly_plots.root --skipFitS > fitDiagnostics_{name}_bkgOnly.log
-python ../../printPulls.py fitDiagnostics_{name}_bkgOnly_plots.root
-#combine -M FitDiagnostics -t -1 --expectSignal 1 {datacard} -n _{name}_bkgPlusSig -m 125 --rMin -20 --rMax 20 #--plots
-#python ../../diffNuisances.py -a fitDiagnostics_{name}_bkgPlusSig.root -g fitDiagnostics_{name}_bkgPlusSig_plots.root --skipFitB > fitDiagnostics_{name}_bkgPlusSig.log
-#python ../../printPulls.py fitDiagnostics_{name}_bkgPlusSig_plots.root
-
-#print NLL for check
-combineTool.py -M FastScan -w {name}_combine_workspace.root -o {name}_nll
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
-        script_file = os.path.join(output_dir, output_prefix + '_run_closureChecks.sh')
-        with open(script_file, 'w') as f:
-            f.write(script)
-        
-        st = os.stat(script_file)
-        os.chmod(script_file, st.st_mode | stat.S_IEXEC)
-
         # Write small script for impacts
         script = """#! /bin/bash
 
 # Run impacts
+combineTool.py -M FastScan -w {name}_combine_workspace.root -o {name}_nll
+
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 -t -1
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
@@ -481,9 +450,8 @@ echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalization
 combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 -v 1 #--plots
 PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
-$CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}.yml -y
-$CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_forPlotIt ../../postfit_plotIt_config_{coupling}_{year}_qcd.yml -y
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=("st_lfv"), year=options.dataYear)
+plotIt/plotIt -o postfit_shapes_{name}_forPlotIt plotIt/configs/TOP-22-011/postfit_config_{year}.yml -y
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), year=options.dataYear)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
             f.write(script)
@@ -492,13 +460,14 @@ $CMSSW_BASE/src/UserCode/HEPToolsFCNC/plotIt/plotIt -o postfit_shapes_{name}_for
         os.chmod(script_file, st.st_mode | stat.S_IEXEC)
 
 def CMSNamingConvention(syst, options):
-    #if syst not in options.correlatedSys:
-    syst_year = options.dataYear
+    syst_year = 'Y' + options.dataYear
     if '2016' in options.dataYear: syst_year = "2016"
     if syst not in correlatedSys:
-        return 'CMS_' + syst_year + '_' + syst
+        return syst_year + '_' + syst
+    elif options.dataYear in syst:
+        return syst_year + '_' + syst
     else:
-        return 'CMS_' + syst
+        return syst
 
 if __name__ == '__main__':
     main()
