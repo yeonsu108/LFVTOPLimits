@@ -45,11 +45,15 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 parser.add_argument('--sysToAvoid', action='store', dest='sysToAvoid', nargs='+', default=['tauidjetHighptstat'], help='Set it to exclude some of the systematics. Name should as in rootfile without the up/dowm postfix, e.g. --sysToAvoid pu hf')
 parser.add_argument('--sysForSMtt', action='store', dest='sysForSMtt', nargs='+', default=['isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics affecting only SM tt.')
 parser.add_argument('--sysForSig', action='store', dest='sysForSig', nargs='+', default=['isr','fsr','mescale','renscale','facscale'], help='Systematics affecting Signals (must be common with SMtt)')
-parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['muid','muiso','mutrg','pu', 'isr','fsr', 'pdfalphas','mescale','renscale','facscale','tune','hdamp'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
+parser.add_argument('--correlatedSys', action='store', dest='correlatedSys', nargs='+', default=['muid', 'muiso', 'mutrg', 'pu', 'isr', 'fsr', 'pdfalphas', 'mescale', 'renscale', 'facscale', 'tune', 'hdamp', 'toppt'], help='Systematics that are correlated accross years. NB: cross section unc are added by hand at the end of this script, go there to change correlation for them.')
 parser.add_argument('-dataYear' , action='store', dest='dataYear', type=str, default='2017', help='Which year were the data taken? This has to be added in datacard entries in view of combination (avoid considering e.g. correlated lumi uncertainty accross years)')
 
 options = parser.parse_args()
 
+
+scale_breakdown = ['mescalemu1ta1', 'mescalemu1ta2', 'mescalemu2ta1', 'mescalemu2ta2',
+                   'renscalemu1ta1', 'renscalemu1ta2', 'renscalemu2ta1', 'renscalemu2ta2',
+                   'facscalemu1ta1', 'facscalemu1ta2', 'facscalemu2ta1', 'facscalemu2ta2']
 
 correlatedSys = options.correlatedSys
 correlatedSys.extend(['jesAbsolute', 'jesAbsolute_'+options.dataYear, 'jesBBEC1', 'jesBBEC1_'+options.dataYear,
@@ -59,19 +63,16 @@ correlatedSys.extend(['jesAbsolute', 'jesAbsolute_'+options.dataYear, 'jesBBEC1'
 
 correlatedSys.extend(['btagcferr1','btagcferr2','btaghf','btaglf'])
 correlatedSys.extend(['tauidjetHighptextrap','tauidjetHighptsyst','tauidjetSystalleras'])
+correlatedSys.extend(scale_breakdown)
 correlatedSys.extend(['pdf'+str(i) for i in range(1,101)])
 
 sysForSMtt = options.sysForSMtt
+sysForSMtt.extend(scale_breakdown)
 sysForSMtt.extend(['pdf'+str(i) for i in range(1,101)])
-sysForSMtt.extend(['mescalemu1ta1', 'mescalemu1ta2', 'mescalemu2ta1', 'mescalemu2ta2',
-                   'renscalemu1ta1', 'renscalemu1ta2', 'renscalemu2ta1', 'renscalemu2ta2',
-                   'facscalemu1ta1', 'facscalemu1ta2', 'facscalemu2ta1', 'facscalemu2ta2'])
 
 sysForSig = options.sysForSig
+sysForSig.extend(scale_breakdown)
 sysForSig.extend(['pdf'+str(i) for i in range(1,101)])
-sysForSig.extend(['mescalemu1ta1', 'mescalemu1ta2', 'mescalemu2ta1', 'mescalemu2ta2',
-                  'renscalemu1ta1', 'renscalemu1ta2', 'renscalemu2ta1', 'renscalemu2ta2',
-                  'facscalemu1ta1', 'facscalemu1ta2', 'facscalemu2ta1', 'facscalemu2ta2'])
 
 
 years = {'2016pre': 19502, '2016post': 16812, '2017': 41480, '2018':59832}
@@ -423,7 +424,7 @@ combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --r
         script = """#! /bin/bash
 
 # Run impacts
-combineTool.py -M FastScan -w {name}_combine_workspace.root -o {name}_nll
+combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_{year}_nll
 
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 -t -1
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50
