@@ -111,3 +111,7 @@ datacards_*
 rocCurves_*
 old
 compare_shapes_*
+
+out_datacards_*
+datacards_*
+plotIt

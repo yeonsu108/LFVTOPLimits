@@ -58,7 +58,7 @@ def symmetrize(var, var_opp, nom):
           if ratio < 0.8: var.SetBinContent(xbin+1, 0.8 * nom.GetBinContent(xbin+1))
           if nom.GetBinContent(xbin+1) - diff/2. < 0.: var.SetBinContent(xbin+1, 0)
 
-  return var
+    return var
 
 
 if not os.path.isfile(f_in.rstrip('.root') + '_org.root'):
@@ -82,21 +82,19 @@ for histos in histo_list:
   h.SetDirectory(ROOT.nullptr)
   hname = h.GetName()
 
-  if ('tune' in hname):
+  if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname):
     h_nom = f_dir.Get(hname[:hname.rfind('__')])
     h_nom.SetDirectory(ROOT.nullptr)
     h = smoothing(h, h_nom)
-    #if 'tt_CMS_fsrDown' in hname:
-    #    h.SetBinContent(6, 1.07)
 
-    if 'Down' in hname:
-      h_opp = f_dir.Get(hname.replace('Down','Up'))
-      h_opp = smoothing(h_opp, h_nom)    
-    elif 'Up' in hname:
-      h_opp = f_dir.Get(hname.replace('Up','Down'))
-      h_opp = smoothing(h_opp, h_nom)    
-      h_opp.SetDirectory(ROOT.nullptr)
-      h = symmetrize(h, h_opp, h_nom)
+    #if 'Down' in hname:
+    #  h_opp = f_dir.Get(hname.replace('Down','Up'))
+    #  h_opp = smoothing(h_opp, h_nom)
+    #elif 'Up' in hname:
+    #  h_opp = f_dir.Get(hname.replace('Up','Down'))
+    #  h_opp = smoothing(h_opp, h_nom)
+    #  h_opp.SetDirectory(ROOT.nullptr)
+    #  h = symmetrize(h, h_opp, h_nom)
      
   h.Write()
 

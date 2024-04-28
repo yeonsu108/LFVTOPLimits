@@ -326,7 +326,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
-    #call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
+    call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
     
     for signal in signals :
         cb = ch.CombineHarvester()
@@ -428,13 +428,13 @@ combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_{year}_n
 
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 -t -1
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
-plotImpacts.py -i {name}_expected_impacts.json -o {name}_{year}_expected_impacts --per-page 50
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_expected_impacts.json --rMin -20 --rMax 20 -t -1
+plotImpacts.py -i {name}_{year}_expected_impacts.json -o {name}_{year}_expected_impacts --per-page 50
 
 #combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 --parallel 32
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
-#plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 --parallel 50
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_impacts.json --rMin -20 --rMax 20
+#plotImpacts.py -i {name}_{year}_impacts.json -o {name}_{year}_impacts --per-page 50
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, year=options.dataYear, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:

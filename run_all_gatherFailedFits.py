@@ -28,14 +28,14 @@ for signal_folder in signal_folders:
                 print "Comparing " + nll_file + " and " + impact_json_exp
                 out_str_exp += "Comparing " + nll_file + " and " + impact_json_exp + '\n'
             else:
-                print "One of file missing in " + nll_file.replace('_nll.root', '')
-                out_str_exp += "One of file missing in " + nll_file.replace('_nll.root', '') + '\n'
+                print "One of file missing in expected impact " + nll_file.replace('_nll.root', '')
+                out_str_exp += "One of file missing in expected impact " + nll_file.replace('_nll.root', '') + '\n'
             if os.path.isfile(nll_file) and os.path.isfile(impact_json):
                 print "Comparing " + nll_file + " and " + impact_json
                 out_str += "Comparing " + nll_file + " and " + impact_json + '\n'
             else:
-                print "One of file missing in " + nll_file.replace('_nll.root', '')
-                out_str += "One of file missing in " + nll_file.replace('_nll.root', '') + '\n'
+                print "One of file missing in impact " + nll_file.replace('_nll.root', '')
+                out_str += "One of file missing in impact " + nll_file.replace('_nll.root', '') + '\n'
 
             f_nll = TFile.Open(nll_file, 'READ')
             nll_list = [l.GetName() for l in f_nll.GetListOfKeys() if not any(der in l.GetName() for der in ['_d1', '_d2'])]
@@ -59,11 +59,13 @@ for signal_folder in signal_folders:
         except: pass
 
     out_name_exp = 'TOP_LFV_' + signal_folder + '_Discriminant_DNN_' + signal_folder + '_Impact_expected_MultiDimFit_Failed.txt'
-    out_file_exp =  open(out_name_exp ,'w')
+    print "Log: ", out_name_exp
+    out_file_exp = open(out_name_exp ,'w')
     print>>out_file_exp, out_str_exp
 
     out_name = 'TOP_LFV_' + signal_folder + '_Discriminant_DNN_' + signal_folder + '_Impact_MultiDimFit_Failed.txt'
-    out_file =  open(out_name ,'w')
+    print "Log: ", out_name
+    out_file = open(out_name ,'w')
     print>>out_file, out_str
 
     os.chdir(current_dir)

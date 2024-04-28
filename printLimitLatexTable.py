@@ -3,7 +3,11 @@ import numpy as np
 import math
 
 limitfolder = sys.argv[1]
-year = limitfolder.split("_")[-1:]
+year = ""
+for y_ in ["2016pre", "2016post", "2017", "2018", "Run2"]:
+    if y_ in limitfolder: year = y_
+    if year == "Run2": year = "2"
+
 
 # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 #signal_Xsec = {'st_lfv_cs': 10.09, 'st_lfv_cv': 58.3, 'st_lfv_ct': 307.4, 'st_lfv_us': 86.49, 'st_lfv_uv': 414.5, 'st_lfv_ut': 1925}
@@ -71,7 +75,7 @@ lfv_table = """
         \\hline\\hline
     \\end{{tabular}}
     \\caption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}} 
-    \\label{{tab:run2limit}} 
+    \\label{{tab:{year}limit}}
 \\end{{table}}
 """.format(
 lim0=for_table[0],
@@ -88,6 +92,4 @@ lim10=for_table[10],
 lim11=for_table[11],
 year = year)
 print(lfv_table)
-
-
 
