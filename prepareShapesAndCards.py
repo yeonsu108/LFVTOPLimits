@@ -327,7 +327,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
     call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
-    
+
     for signal in signals :
         cb = ch.CombineHarvester()
         cb.AddObservations(['*'], [''], ['_%s'%options.dataYear], [''], discriminant)
@@ -462,7 +462,7 @@ plotIt/plotIt -o postfit_shapes_{name}_forPlotIt plotIt/configs/TOP-22-011/postf
 
 def CMSNamingConvention(syst, options):
     syst_year = 'Y' + options.dataYear
-    if '2016' in options.dataYear: syst_year = "2016"
+    if '2016' in options.dataYear: syst_year = "Y2016"
     if syst not in correlatedSys:
         return syst_year + '_' + syst
     elif options.dataYear in syst:
