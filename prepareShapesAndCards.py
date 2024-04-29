@@ -171,8 +171,8 @@ def merge_histograms(process, histogram, destination):
     if not 'data' in process:
         histogram.Scale(luminosity)
     import array
-    #arr = array.array('d',[0,1,2,5,10,30,100])
-    #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+    arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
+    histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
     if not d:
@@ -409,7 +409,7 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 # Run limit
 
 echo combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --expectSignal 1 --cminDefaultMinimizerStrategy 0 #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
