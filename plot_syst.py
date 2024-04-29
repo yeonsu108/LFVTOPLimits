@@ -8,7 +8,8 @@ input_path = sys.argv[1]
 
 drawNom = True
 logy = True
-couplings = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
+#couplings = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
+couplings = ['st_lfv_cs']
 rootfile_template = 'TOP_LFV_COUPLING_Discriminant_DNN_COUPLING_shapes.root'
 process_list_org = ['tt', 'other' ,'singleTop']
 
@@ -20,15 +21,15 @@ if not os.path.isdir(plot_dir):
 
 def drawRatio(c, nom, up, dn):
     c.cd()
-    ratio_up = nom.Clone()
-    ratio_up.Divide(up)
+    ratio_up = up.Clone()
+    ratio_up.Divide(nom)
     ratio_up.SetLineColor(ROOT.kRed)
-    ratio_dn = nom.Clone()
+    ratio_dn = dn.Clone()
     ratio_dn.SetLineColor(ROOT.kBlue)
-    ratio_dn.Divide(dn)
+    ratio_dn.Divide(nom)
     legend = ROOT.TLegend(0.25, 0.75, 0.55, 0.9, syst)
-    legend.AddEntry(ratio_up, "Nom/Up")
-    legend.AddEntry(ratio_dn, "Nom/Down")
+    legend.AddEntry(ratio_up, "Up/Nom")
+    legend.AddEntry(ratio_dn, "Down/Nom")
     line = ROOT.TLine(-1, 1, 1, 1)
     line.SetLineStyle(2)
     minmax = [ratio_up.GetMaximum(), ratio_up.GetMinimum(), ratio_dn.GetMaximum(), ratio_dn.GetMinimum()]
@@ -98,10 +99,10 @@ def drawComp(c, nom, up, dn, lowstat):
     pad2.SetLogx()
 
     pad2.cd()
-    ratio_up = nom.Clone()
-    ratio_up.Divide(up)
-    ratio_dn = nom.Clone()
-    ratio_dn.Divide(dn)
+    ratio_up = up.Clone()
+    ratio_up.Divide(nom)
+    ratio_dn = dn.Clone()
+    ratio_dn.Divide(nom)
     ratio_up.SetLineColor(ROOT.kRed)
     ratio_dn.SetLineColor(ROOT.kBlue)
     line = ROOT.TLine(-1, 1, 1, 1)
@@ -122,7 +123,7 @@ def drawComp(c, nom, up, dn, lowstat):
     ratio_up.SetTitle('')
     ratio_up.GetXaxis().SetLabelSize(0.1)
     ratio_up.GetXaxis().SetTitleSize(0.13)
-    ratio_up.GetYaxis().SetTitle('Nominal / Up(Dn)')
+    ratio_up.GetYaxis().SetTitle('Up(Dn) / Nominal')
     ratio_up.GetYaxis().SetTitleSize(0.1)
     ratio_up.GetYaxis().SetTitleOffset(0.4)
     ratio_up.GetYaxis().SetLabelSize(0.1)
@@ -147,9 +148,8 @@ for coupling in couplings:
         if 'Up' in it: 
 		syst_list.append(it[it.find('_')+1:-2])
     for syst in list(set(syst_list)):
-        #if not 'pdf' in syst: continue
+        if 'pdf' in syst and 'pdfalphas' not in syst: continue
         #if not any(s in syst for s in ['tune','hdamp'] ): continue
-        if "51" in syst : continue
         syst_name = syst + "_" + coupling
         #syst_name = syst
         for proc in process_list:
