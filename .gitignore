@@ -112,6 +112,7 @@ rocCurves_*
 old
 compare_shapes_*
 
-out_datacards_*
+out_*
 datacards_*
+fullRun2Comb_*
 plotIt
