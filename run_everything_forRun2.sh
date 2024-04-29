@@ -1,17 +1,16 @@
-datacardFolder=$1
-#python prepareRun2Combine.py -o $datacardFolder
-#python prepareRun2Combine.py -o $datacardFolder -p16 datacards_201215_2016v1_uncUpdate2_allComb -p17 datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp_allComb -p18 datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp_allComb
-python prepareRun2Combine.py -o $datacardFolder -p16 datacards_201215_2016v1_uncUpdate2 -p17 datacards_201215_2017v6_ttbbUnc_smoothTuneHdamp -p18 datacards_201215_2018v6_ttbbUnc_smoothTuneHdamp
+postfix=$1
+datacardFolder=fullRun2Comb_$postfix
+python prepareRun2Combine.py -o $datacardFolder \
+    -p16pre  datacards_2016pre_${postfix} \
+    -p16post datacards_2016post_${postfix} \
+    -p17     datacards_2017_${postfix} \
+    -p18     datacards_2018_${postfix}
 python run_all_limits.py $datacardFolder
-python plotLimitsPerCategory.py -lumi 137 -limitfolder $datacardFolder #For 161718  b2j3-b4j4
-python printLimitLatexTable.py $datacardFolder False unblind #For 161718 b2j3-b4j4
-python run_all_closureChecks.py $datacardFolder
+python plotLimitsPerCategory.py -limitfolder $datacardFolder
+python printLimitLatexTable.py $datacardFolder > out_$datacardFolder
 python run_all_impacts.py $datacardFolder
 python run_all_gatherFailedFits.py $datacardFolder
-python run_all_postfits.py $datacardFolder 1718
-python printPostfitLatexTable.py $datacardFolder 1718
-python plotLimitsInterpolation.py -limitfolder $datacardFolder
 
-python run_all_limits.py $datacardFolder 1718
-python plotLimitsPerCategory.py -lumi 137 -printlimits True -limitfolder $datacardFolder #For 161718, 1718, 1617
-python plotLimitsInterpolation.py -category 1718_all -lumi 101 -limitfolder $datacardFolder
+#python run_all_postfits.py $datacardFolder
+#python printPostfitLatexTable.py $datacardFolder
+#python plotLimitsInterpolation.py -limitfolder $datacardFolder
