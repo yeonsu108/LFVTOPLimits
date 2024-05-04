@@ -7,6 +7,9 @@ from math import sqrt
 import yaml
 from collections import OrderedDict
 from subprocess import call
+import array
+
+from symmetrize import smoothing, symmetrize
 
 # to prevent pyroot to hijack argparse we need to go around
 tmpargv = sys.argv[:] 
@@ -146,7 +149,7 @@ def main():
         for discriminant in dicriminants_per_signal.keys() :
             prepareShapes(backgrounds, [signal], dicriminants_per_signal[discriminant], discriminant)
 
-def merge_histograms(process, histogram, destination):
+def merge_histograms(process, fin, histogram, destination):
     """
     Merge two histograms together. If the destination histogram does not exist, it
     is created by cloning the input histogram
@@ -170,9 +173,10 @@ def merge_histograms(process, histogram, destination):
     # Rescale histogram to luminosity, if it's not data
     if not 'data' in process:
         histogram.Scale(luminosity)
-    import array
-    arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
-    histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+
+    #import array
+    #arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
+    #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
     if not d:
@@ -287,7 +291,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     histFornevt = f.Get('hcounter')
                     nevt = histFornevt.GetBinContent(2)
                     TH1.Scale(xsec/float(nevt))
-                shapes[category][process]['nominal'] = merge_histograms(process, TH1, dict_get(shapes[category][process], 'nominal'))
+                shapes[category][process]['nominal'] = merge_histograms(process, f, TH1, dict_get(shapes[category][process], 'nominal'))
                 if not "data" in process: 
                     for systematic in systematics:
                         if systematic in [item for item in sysForSMtt if item not in sysForSig] \
@@ -300,8 +304,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                                 sys.exit()
                             if options.applyxsec and not 'data' in process and TH1_syst:
                                 TH1_syst.Scale(xsec/float(nevt))
-                            shapes[category][process][key] = merge_histograms(process, TH1_syst, dict_get(shapes[category][process], key))
+                            shapes[category][process][key] = merge_histograms(process, f, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
+
+    arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
 
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
     for category, processes in shapes.items():
@@ -309,11 +315,41 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
         for process, systematics_ in processes.items():
             for systematic, histogram in systematics_.items():
                 histogram.SetName(process if systematic == 'nominal' else process + '__' + systematic)
-                histogram.Write()
+
+                hname = histogram.GetName()
+
+                if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname):
+
+                    h_nom = shapes[category][process]['nominal']
+                    h_nom.SetDirectory(ROOT.nullptr)
+
+                    # Process up and down simultaneously
+                    if 'Down' in systematic: continue
+                    hist_up = histogram
+                    hist_up = smoothing(hist_up, h_nom)
+
+                    hist_dn = shapes[category][process][systematic.replace('Up', 'Down')]
+                    hist_dn.SetName(process if systematic == 'nominal' else process + '__' + systematic.replace('Up', 'Down'))
+                    hist_dn = smoothing(hist_dn, h_nom)
+
+                    hist_up = hist_up.Rebin(len(arr)-1, hist_up.GetName(), arr)
+                    hist_dn = hist_dn.Rebin(len(arr)-1, hist_dn.GetName(), arr)
+                    h_nom = h_nom.Rebin(len(arr)-1, h_nom.GetName(), arr)
+
+                    hist_up_to_Write = symmetrize(hist_up, hist_dn, h_nom)
+                    hist_dn_to_Write = symmetrize(hist_dn, hist_up, h_nom)
+
+                    hist_up_to_Write.Write()
+                    hist_dn_to_Write.Write()
+
+                else:
+                    histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+                    histogram.Write()
+
         output_file.cd()
 
     output_file.Close()
-    print("Done. File saved as %r" % output_filename)
+    #print("Done. File saved as %r" % output_filename)
 
     return output_filename, cms_systematics
 
@@ -326,7 +362,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
     root_path = options.root_path
 
     file, systematics = prepareFile(processes_mapping, discriminants, root_path, discriminantName)
-    call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
+    #call(['python', 'symmetrize.py', options.output, file, options.dataYear], shell=False)
 
     for signal in signals :
         cb = ch.CombineHarvester()
