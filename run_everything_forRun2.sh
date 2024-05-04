@@ -7,7 +7,7 @@ python prepareRun2Combine.py -o $datacardFolder \
     -p18     datacards_2018_${postfix}
 python run_all_limits.py $datacardFolder
 python plotLimitsPerCategory.py -limitfolder $datacardFolder
-python printLimitLatexTable.py $datacardFolder > out_$datacardFolder
+python printLimitLatexTable.py $datacardFolder > out_${datacardFolder}.tex
 python run_all_impacts.py $datacardFolder
 python run_all_gatherFailedFits.py $datacardFolder
 
