@@ -3,74 +3,80 @@ import numpy as np
 import math
 
 limitfolder = sys.argv[1]
-year = limitfolder.split("_")[-1:]
+year = ""
+for y_ in ["2016pre", "2016post", "2017", "2018", "Run2"]:
+    if y_ in limitfolder: year = y_
+    if year == "Run2": year = "2"
 
-signal_Xsec = {'st_lfv_cs':10.09,'st_lfv_cv':58.3,'st_lfv_ct':307.4,'st_lfv_us':86.49,'st_lfv_uv':414.5,'st_lfv_ut':1925}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+
+# for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+#signal_Xsec = {'st_lfv_cs': 10.09, 'st_lfv_cv': 58.3, 'st_lfv_ct': 307.4, 'st_lfv_us': 86.49, 'st_lfv_uv': 414.5, 'st_lfv_ut': 1925}
+# For SMEFTsim cross sections, but TT are always 2.69, 21.5, 129 for s, v, t
+signal_Xsec = {'st_lfv_cs': 6.4, 'st_lfv_cv': 41.0, 'st_lfv_ct': 225.2, 'st_lfv_us': 61.83, 'st_lfv_uv': 297.6, 'st_lfv_ut': 1401}
 
 def calcXsec(signal,limits):
-    xsec= list(np.around(np.array(limits) * signal_Xsec[signal],decimals=3))
-    if len(xsec)==1: result = str(xsec[0])
+    xsec = list(np.around(np.array(limits) * signal_Xsec[signal], decimals=3))
+    if len(xsec) == 1: result = str(xsec[0])
     else: result = str(xsec)
     return result
 
 def calcWilson(limits):
-    wilson = list(np.around(np.sqrt(limits),decimals=3))
-    if len(wilson)==1: result = str(wilson[0])
+    wilson = list(np.around(np.sqrt(limits), decimals=3))
+    if len(wilson) == 1: result = str(wilson[0])
     else: result = str(wilson)
     return result
 
 
-#Add /1.3 for top width 
 def calcBr(op, limits):
     out = []
     if op == "cs" or op == "us":
-        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(1.3*6144*(math.pi**3))
+        out = 2 * np.array(limits) * (172.5**5) * 10**(-6) / (1.32 * 6144 * (math.pi**3))
     elif op == "cv" or op == "uv":
-        out = 4*np.array(limits)*(172.5**5)*10**(-6)/(1.3*1536*(math.pi**3))
+        out = 4 * np.array(limits) * (172.5**5) * 10**(-6) / (1.32 * 1536 * (math.pi**3))
     elif op == "ct" or op == "ut":
-        out = 2*np.array(limits)*(172.5**5)*10**(-6)/(1.3*128*(math.pi**3))
-    out = list(np.around(out,decimals=3))
-    if len(out)==1: result = str(out[0])
+        out = 2 * np.array(limits) * (172.5**5) * 10**(-6) / (1.32 * 128*(math.pi**3))
+    out = list(np.around(out, decimals=3))
+    if len(out) == 1: result = str(out[0])
     else: result = str(out)
     return result
 
 ################
 for_table = []
 for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
-#for signal in ['st_lfv_cs']: #, 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 'st_lfv_ut']:
-	op = signal.split("_")[2]
-	limits = json.loads(open(os.path.join(limitfolder, 'st_lfv_'+op+'_limits.json')).read())
-	limits = limits[""]
-	#print(signal , op)
-	nom = " & ".join([calcXsec(signal,[limits['expected']]),calcWilson([limits['expected']]),calcBr(op, [limits['expected']])])
-	#print("nom : ", nom)
-	for_table.append(nom)
-	unc = " & ".join([calcXsec(signal,limits['one_sigma']),calcWilson(limits['one_sigma']),calcBr(op, limits['one_sigma'])]) 
-	#print("unc : ", unc)
-	for_table.append(unc)
+  op = signal.split("_")[2]
+  limits = json.loads(open(os.path.join(limitfolder, signal+'_limits.json')).read())
+  limits = limits[""]
+  #print(signal , op)
+  nom = " & ".join([calcXsec(signal, [limits['expected']]), calcWilson([limits['expected']]), calcBr(op, [limits['expected']])])
+  #nom = " & ".join([calcXsec(signal, [limits['observed']]), calcWilson([limits['observed']]), calcBr(op, [limits['observed']])])
+  #print("nom : ", nom)
+  for_table.append(nom)
+  unc = " & ".join([calcXsec(signal, limits['one_sigma']), calcWilson(limits['one_sigma']), calcBr(op, limits['one_sigma'])]) 
+  #print("unc : ", unc)
+  for_table.append(unc)
 
 #print(len(for_table),for_table)
 
 
 lfv_table = """
 \\begin{{table}}[!hp] 
-    \\centering 
+    \\centering
     \\renewcommand{{\\arraystretch}}{{1.1}}
-    \\begin{{tabular}}{{c|c|c|c|c}} 
-        \\hline\\hline 
+    \\begin{{tabular}}{{c|c|c|c|c}}
+        \\hline\\hline
         Interaction & Type & $\\sigma$ [fb] & $C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$TeV^{{-2}}$] & $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
-        \\multirow{{6}}{{*}}{{$tc\\mu\\tau$}}  & \\multirow{{2}}{{*}}{{Scalar}} &
-        {lim0}\\\\ & & {lim1}\\\\\\cline{{2-5}} 
-          & \\multirow{{2}}{{*}}{{Vector}} & {lim2}\\\\  & & {lim3}\\\\\\cline{{2-5}} 
-          & \\multirow{{2}}{{*}}{{Tensor}} & {lim4}\\\\  & & {lim5}\\\\\\cline{{1-5}} 
-          \\multirow{{6}}{{*}}{{$tu\\mu\\tau$}} & \\multirow{{2}}{{*}}{{Scalar}}
-        &  {lim6}\\\\  & & {lim7}\\\\\\cline{{2-5}} 
-          & \\multirow{{2}}{{*}}{{Vector}} & {lim8}\\\\  & & {lim9}\\\\\\cline{{2-5}} 
-          & \\multirow{{2}}{{*}}{{Tensor}} &{lim10}\\\\  & & {lim11}\\\\\\cline{{2-5}} 
+        \\multirow{{6}}{{*}}{{$tc\\mu\\tau$}}
+            & \\multirow{{2}}{{*}}{{Scalar}} & {lim0} \\\\ & & {lim1} \\\\\\cline{{2-5}}
+            & \\multirow{{2}}{{*}}{{Vector}} & {lim2} \\\\ & & {lim3} \\\\\\cline{{2-5}}
+            & \\multirow{{2}}{{*}}{{Tensor}} & {lim4} \\\\ & & {lim5} \\\\\\cline{{1-5}}
+        \\multirow{{6}}{{*}}{{$tu\\mu\\tau$}}
+            & \\multirow{{2}}{{*}}{{Scalar}} & {lim6} \\\\ & & {lim7} \\\\\\cline{{2-5}}
+            & \\multirow{{2}}{{*}}{{Vector}} & {lim8} \\\\ & & {lim9} \\\\\\cline{{2-5}}
+            & \\multirow{{2}}{{*}}{{Tensor}} & {lim10} \\\\ & & {lim11} \\\\\\cline{{2-5}}
         \\hline\\hline
     \\end{{tabular}}
-    \\caption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}} 
-    \\label{{tab:run2limit}} 
+    \\caption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}}
+    \\label{{tab:{year}limit}}
 \\end{{table}}
 """.format(
 lim0=for_table[0],
@@ -87,6 +93,4 @@ lim10=for_table[10],
 lim11=for_table[11],
 year = year)
 print(lfv_table)
-
-
 
