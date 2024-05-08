@@ -487,8 +487,11 @@ echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalization
 combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 -v 1 #--plots
 PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
-plotIt/plotIt -o postfit_shapes_{name}_forPlotIt plotIt/configs/TOP-22-011/postfit_config_{year}.yml -y
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), year=options.dataYear)
+../../plotIt/plotIt -o postfit_shapes_TOP_LV_forPlotIt ../../plotIt/configs/TOP-22-011/postfit_config_{year}.yml -y --allSig --selectSig {signal}
+cd postfit_shapes_TOP_LV_forPlotIt
+mv DNN_logx_logy.pdf DNN_{signal}_{year}_logx_logy.pdf
+mv DNN_logx_logy.png DNN_{signal}_{year}_logx_logy.png
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), year=options.dataYear, signal=signal)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
             f.write(script)
