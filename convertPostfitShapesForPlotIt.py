@@ -47,15 +47,14 @@ print "Detected channels: ", channels
 # Naming is 'category/bkg_name'
 
 processs = set()
-total_unc = ['ttbb_postfit_histos__totalup','ttbb_postfit_histos__totaldown']
+total_unc = ['tt_postfit_histos__totalup','tt_postfit_histos__totaldown']
 
-#for proc in file.Get('%sb2j3_prefit' % channels[0][:-4]).GetListOfKeys():
 for proc in file.Get('%s_prefit' % channels[0]).GetListOfKeys():
     processs.add(proc.GetName())
 
 print 'Detected processes: ', processs
 
-output_dir = os.path.splitext(options.input)[0]+'_forPlotIt'
+output_dir = 'postfit_shapes_TOP_LFV_forPlotIt'
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -70,7 +69,7 @@ for process in processs:
     output_filename = "%s_postfit_histos.root" % (process)
     plot_file = TFile.Open(os.path.join(output_dir, output_filename), 'recreate')
     for channel in channels:
-#        print "    Channel : ", channel
+        print "    Channel : ", channel
         # Nominal post-fit shape
         nominal_postfit = file.Get('%s_postfit/%s' % (channel, process))
         try:
@@ -106,7 +105,7 @@ for process in processs:
                 print "    Channel : ", channel
                 if 'up' in t:
                     tot = file.Get('%s_postfit/%s' % (channel, process))
-                    nom = file.Get('%s_postfit/%s' % (channel, 'ttbb'))
+                    nom = file.Get('%s_postfit/%s' % (channel, 'tt'))
                     var = tot.Clone()
                     var.SetName(channel)
                     shift_hist(var, 1)
@@ -115,7 +114,7 @@ for process in processs:
                     var.Write()
                 elif 'down' in t:
                     tot = file.Get('%s_postfit/%s' % (channel, process))
-                    nom = file.Get('%s_postfit/%s' % (channel, 'ttbb'))
+                    nom = file.Get('%s_postfit/%s' % (channel, 'tt'))
                     var = tot.Clone()
                     var.SetName(channel)
                     shift_hist(var, -1)
