@@ -98,22 +98,27 @@ combine -M AsymptoticLimits -n {name} {workspace_root} --run blind  --rMin -1 --
         st = os.stat(script_file)
         os.chmod(script_file, st.st_mode | stat.S_IEXEC)
 
+        r_range = '20'
+        if 'st_lfv_us' in signal: r_range = '1'
+        elif 'st_lfv_uv' in signal: r_range = '1'
+        elif 'st_lfv_ut' in signal: r_range = '0.05'
+
         # Write small script for impacts
         script = """#! /bin/bash
 
 ## Run impacts
 combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
 
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20 -t -1
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --robustHesse 1 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -20 --rMax 20 -t -1
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -{r_range} --rMax {r_range} -t -1
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --robustHesse 1 --doFits --rMin -{r_range} --rMax {r_range} -t -1 --parallel 50
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -{r_range} --rMax {r_range} -t -1
 plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 50
 
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -20 --rMax 20
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --robustHesse 1 --rMin -20 --rMax 20 --parallel 50
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -20 --rMax 20
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -{r_range} --rMax {r_range}
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --robustHesse 1 --rMin -{r_range} --rMax {r_range} --parallel 50
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -{r_range} --rMax {r_range}
 #plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, r_range=r_range, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
             f.write(script)
@@ -125,13 +130,13 @@ plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-
         script = """#! /bin/bash
 
 # Run postfit
-echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 --robustHesse 1 --robustFit=1 -v 1
-combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -20 --rMax 20 --robustHesse 1 --robustFit=1 -m {fake_mass} -v 1 #--plots
+echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -{r_range} --rMax {r_range} --robustHesse 1 --robustFit=1 -v 1
+combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -{r_range} --rMax {r_range} --robustHesse 1 --robustFit=1 -m {fake_mass} -v 1 #--plots
 PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling -m {fake_mass}
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
 python ../../merge_postfits.py {coupling} {year}
 plotIt/plotIt -o postfit_shapes_{name}_forPlotIt plotIt/config/TOP-22-011/postfit_plotIt_config_{coupling}_{year}.yml -y
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1), coupling=signal, year=year)
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, r_range=r_range, systematics=(0 if options.nosys else 1), coupling=signal, year=year)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
         with open(script_file, 'w') as f:
             f.write(script)
