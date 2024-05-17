@@ -69,7 +69,7 @@ for process in processs:
     output_filename = "%s_postfit_histos.root" % (process)
     plot_file = TFile.Open(os.path.join(output_dir, output_filename), 'recreate')
     for channel in channels:
-        print "    Channel : ", channel
+        # print "    Channel : ", channel
         # Nominal post-fit shape
         nominal_postfit = file.Get('%s_postfit/%s' % (channel, process))
         try:
@@ -126,6 +126,7 @@ for process in processs:
 
 
 
+#not used
 if options.signals:
     f = TFile.Open(options.signals)
     signals = [k.GetName() for k in f.Get(channels[0]).GetListOfKeys() if not '__' in k.GetName() and ('Hct' in k.GetName() or 'Hut' in k.GetName())]

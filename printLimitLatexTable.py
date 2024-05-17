@@ -47,8 +47,7 @@ for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 
   limits = json.loads(open(os.path.join(limitfolder, signal+'_limits.json')).read())
   limits = limits[""]
   #print(signal , op)
-  nom = " & ".join([calcXsec(signal, [limits['expected']]), calcWilson([limits['expected']]), calcBr(op, [limits['expected']])])
-  #nom = " & ".join([calcXsec(signal, [limits['observed']]), calcWilson([limits['observed']]), calcBr(op, [limits['observed']])])
+  nom = " & ".join([calcXsec(signal, [limits['observed']]) + ' (' + calcXsec(signal, [limits['expected']]) + ')', calcWilson([limits['observed']]) + ' (' + calcWilson([limits['expected']]) + ')',  calcBr(op, [limits['observed']]) + ' (' + calcBr(op, [limits['expected']]) + ')'])
   #print("nom : ", nom)
   for_table.append(nom)
   unc = " & ".join([calcXsec(signal, limits['one_sigma']), calcWilson(limits['one_sigma']), calcBr(op, limits['one_sigma'])]) 
@@ -64,7 +63,7 @@ lfv_table = """
     \\renewcommand{{\\arraystretch}}{{1.1}}
     \\begin{{tabular}}{{c|c|c|c|c}}
         \\hline\\hline
-        Interaction & Type & $\\sigma$ [fb] & $C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$TeV^{{-2}}$] & $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
+        Interaction & Type & $Observed (expected) \\sigma$ [fb] & $Observed (expected) C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$TeV^{{-2}}$] & Observed (expected) $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
         \\multirow{{6}}{{*}}{{$tc\\mu\\tau$}}
             & \\multirow{{2}}{{*}}{{Scalar}} & {lim0} \\\\ & & {lim1} \\\\\\cline{{2-5}}
             & \\multirow{{2}}{{*}}{{Vector}} & {lim2} \\\\ & & {lim3} \\\\\\cline{{2-5}}

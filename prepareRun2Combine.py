@@ -77,7 +77,9 @@ for signal in signals:
 
     # Write card
     for output_prefix in output_prefix_list:
-        year = output_prefix.split('_')[9]
+        year = output_prefix.split('_')[10]
+        if year == '16pre16post1718':
+            year = 'Run2'
         output_dir = os.path.join(options.output, signal)
         datacard = os.path.join(output_dir, output_prefix + '.dat')
         workspace_file = os.path.basename( os.path.join(output_dir, output_prefix + '_combine_workspace.root') )
@@ -87,8 +89,9 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 
 # Run limit
 
-echo combine -M AsymptoticLimits -n {name} {workspace_root} --run blind #-v +2
-combine -M AsymptoticLimits -n {name} {workspace_root} --run blind  --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --expectSignal 0 --cminDefaultMinimizerStrategy 0  #-v +2
+echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --expectSignal 0 --cminDefaultMinimizerStrategy 0  #-v +2
+combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --expectSignal 0 --cminDefaultMinimizerStrategy 0  #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
@@ -101,7 +104,7 @@ combine -M AsymptoticLimits -n {name} {workspace_root} --run blind  --rMin -1 --
         r_range = '20'
         if 'st_lfv_us' in signal: r_range = '1'
         elif 'st_lfv_uv' in signal: r_range = '1'
-        elif 'st_lfv_ut' in signal: r_range = '0.05'
+        elif 'st_lfv_ut' in signal: r_range = '0.005'
 
         # Write small script for impacts
         script = """#! /bin/bash
@@ -109,15 +112,15 @@ combine -M AsymptoticLimits -n {name} {workspace_root} --run blind  --rMin -1 --
 ## Run impacts
 combineTool.py -M FastScan -w {name}_combine_workspace.root:w -o {name}_nll
 
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -{r_range} --rMax {r_range} -t -1
-combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --robustHesse 1 --doFits --rMin -{r_range} --rMax {r_range} -t -1 --parallel 50
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --rMin -{r_range} --rMax {r_range} -t -1
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --rMin -{r_range} --rMax {r_range} -t -1 --parallel 50
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_expected_impacts.json --rMin -{r_range} --rMax {r_range} -t -1
 plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-page 50
 
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --robustHesse 1 --rMin -{r_range} --rMax {r_range}
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --robustHesse 1 --rMin -{r_range} --rMax {r_range} --parallel 50
-#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -{r_range} --rMax {r_range}
-#plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --robustFit=1 --rMin -{r_range} --rMax {r_range}
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --robustFit=1 --doFits --rMin -{r_range} --rMax {r_range} --parallel 50
+combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_impacts.json --rMin -{r_range} --rMax {r_range}
+plotImpacts.py -i {name}_impacts.json -o {name}_impacts --per-page 50
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, r_range=r_range, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
@@ -130,14 +133,33 @@ plotImpacts.py -i {name}_expected_impacts.json -o {name}_expected_impacts --per-
         script = """#! /bin/bash
 
 # Run postfit
-echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -{r_range} --rMax {r_range} --robustHesse 1 --robustFit=1 -v 1
-combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -{r_range} --rMax {r_range} --robustHesse 1 --robustFit=1 -m {fake_mass} -v 1 #--plots
+echo combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -{r_range} --rMax {r_range} --robustFit=1 -v 1
+combine -M FitDiagnostics {datacard} -n _{name}_postfit --saveNormalizations --saveShapes --saveWithUncertainties --preFitValue 0 --rMin -{r_range} --rMax {r_range} --robustFit=1 -m {fake_mass} -v 1 #--plots
 PostFitShapesFromWorkspace -w {name}_combine_workspace.root -d {datacard} -o postfit_shapes_{name}.root -f fitDiagnostics_{name}_postfit.root:fit_b --postfit --sampling -m {fake_mass}
 python ../../convertPostfitShapesForPlotIt.py -i postfit_shapes_{name}.root
-python ../../merge_postfits.py {coupling} {year}
-plotIt/plotIt -o postfit_shapes_{name}_forPlotIt plotIt/config/TOP-22-011/postfit_plotIt_config_{coupling}_{year}.yml -y
+python ../../merge_postfits.py
+../../plotIt/plotIt -o postfit_shapes_TOP_LFV_forPlotIt ../../plotIt/configs/TOP-22-011/postfit_config_Run2.yml -y --allSig --selectSig {coupling}
+cd postfit_shapes_TOP_LFV_forPlotIt
+mv DNN_logx_logy.pdf DNN_{coupling}_{year}_logx_logy.pdf
+mv DNN_logx_logy.png DNN_{coupling}_{year}_logx_logy.png
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, r_range=r_range, systematics=(0 if options.nosys else 1), coupling=signal, year=year)
         script_file = os.path.join(output_dir, output_prefix + '_run_postfit.sh')
+        with open(script_file, 'w') as f:
+            f.write(script)
+
+        st = os.stat(script_file)
+        os.chmod(script_file, st.st_mode | stat.S_IEXEC)
+
+        # Write small script for goodness of fit
+        script = """#! /bin/bash
+
+# Run GoodnessOfFit
+echo combine -M GoodnessOfFit --algo=saturated -d {workspace_root} -n _{name}_toys --cminDefaultMinimizerStrategy 0 --fixedSignalStrength=0 -t 500
+combine -M GoodnessOfFit --algo=saturated -d {workspace_root} -n _{name}_data --cminDefaultMinimizerStrategy 0 --fixedSignalStrength=0 > GOF_log
+combine -M GoodnessOfFit --algo=saturated -d {workspace_root} -n _{name}_toys --cminDefaultMinimizerStrategy 0 --fixedSignalStrength=0 -t 500 >> GOF_log
+python ../../GOF_plotPValue.py -t higgsCombine_{name}_toys.GoodnessOfFit.mH120.123456.root -d higgsCombine_{name}_data.GoodnessOfFit.mH120.root -o GOF_{coupling}_{year}
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, r_range=r_range, systematics=(0 if options.nosys else 1), coupling=signal, year=year)
+        script_file = os.path.join(output_dir, output_prefix + '_run_gof.sh')
         with open(script_file, 'w') as f:
             f.write(script)
 
