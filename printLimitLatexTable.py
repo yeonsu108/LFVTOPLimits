@@ -60,10 +60,11 @@ for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 
 lfv_table = """
 \\begin{{table}}[!hp] 
     \\centering
-    \\renewcommand{{\\arraystretch}}{{1.1}}
+    \\resizebox{{1.\\hsize}}{{!}}{{
+    \\renewcommand{{\\arraystretch}}{{1.4}}
     \\begin{{tabular}}{{c|c|c|c|c}}
         \\hline\\hline
-        Interaction & Type & $Observed (expected) \\sigma$ [fb] & $Observed (expected) C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$TeV^{{-2}}$] & Observed (expected) $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
+        Interaction & Type & Obs. (exp.) $\\sigma$ [fb] & Obs. (exp.) $C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$\TeV^{{-2}}$] & Obs. (exp.) $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
         \\multirow{{6}}{{*}}{{$tc\\mu\\tau$}}
             & \\multirow{{2}}{{*}}{{Scalar}} & {lim0} \\\\ & & {lim1} \\\\\\cline{{2-5}}
             & \\multirow{{2}}{{*}}{{Vector}} & {lim2} \\\\ & & {lim3} \\\\\\cline{{2-5}}
@@ -74,6 +75,7 @@ lfv_table = """
             & \\multirow{{2}}{{*}}{{Tensor}} & {lim10} \\\\ & & {lim11} \\\\\\cline{{2-5}}
         \\hline\\hline
     \\end{{tabular}}
+    }}
     \\caption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}}
     \\label{{tab:{year}limit}}
 \\end{{table}}
