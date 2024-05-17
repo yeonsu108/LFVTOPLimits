@@ -1,5 +1,5 @@
 #postfix=$1
-postfix=0501_symm1
+postfix=0501_symm1_unblind
 
 source run_everything_oneYear.sh datacards_2018_${postfix} 2018
 source run_everything_oneYear.sh datacards_2017_${postfix} 2017

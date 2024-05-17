@@ -25,6 +25,13 @@ cd UserCode
 git clone https://github.com/easilar/LFVTOPLimits.git LFVTOPLimits
 cd $CMSSW_BASE/src
 scram b -j 4
+
+cd UserCode/LFVTOPLimits
+git clone git@github.com:minerva1993/plotIt.git
+cd plotIt/external
+source build-external.sh
+cd ..
+make -j6
 ```
 # Stay up to date
 You can check that the above recipe is up to date by following the links
