@@ -1,5 +1,5 @@
 postfix=$1
-datacardFolder=fullRun2Comb_$postfix
+datacardFolder=fullRun2Comb_${postfix}
 python prepareRun2Combine.py -o $datacardFolder \
     -p16pre  datacards_2016pre_${postfix} \
     -p16post datacards_2016post_${postfix} \
@@ -12,6 +12,6 @@ python run_all_impacts.py $datacardFolder
 python run_all_gatherFailedFits.py $datacardFolder
 python run_all_postfits.py $datacardFolder
 python run_all_gof.py $datacardFolder
+python plotLimitsInterpolation.py -limitfolder $datacardFolder
 
 #python printPostfitLatexTable.py $datacardFolder
-#python plotLimitsInterpolation.py -limitfolder $datacardFolder

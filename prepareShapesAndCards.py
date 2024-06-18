@@ -96,20 +96,16 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     }
 
 # IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
+
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
-        #'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
-        #'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
-        #'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
-        #'DY' : ['hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root'],
-        #'TTX' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        #'ST_t-channel' : ['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root'],
-        #'ST_tW' : ['hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+        # Note: no entries from, WJetsToLNu_HT0To100, WJetsToLNu_HT100To200, hist_ST_s
         'tt': ['hist_TTToSemiLeptonic.root','hist_TTTo2L2Nu.root'],
-	'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
-        #'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        'other' : ['hist_TTToHadronic.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root','hist_TTWJetsToLNu.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        # QCD
-        #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
+        'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+        'other' : ['hist_TTToHadronic.root',
+                   'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root',
+                   'hist_WW.root','hist_WZ.root','hist_ZZ.root',
+                   'hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root',
+                   'hist_TTWJetsToLNu.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
         # Signal
         'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
         'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TCMuTau_Tensor.root'],
@@ -118,13 +114,30 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TUMuTau_Tensor.root'],
         'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TUMuTau_Vector.root'],
         # Data
-        'data_all' : ['hist_SingleMuon'+options.dataYear+'.root'],
+        'data_all' : ['hist_SingleMuon.root'],
+
+        ###################
+        # Old definitions #
+        ###################
+        #'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
+        #'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
+        #'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
+        #'DY' : ['hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root'],
+        #'TTX' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        #'ST_t-channel' : ['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root'],
+        #'ST_tW' : ['hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+        #'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
         }
 
 processes_mapping['data_obs'] = processes_mapping['data_all']
 processes_mapping.pop('data_all')
 
+#processes_mapping['misID'] = ['hist_fake_'+i.replace('hist_', '') for i in processes_mapping['singleTop'] + processes_mapping['other']]
+#processes_mapping['misID_tt'] = ['hist_fake_'+i.replace('hist_', '') for i in processes_mapping['tt']]
+
 smTTlist = ['tt'] # for systematics affecting only SM tt
+#smTTlist = ['tt', 'misID_tt'] # for systematics affecting only SM tt
 lfvlist = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us'] 
 
 if options.applyxsec:
@@ -138,7 +151,8 @@ if options.applyxsec:
 def main():
     """Main function"""
     signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
-    backgrounds = ['tt', 'other' , 'singleTop'] #, 'wJets','vv','DY','TTX'] #,'singleTop'] #, 'qcd']
+    backgrounds = ['tt', 'other' , 'singleTop']
+    #backgrounds = ['tt', 'other' , 'singleTop', 'misID', 'misID_tt']
 
     #print("Background considered: ", backgrounds)
 
@@ -283,6 +297,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
                 process_file_basename = os.path.basename(process_file)
+                #if 'fake_' in process_file_basename: #for misID separated fit
+                #    process_file_basename = process_file_basename.replace('fake_', '')
                 if not TH1:
                     sys.exit()
                 if options.applyxsec and not 'data' in process:
@@ -301,6 +317,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             key = CMSNamingConvention(systematic,options) + variation.capitalize()
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             if not TH1_syst:
+                                # Some of misID processes are empty, just continue
+                                #print("EMPTY HISTO!!!!: ", process_file, original_histogram_name + '__' + systematic + variation)
+                                #continue
                                 sys.exit()
                             if options.applyxsec and not 'data' in process and TH1_syst:
                                 TH1_syst.Scale(xsec/float(nevt))
@@ -319,6 +338,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 hname = histogram.GetName()
 
                 if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname):
+                #if ('tune' in hname) or ('hdamp' in hname) or \
+                #   ('jes' in hname and 'other' in hname) or \
+                #   ('jer' in hname and 'other' in hname) or \
+                #   ('misID' in hname and 'misID_tt' not in hname):
 
                     h_nom = shapes[category][process]['nominal']
                     h_nom.SetDirectory(ROOT.nullptr)
@@ -413,6 +436,10 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             cb.cp().AddSyst(cb, 'xsec_wjets', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
             cb.cp().AddSyst(cb, 'xsec_singleTop', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
             cb.cp().AddSyst(cb, 'xsec_Other', 'lnN', ch.SystMap('process')(['other'], 1.1))
+            #cb.cp().AddSyst(cb, 'rate_misID', 'rateParam', ch.SystMap('process')(['misID'], 1.0))
+            #cb.cp().AddSyst(cb, 'rate_misID_tt', 'rateParam', ch.SystMap('process')(['misID_tt'], 1.0))
+            #cb.cp().AddSyst(cb, 'rate_misID', 'lnN', ch.SystMap('process')(['misID'], 2.0))
+            #cb.cp().AddSyst(cb, 'rate_misID_tt', 'lnN', ch.SystMap('process')(['misID_tt'], 1.5))
 
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
@@ -447,6 +474,7 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
 #combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2. #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
@@ -472,6 +500,16 @@ combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 --parallel 50
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_impacts.json --rMin -20 --rMax 20
 plotImpacts.py -i {name}_{year}_impacts.json -o {name}_{year}_impacts --per-page 50
+
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 -t -1 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_expected_impacts.json --rMin -20 --rMax 20 -t -1
+#plotImpacts.py -i {name}_{year}_expected_impacts.json -o {name}_{year}_expected_impacts --per-page 50
+#
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 --parallel 50 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_impacts.json --rMin -20 --rMax 20
+#plotImpacts.py -i {name}_{year}_impacts.json -o {name}_{year}_impacts --per-page 50
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, year=options.dataYear, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
