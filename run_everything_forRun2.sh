@@ -11,7 +11,7 @@ python printLimitLatexTable.py $datacardFolder > out_${datacardFolder}.tex
 python run_all_impacts.py $datacardFolder
 python run_all_gatherFailedFits.py $datacardFolder
 python run_all_postfits.py $datacardFolder
-python run_all_gof.py $datacardFolder
 python plotLimitsInterpolation.py -limitfolder $datacardFolder
+python run_all_gof.py $datacardFolder
 
 #python printPostfitLatexTable.py $datacardFolder

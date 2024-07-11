@@ -8,7 +8,7 @@ gROOT.SetBatch()
 gROOT.ProcessLine(".x setTDRStyle.C")
 
 parser = argparse.ArgumentParser(description='Store limits inside a json file and plot them if required (one bin per category).')
-parser.add_argument('--limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where ct and ut combine output folders are stored')
+parser.add_argument('-limitfolder', dest='limitfolder', default='./datacards', type=str, help='Folder where ct and ut combine output folders are stored')
 parser.add_argument('--unblind', dest='unblind', action='store_true', default=True, help='Display or not the observed limit.')
 parser.add_argument('--lumi', dest='lumi', type=str, default='138', help='Luminosity to display on the plot.')
 parser.add_argument('--pas', dest='pas', type=bool, default=True, help='To present Preliminary label')
@@ -91,18 +91,30 @@ def br(op, ut_limit, ct_limit, pos, arrX, arrY, to_print):
 
 
 for i in xrange(200000):
-    x_pos = 0.000005 * i
+    x_pos = 0.0001 * i
+    #x_pos = 0.000005 * i
 
     to_print = False
-    if (x_pos * 400).is_integer(): to_print = True
+    #if (x_pos * 400).is_integer(): to_print = True
 
     for signal_lorentz in signal_lorentz_dict:
         coupl(ut_exp[signal_lorentz], ct_exp[signal_lorentz], x_pos, x_coup_exp[signal_lorentz], y_coup_exp[signal_lorentz], to_print)
+
+        br('u'+signal_lorentz, ut_exp[signal_lorentz], ct_exp[signal_lorentz], x_pos, x_br_exp[signal_lorentz], y_br_exp[signal_lorentz], to_print)
+
+
+#Unc band requires high gran.
+for i in xrange(200000):
+    x_pos = 0.000005 * i
+
+    to_print = False
+    #if (x_pos * 400).is_integer(): to_print = True
+
+    for signal_lorentz in signal_lorentz_dict:
         coupl(ut_obs[signal_lorentz], ct_obs[signal_lorentz], x_pos, x_coup_obs[signal_lorentz], y_coup_obs[signal_lorentz], to_print)
         coupl(ut_one_up[signal_lorentz], ct_one_up[signal_lorentz], x_pos, x_coup_one_up[signal_lorentz], y_coup_one_up[signal_lorentz], to_print)
         coupl(ut_one_dn[signal_lorentz], ct_one_dn[signal_lorentz], x_pos, x_coup_one_dn[signal_lorentz], y_coup_one_dn[signal_lorentz], to_print)
 
-        br('u'+signal_lorentz, ut_exp[signal_lorentz], ct_exp[signal_lorentz], x_pos, x_br_exp[signal_lorentz], y_br_exp[signal_lorentz], to_print)
         br('u'+signal_lorentz, ut_obs[signal_lorentz], ct_obs[signal_lorentz], x_pos, x_br_obs[signal_lorentz], y_br_obs[signal_lorentz], to_print)
         br('u'+signal_lorentz, ut_one_up[signal_lorentz], ct_one_up[signal_lorentz], x_pos, x_br_one_up[signal_lorentz], y_br_one_up[signal_lorentz], to_print)
         br('u'+signal_lorentz, ut_one_dn[signal_lorentz], ct_one_dn[signal_lorentz], x_pos, x_br_one_dn[signal_lorentz], y_br_one_dn[signal_lorentz], to_print)
@@ -180,10 +192,11 @@ latexLabel.DrawLatex(0.19, 0.87, "CMS")
 latexLabel.SetTextFont(62)
 latexLabel.SetTextSize(0.65 * c1.GetTopMargin())
 latexLabel.DrawLatex(0.63, 0.88, "CLFV     Exp #pm 1#sigma   Obs")
-latexLabel.DrawLatex(0.63, 0.84, "Scalar")
-latexLabel.DrawLatex(0.63, 0.80, "Vector")
-latexLabel.DrawLatex(0.63, 0.76, "Tensor")
-latexLabel.DrawLatex(0.63, 0.715, "95% CL upper limits")
+#latexLabel.DrawLatex(0.60, 0.88, "CLFV  Exp #pm 68% CL interval   Obs")
+latexLabel.DrawLatex(0.60, 0.84, "Scalar")
+latexLabel.DrawLatex(0.60, 0.80, "Vector")
+latexLabel.DrawLatex(0.60, 0.76, "Tensor")
+latexLabel.DrawLatex(0.60, 0.715, "95% CL upper limits")
 
 if options.pas:
     latexLabel.SetTextFont(52) # helvetica italics
@@ -218,8 +231,12 @@ for signal_lorentz in signal_lorentz_dict:
 gPad.RedrawAxis();
 legend.Draw('same')
 c1.cd()
-if options.pas: c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+"_pas.pdf")
-else:           c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+".pdf")
+if options.pas:
+    c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+"_pas.pdf")
+    c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+"_pas.png")
+else:
+    c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+".pdf")
+    c1.Print(options.limitfolder + "/interpolated_coupling"+postfix+".png")
 
 ##########################################
 #           branching fraction           #
@@ -331,5 +348,9 @@ for signal_lorentz in signal_lorentz_dict:
 gPad.RedrawAxis();
 legend.Draw('same')
 
-if options.pas: c2.Print(options.limitfolder + "/interpolated_br"+postfix+"_pas.pdf")
-else:           c2.Print(options.limitfolder + "/interpolated_br"+postfix+".pdf")
+if options.pas:
+    c2.Print(options.limitfolder + "/interpolated_br"+postfix+"_pas.pdf")
+    c2.Print(options.limitfolder + "/interpolated_br"+postfix+"_pas.png")
+else:
+    c2.Print(options.limitfolder + "/interpolated_br"+postfix+".pdf")
+    c2.Print(options.limitfolder + "/interpolated_br"+postfix+".png")

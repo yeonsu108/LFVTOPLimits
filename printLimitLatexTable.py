@@ -66,7 +66,7 @@ lfv_table = """
     \\topcaption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson coefficient ($C_{{\\cPqt\\cPq\\mu\\tau}}$), and branching fraction for different types of interactions. Values for the 68\\% expected \\CL interval are given in square brackets.}}
     \\resizebox{{1.\\hsize}}{{!}}{{
     \\begin{{tabular}}{{ccccc}}
-        Interaction & Type & Obs. (exp.) $\\sigma$ [fb] & Obs. (exp.) $C_{{\\cPqt\\cPq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$\TeV^{{-2}}$] & Obs. (exp.) $\\mathcal{{B}}(\\tTomutauq) [10^{{-6}}]$ \\\\ \\hline
+        Interaction & Type & Obs. (exp.) $\\sigma$ (\\unit{{fb}}) & Obs. (exp.) $C_{{\\cPqt\\cPq\\mu\\tau}}\\slash\\Lambda^{{2}}$ ($\TeV^{{-2}}$) & Obs. (exp.) $\\mathcal{{B}}(\\tTomutauq) (10^{{-6}})$ \\\\ \\hline
         \\multirow{{6}}{{*}}{{$\\cPqt\\cPqu\\mu\\tau$}}
             & \\multirow{{2}}{{*}}{{Scalar}} & {lim6} \\\\ & & {lim7} \\\\
             & \\multirow{{2}}{{*}}{{Vector}} & {lim8} \\\\ & & {lim9} \\\\

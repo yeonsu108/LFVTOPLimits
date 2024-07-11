@@ -68,6 +68,9 @@ correlatedSys.extend(['btagcferr1','btagcferr2','btaghf','btaglf'])
 correlatedSys.extend(['tauidjetHighptextrap','tauidjetHighptsyst','tauidjetSystalleras'])
 correlatedSys.extend(scale_breakdown)
 correlatedSys.extend(['pdf'+str(i) for i in range(1,101)])
+correlatedSys.extend(['muhighpt', 'muonhighscale'])
+
+options.sysToAvoid.extend(['muonhighscale', 'metUnclust'])
 
 sysForSMtt = options.sysForSMtt
 sysForSMtt.extend(scale_breakdown)
@@ -337,11 +340,17 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
 
                 hname = histogram.GetName()
 
-                if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname):
+                #if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname):
+                if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname) or \
+                   (options.dataYear == '2016pre' and 'other' in hname):
+                   #(options.dataYear == '2016pre' and 'other' in hname) or (options.dataYear == '2016post' and 'other' in hname):
                 #if ('tune' in hname) or ('hdamp' in hname) or \
                 #   ('jes' in hname and 'other' in hname) or \
                 #   ('jer' in hname and 'other' in hname) or \
-                #   ('misID' in hname and 'misID_tt' not in hname):
+                #   ('jer' in hname and 'singleTop' in hname) or \
+                #   ('fsr' in hname and 'other' in hname) or \
+                #   ('muhighpt' in hname and 'other' in hname) or \
+                #   ('metUnclust' in hname and 'other' in hname):
 
                     h_nom = shapes[category][process]['nominal']
                     h_nom.SetDirectory(ROOT.nullptr)
@@ -476,7 +485,10 @@ echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 #-v +2
 #combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2. #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+
+combine -M MultiDimFit {name}_combine_workspace.root -n .NLLScan --rMin -0.5 --rMax 0.5 --algo grid --points 200
+python ../../plot1DScan.py higgsCombine.NLLScan.MultiDimFit.mH120.root -o single_scan_{year}_{signal}
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, year=options.dataYear, signal=signal, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
         with open(script_file, 'w') as f:
             f.write(script)

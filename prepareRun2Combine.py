@@ -92,7 +92,10 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0  #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+
+combine -M MultiDimFit {name}_combine_workspace.root -n .NLLScan --rMin -0.5 --rMax 0.5 --algo grid --points 200
+python ../../plot1DScan.py higgsCombine.NLLScan.MultiDimFit.mH120.root -o single_scan_Run2_{signal}
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass,  signal=signal, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
         with open(script_file, 'w') as f:
             f.write(script)
@@ -104,6 +107,7 @@ combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbs
         if 'st_lfv_us' in signal: r_range = '1'
         elif 'st_lfv_uv' in signal: r_range = '1'
         elif 'st_lfv_ut' in signal: r_range = '0.005'
+        elif 'st_lfv_ct' in signal: r_range = '2'
 
         # Write small script for impacts
         script = """#! /bin/bash
