@@ -1,5 +1,6 @@
 #postfix=$1
 postfix=0705
+#postfix=0705_postfit_mutau_mass
 
 source run_everything_oneYear.sh datacards_2018_${postfix} 2018
 source run_everything_oneYear.sh datacards_2017_${postfix} 2017

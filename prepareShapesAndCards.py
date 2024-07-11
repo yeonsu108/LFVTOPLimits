@@ -86,6 +86,12 @@ luminosity = years[options.dataYear]
 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
         'DNN': get_hist_regex('h_dnn_pred_S5'),
+        #Drawing input postfit - remove rebins, include scales, no need to draw all signals, run only cards for each year
+        #'DNN': get_hist_regex('h_muon1_pt_S5'),
+        #'DNN': get_hist_regex('h_tau1_pt_S5'),
+        #'DNN': get_hist_regex('h_jet1_pt_S5'),
+        #'DNN': get_hist_regex('h_jet2_pt_S5'),
+        #'DNN': get_hist_regex('h_mutau_mass_S5'),
         }
 
 discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
@@ -406,6 +412,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         if not options.nosys:
             for systematic in systematics:
                 if any(s_ == systematic for s_ in ['mescale', 'renscale', 'facscale', 'jesFlavorQCD']): continue
+                #if any(s_ == systematic for s_ in ['jesFlavorQCD']): continue
                 systematic_only_for_SMtt = False
                 systematic_only_for_Sig = False
 
