@@ -120,6 +120,11 @@ for i in xrange(200000):
         br('u'+signal_lorentz, ut_one_dn[signal_lorentz], ct_one_dn[signal_lorentz], x_pos, x_br_one_dn[signal_lorentz], y_br_one_dn[signal_lorentz], to_print)
 
 
+margin_left = 0.16
+margin_right = 0.04
+margin_top = 0.065
+margin_bottom = 0.135
+
 ##########################################
 #           Wilson coefficient           #
 ##########################################
@@ -127,8 +132,12 @@ g_coup_exp = {}; g_coup_obs = {}
 g_coup_one_band = {};
 
 # Create Canvas
-c1 = TCanvas("c1","interpolate",450,400)
-c1.SetLeftMargin(0.15)
+c1 = TCanvas("c1", "interpolate", 450, 450)
+c1.SetLeftMargin(margin_left)
+c1.SetRightMargin(margin_right)
+c1.SetTopMargin(margin_top)
+c1.SetBottomMargin(margin_bottom)
+
 p1 = c1.DrawFrame(0, 0.002, 0.3, 1.4)
 
 # Create TGraph
@@ -162,52 +171,59 @@ for signal_lorentz in signal_lorentz_dict:
 # Axis style
 xAxis = p1.GetXaxis()
 xAxis.SetTitle("C_{tu#mu#tau}/#Lambda^{2} (TeV^{-2})")
-xAxis.SetLabelSize(0.05)
-xAxis.SetLabelFont(42)
-xAxis.SetTitleFont(42)
+xAxis.SetLabelSize(20)
+xAxis.SetLabelFont(43)
+xAxis.SetLabelOffset(0.007)
+xAxis.SetTitleFont(43)
 xAxis.SetTitleOffset(1.0)
-xAxis.SetTitleSize(0.053)
+xAxis.SetTitleSize(22)
+xAxis.SetTickLength(0.03)
 yAxis = p1.GetYaxis()
 yAxis.SetTitle("C_{tc#mu#tau}/#Lambda^{2} (TeV^{-2})")
-yAxis.SetLabelSize(0.05)
-yAxis.SetLabelFont(42)
-yAxis.SetTitleFont(42)
-yAxis.SetTitleOffset(1.3)
-yAxis.SetTitleSize(0.053)
+yAxis.SetLabelSize(20)
+yAxis.SetLabelFont(43)
+yAxis.SetLabelOffset(0.012)
+yAxis.SetTitleFont(43)
+yAxis.SetTitleOffset(1.4)
+yAxis.SetTitleSize(22)
+yAxis.SetTickLength(0.03)
 
 
 # Some text
 progress = 'Preliminary'
 latexLabel = TLatex()
-latexLabel.SetTextSize(0.8 * c1.GetTopMargin())
 latexLabel.SetNDC()
 #Lumi
 latexLabel.SetTextFont(62) # helvetica
-latexLabel.DrawLatex(0.71, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
+latexLabel.SetTextSize(0.8 * margin_top)
+latexLabel.SetTextAlign(33)
+latexLabel.DrawLatex(1 - margin_right, 1 - 0.05 * margin_top, '%s fb^{-1} (13 TeV)'%(options.lumi))
 #CMS
 latexLabel.SetTextFont(62) # helvetica bold face
-latexLabel.SetTextSize(1.00 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.19, 0.87, "CMS")
+latexLabel.SetTextSize(0.9 * margin_top)
+latexLabel.SetTextAlign(11)
+latexLabel.DrawLatex(1.248 * margin_left, 0.865, "CMS")
 #legend
 latexLabel.SetTextFont(62)
-latexLabel.SetTextSize(0.65 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.63, 0.88, "CLFV     Exp #pm 1#sigma   Obs")
+latexLabel.SetTextSize(0.6 * c1.GetTopMargin())
+latexLabel.DrawLatex(0.57, 0.88, "CLFV    Exp #pm 1#sigma   Obs")
+latexLabel.SetTextFont(42)
 #latexLabel.DrawLatex(0.60, 0.88, "CLFV  Exp #pm 68% CL interval   Obs")
-latexLabel.DrawLatex(0.60, 0.84, "Scalar")
-latexLabel.DrawLatex(0.60, 0.80, "Vector")
-latexLabel.DrawLatex(0.60, 0.76, "Tensor")
-latexLabel.DrawLatex(0.60, 0.715, "95% CL upper limits")
+latexLabel.DrawLatex(0.57, 0.84, "Scalar")
+latexLabel.DrawLatex(0.57, 0.80, "Vector")
+latexLabel.DrawLatex(0.57, 0.76, "Tensor")
+latexLabel.DrawLatex(0.57, 0.715, "95% CL upper limits")
 
 if options.pas:
     latexLabel.SetTextFont(52) # helvetica italics
-    latexLabel.SetTextSize(0.7 * c1.GetTopMargin())
-    latexLabel.DrawLatex(0.19, 0.82, progress)
+    latexLabel.SetTextSize(0.5 * c1.GetTopMargin())
+    latexLabel.DrawLatex(1.21 * margin_left, 0.833, progress)
 
 latexLabel.Clear()
 
 
 # Legend
-legend = TLegend(0.74, 0.75, 0.92, 0.87)
+legend = TLegend(0.72, 0.75, 0.94, 0.87)
 legend.SetNColumns(2)
 legend.SetColumnSeparation(0.0)
 legend.SetMargin(1.0)
@@ -244,8 +260,12 @@ else:
 g_br_exp = {}; g_br_obs = {}
 g_br_one_band = {};
 
-c2 = TCanvas("c2","interpolate",450,400)
-c2.SetLeftMargin(0.15)
+c2 = TCanvas("c2", "interpolate", 450, 450)
+c2.SetLeftMargin(margin_left)
+c2.SetRightMargin(margin_right)
+c2.SetTopMargin(margin_top)
+c2.SetBottomMargin(margin_bottom)
+
 p2 = c2.DrawFrame(0, 0.001, 0.27, 4.7)
 #TGaxis.SetMaxDigits(2)
 #TGaxis.SetExponentOffset(-0.03, -0.04, "x");
@@ -277,55 +297,60 @@ for signal_lorentz in signal_lorentz_dict:
 
 # Axis style
 xAxis = p2.GetXaxis()
-#xAxis.SetTitle("BR_{ut}[%]")
 xAxis.SetTitle("B(t#rightarrow #mu#tau u) #times 10^{-6}")
-xAxis.SetLabelSize(0.05)
-xAxis.SetLabelFont(42)
-xAxis.SetTitleFont(42)
+xAxis.SetLabelSize(20)
+xAxis.SetLabelFont(43)
+xAxis.SetLabelOffset(0.007)
+xAxis.SetTitleFont(43)
 xAxis.SetTitleOffset(1.0)
-xAxis.SetTitleSize(0.053)
+xAxis.SetTitleSize(22)
+xAxis.SetTickLength(0.03)
 yAxis = p2.GetYaxis()
-#yAxis.SetTitle("BR_{ct}[%]")
 yAxis.SetTitle("B(t#rightarrow #mu#tau c) #times 10^{-6}")
-yAxis.SetLabelSize(0.05)
-yAxis.SetLabelFont(42)
-yAxis.SetTitleFont(42)
-yAxis.SetTitleOffset(1.3)
-yAxis.SetTitleSize(0.053)
+yAxis.SetLabelSize(20)
+yAxis.SetLabelFont(43)
+yAxis.SetLabelOffset(0.012)
+yAxis.SetTitleFont(43)
+yAxis.SetTitleOffset(1.4)
+yAxis.SetTitleSize(22)
+yAxis.SetTickLength(0.03)
 
 
 # Some text
 progress = 'Preliminary'
 latexLabel = TLatex()
-latexLabel.SetTextSize(0.8 * c1.GetTopMargin())
 latexLabel.SetNDC()
 #Lumi
 latexLabel.SetTextFont(62) # helvetica
-latexLabel.DrawLatex(0.71, 0.96, '%s fb^{-1} (13 TeV)'%(options.lumi))
+latexLabel.SetTextSize(0.8 * margin_top)
+latexLabel.SetTextAlign(33)
+latexLabel.DrawLatex(1 - margin_right, 1 - 0.05 * margin_top, '%s fb^{-1} (13 TeV)'%(options.lumi))
 #CMS
 latexLabel.SetTextFont(62) # helvetica bold face
-latexLabel.SetTextSize(1.00 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.19, 0.87, "CMS")
+latexLabel.SetTextSize(0.9 * margin_top)
+latexLabel.SetTextAlign(11)
+latexLabel.DrawLatex(1.248 * margin_left, 0.865, "CMS")
 #legend
 latexLabel.SetTextFont(62)
-latexLabel.SetTextSize(0.65 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.63, 0.88, "CLFV     Exp #pm 1#sigma   Obs")
-latexLabel.DrawLatex(0.63, 0.84, "Scalar")
-latexLabel.DrawLatex(0.63, 0.80, "Vector")
-latexLabel.DrawLatex(0.63, 0.76, "Tensor")
-latexLabel.DrawLatex(0.63, 0.715, "95% CL upper limits")
+latexLabel.SetTextSize(0.6 * c1.GetTopMargin())
+latexLabel.DrawLatex(0.57, 0.88, "CLFV    Exp #pm 1#sigma   Obs")
+latexLabel.SetTextFont(42)
+#latexLabel.DrawLatex(0.60, 0.88, "CLFV  Exp #pm 68% CL interval   Obs")
+latexLabel.DrawLatex(0.57, 0.84, "Scalar")
+latexLabel.DrawLatex(0.57, 0.80, "Vector")
+latexLabel.DrawLatex(0.57, 0.76, "Tensor")
+latexLabel.DrawLatex(0.57, 0.715, "95% CL upper limits")
 
 if options.pas:
     latexLabel.SetTextFont(52) # helvetica italics
-    latexLabel.SetTextSize(0.7 * c1.GetTopMargin())
-    latexLabel.DrawLatex(0.19, 0.82, progress)
+    latexLabel.SetTextSize(0.5 * c1.GetTopMargin())
+    latexLabel.DrawLatex(1.21 * margin_left, 0.833, progress)
 
 latexLabel.Clear()
 
 
 # Legend
 legend.Clear()
-legend.SetNColumns(2)
 legend.SetColumnSeparation(0.0)
 legend.SetMargin(1.0)
 legend.SetTextFont(42)
