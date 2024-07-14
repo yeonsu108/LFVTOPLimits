@@ -31,8 +31,8 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 options = parser.parse_args()
 
 years = ['16pre16post1718']
-#signals = ['st_lfv_cs', 'st_lfv_ct', 'st_lfv_cv', 'st_lfv_us', 'st_lfv_ut', 'st_lfv_uv']
-signals = ['st_lfv_uv']
+signals = ['st_lfv_cs', 'st_lfv_ct', 'st_lfv_cv', 'st_lfv_us', 'st_lfv_ut', 'st_lfv_uv']
+#signals = ['st_lfv_uv'] #for control plots
 if cmssw_base not in options.path_16pre:
     options.path_16pre = os.path.join(base_path, options.path_16pre)
 if cmssw_base not in options.path_16post:
