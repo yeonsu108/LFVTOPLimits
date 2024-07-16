@@ -31,8 +31,8 @@ parser.add_argument('--nosys', action='store', dest='nosys', default=False, help
 options = parser.parse_args()
 
 years = ['16pre16post1718']
-signals = ['st_lfv_cs', 'st_lfv_ct', 'st_lfv_cv', 'st_lfv_us', 'st_lfv_ut', 'st_lfv_uv']
-#signals = ['st_lfv_uv'] #for control plots
+#signals = ['st_lfv_cs', 'st_lfv_ct', 'st_lfv_cv', 'st_lfv_us', 'st_lfv_ut', 'st_lfv_uv']
+signals = ['st_lfv_uv'] #for control plots
 if cmssw_base not in options.path_16pre:
     options.path_16pre = os.path.join(base_path, options.path_16pre)
 if cmssw_base not in options.path_16post:
@@ -101,8 +101,8 @@ echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0  #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
 
-combine -M MultiDimFit {name}_combine_workspace.root -n .NLLScan --rMin -0.5 --rMax 0.5 --algo grid --points 100
-python ../../plot1DScan.py higgsCombine.NLLScan.MultiDimFit.mH120.root -o single_scan_Run2_{signal}
+#combine -M MultiDimFit {name}_combine_workspace.root -n .NLLScan --rMin -0.5 --rMax 0.5 --algo grid --points 100
+#python ../../plot1DScan.py higgsCombine.NLLScan.MultiDimFit.mH120.root -o single_scan_Run2_{signal}
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass,  signal=signal, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
         with open(script_file, 'w') as f:

@@ -15,6 +15,7 @@ for fname in files:
     prefix = 'DNN'
     histos = ['']
     year_list = list(set([i.GetName()[5:] for i in f_org.GetListOfKeys() if '__' not in i.GetName()]))
+    #year_list = ['2016pre', '2016post', '2017', '2018'] #control postfit
     if not any(i in fname for i in ['data', 'totalup', 'totaldown']): vars = ['', '__postfitup', '__postfitdown']
     else: vars = ['']
  
@@ -23,10 +24,12 @@ for fname in files:
     for hbase in histos:
         for var in vars:
             h_ = f_org.Get('year_' + year_list[0] + hbase + var)
+            #h_ = f_org.Get('ch2_year_' + year_list[0] + hbase + var) #control postfit
             h_.SetDirectory(0)
             year_num = 1
             while year_num < len(year_list):
                 h_tmp = f_org.Get('year_' + year_list[year_num] + hbase + var).Clone(hbase + var)
+                #h_tmp = f_org.Get('ch2_year_' + year_list[year_num] + hbase + var).Clone(hbase + var) #control postfit
                 h_tmp.SetDirectory(0)
                 h_.Add(h_tmp, 1.0)
                 year_num += 1

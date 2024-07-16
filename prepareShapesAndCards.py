@@ -336,6 +336,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 f.Close()
 
     arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
+    #potfit muon pt
+    #arr = array.array('d',[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400])
 
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
     for category, processes in shapes.items():
@@ -412,7 +414,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         if not options.nosys:
             for systematic in systematics:
                 if any(s_ == systematic for s_ in ['mescale', 'renscale', 'facscale', 'jesFlavorQCD']): continue
-                #if any(s_ == systematic for s_ in ['jesFlavorQCD']): continue
+                #if any(s_ == systematic for s_ in ['jesFlavorQCD']): continue #for postfit
                 systematic_only_for_SMtt = False
                 systematic_only_for_Sig = False
 
