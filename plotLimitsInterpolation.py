@@ -4,6 +4,7 @@ from array import array
 from ROOT import *
 import numpy as np
 import math
+from collections import OrderedDict
 gROOT.SetBatch()
 gROOT.ProcessLine(".x setTDRStyle.C")
 
@@ -19,7 +20,11 @@ print options.limitfolder
 postfix = ''
 
 signal_Xsec = {'st_lfv_cs': 6.4, 'st_lfv_cv': 41.0, 'st_lfv_ct': 225.2, 'st_lfv_us': 61.83, 'st_lfv_uv': 297.6, 'st_lfv_ut': 1401}
-signal_lorentz_dict = {'s': kRed+1, 'v': kGreen+2, 't': kBlue+1}
+signal_lorentz_dict = OrderedDict()
+#signal_lorentz_dict = {'s': kRed+1, 'v': kGreen+2, 't': kBlue+1}
+signal_lorentz_dict['s'] = kRed+1
+signal_lorentz_dict['v'] = kGreen+2
+signal_lorentz_dict['t'] = kBlue+1
 #signal_lorentz_dict = {'t': kBlue+1}
 
 def calcWilson(limits):
@@ -206,9 +211,9 @@ latexLabel.DrawLatex(1.248 * margin_left, 0.865, "CMS")
 #legend
 latexLabel.SetTextFont(62)
 latexLabel.SetTextSize(0.6 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.57, 0.88, "CLFV    Exp #pm 1#sigma   Obs")
+#latexLabel.DrawLatex(0.57, 0.88, "CLFV    Exp #pm 1#sigma   Obs")
+latexLabel.DrawLatex(0.57, 0.88, "CLFV   68% exp.   Obs.")
 latexLabel.SetTextFont(42)
-#latexLabel.DrawLatex(0.60, 0.88, "CLFV  Exp #pm 68% CL interval   Obs")
 latexLabel.DrawLatex(0.57, 0.84, "Scalar")
 latexLabel.DrawLatex(0.57, 0.80, "Vector")
 latexLabel.DrawLatex(0.57, 0.76, "Tensor")
@@ -223,9 +228,9 @@ latexLabel.Clear()
 
 
 # Legend
-legend = TLegend(0.72, 0.75, 0.94, 0.87)
+legend = TLegend(0.7, 0.75, 0.94, 0.87)
 legend.SetNColumns(2)
-legend.SetColumnSeparation(0.0)
+legend.SetColumnSeparation(0.05)
 legend.SetMargin(1.0)
 legend.SetTextFont(42)
 legend.SetTextColor(kWhite)
@@ -241,7 +246,7 @@ for signal_lorentz in signal_lorentz_dict:
     g_coup_one_band[signal_lorentz].SetLineColorAlpha(signal_lorentz_dict[signal_lorentz], 1.0)
     g_coup_one_band[signal_lorentz].SetLineStyle(2)
     g_coup_one_band[signal_lorentz].SetLineWidth(2)
-    legend.AddEntry(g_coup_one_band[signal_lorentz], '............', 'lf')
+    legend.AddEntry(g_coup_one_band[signal_lorentz], '.', 'lf')
     legend.AddEntry(g_coup_obs[signal_lorentz], '.', 'l')
 
 gPad.RedrawAxis();
@@ -333,9 +338,9 @@ latexLabel.DrawLatex(1.248 * margin_left, 0.865, "CMS")
 #legend
 latexLabel.SetTextFont(62)
 latexLabel.SetTextSize(0.6 * c1.GetTopMargin())
-latexLabel.DrawLatex(0.57, 0.88, "CLFV    Exp #pm 1#sigma   Obs")
+#latexLabel.DrawLatex(0.57, 0.88, "CLFV    Exp #pm 1#sigma   Obs")
+latexLabel.DrawLatex(0.57, 0.88, "CLFV   68% exp.   Obs.")
 latexLabel.SetTextFont(42)
-#latexLabel.DrawLatex(0.60, 0.88, "CLFV  Exp #pm 68% CL interval   Obs")
 latexLabel.DrawLatex(0.57, 0.84, "Scalar")
 latexLabel.DrawLatex(0.57, 0.80, "Vector")
 latexLabel.DrawLatex(0.57, 0.76, "Tensor")
@@ -351,7 +356,7 @@ latexLabel.Clear()
 
 # Legend
 legend.Clear()
-legend.SetColumnSeparation(0.0)
+legend.SetColumnSeparation(0.05)
 legend.SetMargin(1.0)
 legend.SetTextFont(42)
 legend.SetTextColor(kWhite)
@@ -367,7 +372,7 @@ for signal_lorentz in signal_lorentz_dict:
     g_br_one_band[signal_lorentz].SetLineColorAlpha(signal_lorentz_dict[signal_lorentz], 1.0)
     g_br_one_band[signal_lorentz].SetLineStyle(2)
     g_br_one_band[signal_lorentz].SetLineWidth(2)
-    legend.AddEntry(g_br_one_band[signal_lorentz], '............', 'lf')
+    legend.AddEntry(g_br_one_band[signal_lorentz], '.', 'lf')
     legend.AddEntry(g_br_obs[signal_lorentz], '.', 'l')
 
 gPad.RedrawAxis();
