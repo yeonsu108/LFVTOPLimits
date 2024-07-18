@@ -197,10 +197,6 @@ def merge_histograms(process, fin, histogram, destination):
     if not 'data' in process:
         histogram.Scale(luminosity)
 
-    #import array
-    #arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
-    #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
-
     d = destination
     if not d:
         d = histogram.Clone()
@@ -336,7 +332,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 f.Close()
 
     arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
-    #potfit muon pt
+    #postfit muon pt
     #arr = array.array('d',[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400])
 
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
@@ -376,6 +372,20 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     hist_dn = hist_dn.Rebin(len(arr)-1, hist_dn.GetName(), arr)
                     h_nom = h_nom.Rebin(len(arr)-1, h_nom.GetName(), arr)
 
+                    #postfit
+                    #hist_up.SetBinContent(hist_up.GetNbinsX(), hist_up.GetBinContent(hist_up.GetNbinsX()) + hist_up.GetBinContent(hist_up.GetNbinsX()+1))
+                    #hist_up.SetBinContent(hist_up.GetNbinsX()+1, 0)
+                    #hist_dn.SetBinContent(hist_dn.GetNbinsX(), hist_dn.GetBinContent(hist_dn.GetNbinsX()) + hist_dn.GetBinContent(hist_dn.GetNbinsX()+1))
+                    #hist_dn.SetBinContent(hist_dn.GetNbinsX()+1, 0)
+                    #h_nom.SetBinContent(h_nom.GetNbinsX(), h_nom.GetBinContent(h_nom.GetNbinsX()) + h_nom.GetBinContent(h_nom.GetNbinsX()+1))
+                    #h_nom.SetBinContent(h_nom.GetNbinsX()+1, 0)
+                    #hist_up.SetBinError(hist_up.GetNbinsX(), sqrt(pow(hist_up.GetBinError(hist_up.GetNbinsX()),2) + pow(hist_up.GetBinError(hist_up.GetNbinsX()+1),2)))
+                    #hist_up.SetBinError(hist_up.GetNbinsX()+1, 0)
+                    #hist_dn.SetBinError(hist_dn.GetNbinsX(), sqrt(pow(hist_dn.GetBinError(hist_dn.GetNbinsX()),2) + pow(hist_dn.GetBinError(hist_dn.GetNbinsX()+1),2)))
+                    #hist_dn.SetBinError(hist_dn.GetNbinsX()+1, 0)
+                    #h_nom.SetBinError(h_nom.GetNbinsX(), sqrt(pow(h_nom.GetBinError(h_nom.GetNbinsX()),2) + pow(h_nom.GetBinError(h_nom.GetNbinsX()+1),2)))
+                    #h_nom.SetBinError(h_nom.GetNbinsX()+1, 0)
+
                     hist_up_to_Write = symmetrize(hist_up, hist_dn, h_nom)
                     hist_dn_to_Write = symmetrize(hist_dn, hist_up, h_nom)
 
@@ -384,6 +394,13 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
 
                 else:
                     histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+
+                    #postfit
+                    #histogram.SetBinContent(histogram.GetNbinsX(), histogram.GetBinContent(histogram.GetNbinsX()) + histogram.GetBinContent(histogram.GetNbinsX()+1))
+                    #histogram.SetBinContent(histogram.GetNbinsX()+1, 0)
+                    #histogram.SetBinError(histogram.GetNbinsX(), sqrt(pow(histogram.GetBinError(histogram.GetNbinsX()),2) + pow(histogram.GetBinError(histogram.GetNbinsX()+1),2)));
+                    #histogram.SetBinError(histogram.GetNbinsX()+1, 0)
+
                     histogram.Write()
 
         output_file.cd()
@@ -454,10 +471,32 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             cb.cp().AddSyst(cb, 'xsec_wjets', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
             cb.cp().AddSyst(cb, 'xsec_singleTop', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
             cb.cp().AddSyst(cb, 'xsec_Other', 'lnN', ch.SystMap('process')(['other'], 1.1))
+
             #cb.cp().AddSyst(cb, 'rate_misID', 'rateParam', ch.SystMap('process')(['misID'], 1.0))
             #cb.cp().AddSyst(cb, 'rate_misID_tt', 'rateParam', ch.SystMap('process')(['misID_tt'], 1.0))
             #cb.cp().AddSyst(cb, 'rate_misID', 'lnN', ch.SystMap('process')(['misID'], 2.0))
             #cb.cp().AddSyst(cb, 'rate_misID_tt', 'lnN', ch.SystMap('process')(['misID_tt'], 1.5))
+
+            #postfit, fully uncorrelate unc
+            #if '2016' in options.dataYear:
+            #    cb.cp().AddSyst(cb, 'CR_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
+            #elif options.dataYear == '2017':
+            #    cb.cp().AddSyst(cb, 'CR_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
+            #elif options.dataYear == '2018':
+            #    cb.cp().AddSyst(cb, 'CR_lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
+
+            #cb.cp().AddSyst(cb, 'CR_xsec_tt', 'lnN', ch.SystMap('process')(['tt'], 1.044))
+            #cb.cp().AddSyst(cb, 'CR_xsec_ttX', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
+            #cb.cp().AddSyst(cb, 'CR_xsec_vv', 'lnN', ch.SystMap('process')(['vv'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_dy', 'lnN', ch.SystMap('process')(['DY'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_wjets', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_singleTop', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_Other', 'lnN', ch.SystMap('process')(['other'], 1.1))
 
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
@@ -562,12 +601,21 @@ mv DNN_logx_logy.png DNN_{signal}_{year}_logx_logy.png
 def CMSNamingConvention(syst, options):
     syst_year = 'Y' + options.dataYear
     if '2016' in options.dataYear: syst_year = "Y2016"
+
     if syst not in correlatedSys:
         return syst_year + '_' + syst
     elif options.dataYear in syst:
         return syst_year + '_' + syst
     else:
         return syst
+
+    # postfit fully uncorrelate unc
+    #if syst not in correlatedSys:
+    #    return 'CR_' + syst_year + '_' + syst
+    #elif options.dataYear in syst:
+    #    return 'CR_' + syst_year + '_' + syst
+    #else:
+    #    return 'CR_' + syst
 
 if __name__ == '__main__':
     main()
