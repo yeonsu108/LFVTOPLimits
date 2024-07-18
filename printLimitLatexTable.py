@@ -14,7 +14,7 @@ for y_ in ["2016pre", "2016post", "2017", "2018", "Run2"]:
 # For SMEFTsim cross sections, but TT are always 2.69, 21.5, 129 for s, v, t
 signal_Xsec = {'st_lfv_cs': 6.4, 'st_lfv_cv': 41.0, 'st_lfv_ct': 225.2, 'st_lfv_us': 61.83, 'st_lfv_uv': 297.6, 'st_lfv_ut': 1401}
 
-def calcXsec(signal,limits):
+def calcXsec(signal, limits):
     xsec = list(np.around(np.array(limits) * signal_Xsec[signal], decimals=3))
     if len(xsec) == 1: result = str(xsec[0])
     else: result = str(xsec)
@@ -50,7 +50,9 @@ for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 
   nom = " & ".join([calcXsec(signal, [limits['observed']]) + ' (' + calcXsec(signal, [limits['expected']]) + ')', calcWilson([limits['observed']]) + ' (' + calcWilson([limits['expected']]) + ')',  calcBr(op, [limits['observed']]) + ' (' + calcBr(op, [limits['expected']]) + ')'])
   #print("nom : ", nom)
   for_table.append(nom)
-  unc = " & ".join([calcXsec(signal, limits['one_sigma']), calcWilson(limits['one_sigma']), calcBr(op, limits['one_sigma'])]) 
+  unc = " & ".join(['{\small ' + calcXsec(signal, limits['one_sigma']) + '}',\
+                    '{\small ' + calcWilson(limits['one_sigma']) + '}',\
+                    '{\small ' + calcBr(op, limits['one_sigma']) + '}'])
   #print("unc : ", unc)
   for_table.append(unc)
 
@@ -58,25 +60,23 @@ for signal in ['st_lfv_cs', 'st_lfv_cv', 'st_lfv_ct', 'st_lfv_us', 'st_lfv_uv', 
 
 
 lfv_table = """
-\\begin{{table}}[!hp] 
+\\begin{{table}}[h!]
     \\centering
-    \\resizebox{{1.\\hsize}}{{!}}{{
     \\renewcommand{{\\arraystretch}}{{1.4}}
-    \\begin{{tabular}}{{c|c|c|c|c}}
-        \\hline\\hline
-        Interaction & Type & Obs. (exp.) $\\sigma$ [fb] & Obs. (exp.) $C_{{tq\\mu\\tau}}\\slash\\Lambda^{{2}}$ [$\TeV^{{-2}}$] & Obs. (exp.) $Br(t\\to q\\mu\\tau)\\times 10^{{-6}}$ \\\\ \\hline\\hline
-        \\multirow{{6}}{{*}}{{$tc\\mu\\tau$}}
-            & \\multirow{{2}}{{*}}{{Scalar}} & {lim0} \\\\ & & {lim1} \\\\\\cline{{2-5}}
-            & \\multirow{{2}}{{*}}{{Vector}} & {lim2} \\\\ & & {lim3} \\\\\\cline{{2-5}}
-            & \\multirow{{2}}{{*}}{{Tensor}} & {lim4} \\\\ & & {lim5} \\\\\\cline{{1-5}}
-        \\multirow{{6}}{{*}}{{$tu\\mu\\tau$}}
-            & \\multirow{{2}}{{*}}{{Scalar}} & {lim6} \\\\ & & {lim7} \\\\\\cline{{2-5}}
-            & \\multirow{{2}}{{*}}{{Vector}} & {lim8} \\\\ & & {lim9} \\\\\\cline{{2-5}}
-            & \\multirow{{2}}{{*}}{{Tensor}} & {lim10} \\\\ & & {lim11} \\\\\\cline{{2-5}}
-        \\hline\\hline
+    \\topcaption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson coefficient ($C_{{\\cPqt\\cPq\\mu\\tau}}$), and branching fraction for different types of interactions. Central probabilty intervals containing 68\\% of the expected upper limits are given in square brackets.}}
+    \\resizebox{{1.\\hsize}}{{!}}{{
+    \\begin{{tabular}}{{ccccc}}
+        Interaction & Type & Obs. (exp.) $\\sigma$ (\\unit{{fb}}) & Obs. (exp.) $C_{{\\cPqt\\cPq\\mu\\tau}}\\slash\\Lambda^{{2}}$ ($\TeV^{{-2}}$) & Obs. (exp.) $\\mathcal{{B}}(\\tTomutauq) (10^{{-6}})$ \\\\ \\hline
+        \\multirow{{6}}{{*}}{{$\\cPqt\\cPqu\\mu\\tau$}}
+            & \\multirow{{2}}{{*}}{{Scalar}} & {lim6} \\\\ & & {lim7} \\\\
+            & \\multirow{{2}}{{*}}{{Vector}} & {lim8} \\\\ & & {lim9} \\\\
+            & \\multirow{{2}}{{*}}{{Tensor}} & {lim10} \\\\ & & {lim11} \\\\\\cline{{1-5}}
+        \\multirow{{6}}{{*}}{{$\\cPqt\\cPqc\\mu\\tau$}}
+            & \\multirow{{2}}{{*}}{{Scalar}} & {lim0} \\\\ & & {lim1} \\\\
+            & \\multirow{{2}}{{*}}{{Vector}} & {lim2} \\\\ & & {lim3} \\\\
+            & \\multirow{{2}}{{*}}{{Tensor}} & {lim4} \\\\ & & {lim5} \\\\
     \\end{{tabular}}
     }}
-    \\caption{{Table for Run {year} upper limits of LFV cross section ($\\sigma$), Wilson Coefficient ($C_{{tq\\mu\\tau}}$), and branching fraction for different types of interactions. $\\pm1\\sigma$ values are in brackets.}}
     \\label{{tab:{year}limit}}
 \\end{{table}}
 """.format(

@@ -9,9 +9,11 @@ input_path = sys.argv[1]
 drawNom = True
 logy = True
 #couplings = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
-couplings = ['st_lfv_cs']
+#couplings = ['st_lfv_cs']
+couplings = ['st_lfv_ut']
 rootfile_template = 'TOP_LFV_COUPLING_Discriminant_DNN_COUPLING_shapes.root'
 process_list_org = ['tt', 'other' ,'singleTop']
+#process_list_org = ['tt', 'other' ,'singleTop', 'misID', 'misID_tt']
 
 plot_dir = 'systematics_plots_' + input_path
 if drawNom: plot_dir = plot_dir.rstrip('/') + '_nom/'

@@ -68,6 +68,9 @@ correlatedSys.extend(['btagcferr1','btagcferr2','btaghf','btaglf'])
 correlatedSys.extend(['tauidjetHighptextrap','tauidjetHighptsyst','tauidjetSystalleras'])
 correlatedSys.extend(scale_breakdown)
 correlatedSys.extend(['pdf'+str(i) for i in range(1,101)])
+correlatedSys.extend(['muhighpt', 'muonhighscale'])
+
+options.sysToAvoid.extend(['muonhighscale', 'metUnclust'])
 
 sysForSMtt = options.sysForSMtt
 sysForSMtt.extend(scale_breakdown)
@@ -83,6 +86,12 @@ luminosity = years[options.dataYear]
 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
         'DNN': get_hist_regex('h_dnn_pred_S5'),
+        #Drawing input postfit - remove rebins, include scales, no need to draw all signals, run only cards for each year
+        #'DNN': get_hist_regex('h_muon1_pt_S5'),
+        #'DNN': get_hist_regex('h_tau1_pt_S5'),
+        #'DNN': get_hist_regex('h_jet1_pt_S5'),
+        #'DNN': get_hist_regex('h_jet2_pt_S5'),
+        #'DNN': get_hist_regex('h_mutau_mass_S5'),
         }
 
 discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
@@ -96,20 +105,16 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
     }
 
 # IF you change Bkg Def, don't forget to change also the backgrounds list in main and the systematics for cross sections
+
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
-        #'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
-        #'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
-        #'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
-        #'DY' : ['hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root'],
-        #'TTX' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        #'ST_t-channel' : ['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root'],
-        #'ST_tW' : ['hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+        # Note: no entries from, WJetsToLNu_HT0To100, WJetsToLNu_HT100To200, hist_ST_s
         'tt': ['hist_TTToSemiLeptonic.root','hist_TTTo2L2Nu.root'],
-	'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
-        #'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        'other' : ['hist_TTToHadronic.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root','hist_TTWJetsToLNu.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
-        # QCD
-        #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
+        'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+        'other' : ['hist_TTToHadronic.root',
+                   'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root',
+                   'hist_WW.root','hist_WZ.root','hist_ZZ.root',
+                   'hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root',
+                   'hist_TTWJetsToLNu.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
         # Signal
         'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
         'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TCMuTau_Tensor.root'],
@@ -118,13 +123,30 @@ processes_mapping = { # Dict with { key(human friendly name of your choice) : va
         'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TUMuTau_Tensor.root'],
         'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TUMuTau_Vector.root'],
         # Data
-        'data_all' : ['hist_SingleMuon'+options.dataYear+'.root'],
+        'data_all' : ['hist_SingleMuon.root'],
+
+        ###################
+        # Old definitions #
+        ###################
+        #'wJets' : ['hist_WJetsToLNu_HT0To100.root', 'hist_WJetsToLNu_HT100To200.root', 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
+        #'wJets' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root'],
+        #'vv' : ['hist_WW.root','hist_WZ.root','hist_ZZ.root'],
+        #'DY' : ['hist_DYJetsToLL_M50_amc.root','hist_DYJetsToLL_M-10to50.root'],
+        #'TTX' : ['hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        #'ST_t-channel' : ['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root'],
+        #'ST_tW' : ['hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
+        #'other' : [ 'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root','hist_WW.root','hist_WZ.root','hist_ZZ.root','hist_TTWJetsToLNu.root','hist_TTWJetsToQQ.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        #'qcd': ['hist_QCD_Pt1000_MuEnriched.root', 'hist_QCD_Pt120To170_MuEnriched.root', 'hist_QCD_Pt170To300_MuEnriched.root', 'hist_QCD_Pt20To30_MuEnriched.root', 'hist_QCD_Pt300To470_MuEnriched.root', 'hist_QCD_Pt30To50_MuEnriched.root', 'hist_QCD_Pt470To600_MuEnriched.root', 'hist_QCD_Pt50To80_MuEnriched.root', 'hist_QCD_Pt600To800_MuEnriched.root', 'hist_QCD_Pt800To1000_MuEnriched.root', 'hist_QCD_Pt80To120_MuEnriched.root'],
         }
 
 processes_mapping['data_obs'] = processes_mapping['data_all']
 processes_mapping.pop('data_all')
 
+#processes_mapping['misID'] = ['hist_fake_'+i.replace('hist_', '') for i in processes_mapping['singleTop'] + processes_mapping['other']]
+#processes_mapping['misID_tt'] = ['hist_fake_'+i.replace('hist_', '') for i in processes_mapping['tt']]
+
 smTTlist = ['tt'] # for systematics affecting only SM tt
+#smTTlist = ['tt', 'misID_tt'] # for systematics affecting only SM tt
 lfvlist = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us'] 
 
 if options.applyxsec:
@@ -138,7 +160,8 @@ if options.applyxsec:
 def main():
     """Main function"""
     signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
-    backgrounds = ['tt', 'other' , 'singleTop'] #, 'wJets','vv','DY','TTX'] #,'singleTop'] #, 'qcd']
+    backgrounds = ['tt', 'other' , 'singleTop']
+    #backgrounds = ['tt', 'other' , 'singleTop', 'misID', 'misID_tt']
 
     #print("Background considered: ", backgrounds)
 
@@ -173,10 +196,6 @@ def merge_histograms(process, fin, histogram, destination):
     # Rescale histogram to luminosity, if it's not data
     if not 'data' in process:
         histogram.Scale(luminosity)
-
-    #import array
-    #arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
-    #histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
 
     d = destination
     if not d:
@@ -283,6 +302,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 f = ROOT.TFile.Open(process_file)
                 TH1 = f.Get(original_histogram_name)
                 process_file_basename = os.path.basename(process_file)
+                #if 'fake_' in process_file_basename: #for misID separated fit
+                #    process_file_basename = process_file_basename.replace('fake_', '')
                 if not TH1:
                     sys.exit()
                 if options.applyxsec and not 'data' in process:
@@ -301,6 +322,9 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             key = CMSNamingConvention(systematic,options) + variation.capitalize()
                             TH1_syst = f.Get(original_histogram_name + '__' + systematic + variation)
                             if not TH1_syst:
+                                # Some of misID processes are empty, just continue
+                                #print("EMPTY HISTO!!!!: ", process_file, original_histogram_name + '__' + systematic + variation)
+                                #continue
                                 sys.exit()
                             if options.applyxsec and not 'data' in process and TH1_syst:
                                 TH1_syst.Scale(xsec/float(nevt))
@@ -308,6 +332,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                 f.Close()
 
     arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
+    #postfit muon pt
+    #arr = array.array('d',[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400])
 
     output_file = ROOT.TFile.Open(output_filename, 'recreate')
     for category, processes in shapes.items():
@@ -318,7 +344,17 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
 
                 hname = histogram.GetName()
 
-                if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname):
+                #if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname):
+                if ('tune' in hname) or ('hdamp' in hname) or ('jes' in hname and 'other' in hname) or ('jer' in hname and 'other' in hname) or \
+                   (options.dataYear == '2016pre' and 'other' in hname):
+                   #(options.dataYear == '2016pre' and 'other' in hname) or (options.dataYear == '2016post' and 'other' in hname):
+                #if ('tune' in hname) or ('hdamp' in hname) or \
+                #   ('jes' in hname and 'other' in hname) or \
+                #   ('jer' in hname and 'other' in hname) or \
+                #   ('jer' in hname and 'singleTop' in hname) or \
+                #   ('fsr' in hname and 'other' in hname) or \
+                #   ('muhighpt' in hname and 'other' in hname) or \
+                #   ('metUnclust' in hname and 'other' in hname):
 
                     h_nom = shapes[category][process]['nominal']
                     h_nom.SetDirectory(ROOT.nullptr)
@@ -336,6 +372,20 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     hist_dn = hist_dn.Rebin(len(arr)-1, hist_dn.GetName(), arr)
                     h_nom = h_nom.Rebin(len(arr)-1, h_nom.GetName(), arr)
 
+                    #postfit
+                    #hist_up.SetBinContent(hist_up.GetNbinsX(), hist_up.GetBinContent(hist_up.GetNbinsX()) + hist_up.GetBinContent(hist_up.GetNbinsX()+1))
+                    #hist_up.SetBinContent(hist_up.GetNbinsX()+1, 0)
+                    #hist_dn.SetBinContent(hist_dn.GetNbinsX(), hist_dn.GetBinContent(hist_dn.GetNbinsX()) + hist_dn.GetBinContent(hist_dn.GetNbinsX()+1))
+                    #hist_dn.SetBinContent(hist_dn.GetNbinsX()+1, 0)
+                    #h_nom.SetBinContent(h_nom.GetNbinsX(), h_nom.GetBinContent(h_nom.GetNbinsX()) + h_nom.GetBinContent(h_nom.GetNbinsX()+1))
+                    #h_nom.SetBinContent(h_nom.GetNbinsX()+1, 0)
+                    #hist_up.SetBinError(hist_up.GetNbinsX(), sqrt(pow(hist_up.GetBinError(hist_up.GetNbinsX()),2) + pow(hist_up.GetBinError(hist_up.GetNbinsX()+1),2)))
+                    #hist_up.SetBinError(hist_up.GetNbinsX()+1, 0)
+                    #hist_dn.SetBinError(hist_dn.GetNbinsX(), sqrt(pow(hist_dn.GetBinError(hist_dn.GetNbinsX()),2) + pow(hist_dn.GetBinError(hist_dn.GetNbinsX()+1),2)))
+                    #hist_dn.SetBinError(hist_dn.GetNbinsX()+1, 0)
+                    #h_nom.SetBinError(h_nom.GetNbinsX(), sqrt(pow(h_nom.GetBinError(h_nom.GetNbinsX()),2) + pow(h_nom.GetBinError(h_nom.GetNbinsX()+1),2)))
+                    #h_nom.SetBinError(h_nom.GetNbinsX()+1, 0)
+
                     hist_up_to_Write = symmetrize(hist_up, hist_dn, h_nom)
                     hist_dn_to_Write = symmetrize(hist_dn, hist_up, h_nom)
 
@@ -344,6 +394,13 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
 
                 else:
                     histogram = histogram.Rebin(len(arr)-1, histogram.GetName(), arr)
+
+                    #postfit
+                    #histogram.SetBinContent(histogram.GetNbinsX(), histogram.GetBinContent(histogram.GetNbinsX()) + histogram.GetBinContent(histogram.GetNbinsX()+1))
+                    #histogram.SetBinContent(histogram.GetNbinsX()+1, 0)
+                    #histogram.SetBinError(histogram.GetNbinsX(), sqrt(pow(histogram.GetBinError(histogram.GetNbinsX()),2) + pow(histogram.GetBinError(histogram.GetNbinsX()+1),2)));
+                    #histogram.SetBinError(histogram.GetNbinsX()+1, 0)
+
                     histogram.Write()
 
         output_file.cd()
@@ -374,6 +431,7 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
         if not options.nosys:
             for systematic in systematics:
                 if any(s_ == systematic for s_ in ['mescale', 'renscale', 'facscale', 'jesFlavorQCD']): continue
+                #if any(s_ == systematic for s_ in ['jesFlavorQCD']): continue #for postfit
                 systematic_only_for_SMtt = False
                 systematic_only_for_Sig = False
 
@@ -414,6 +472,32 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
             cb.cp().AddSyst(cb, 'xsec_singleTop', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
             cb.cp().AddSyst(cb, 'xsec_Other', 'lnN', ch.SystMap('process')(['other'], 1.1))
 
+            #cb.cp().AddSyst(cb, 'rate_misID', 'rateParam', ch.SystMap('process')(['misID'], 1.0))
+            #cb.cp().AddSyst(cb, 'rate_misID_tt', 'rateParam', ch.SystMap('process')(['misID_tt'], 1.0))
+            #cb.cp().AddSyst(cb, 'rate_misID', 'lnN', ch.SystMap('process')(['misID'], 2.0))
+            #cb.cp().AddSyst(cb, 'rate_misID_tt', 'lnN', ch.SystMap('process')(['misID_tt'], 1.5))
+
+            #postfit, fully uncorrelate unc
+            #if '2016' in options.dataYear:
+            #    cb.cp().AddSyst(cb, 'CR_lumi_uncorr_2016', 'lnN', ch.SystMap()(1.01))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_161718', 'lnN', ch.SystMap()(1.006))
+            #elif options.dataYear == '2017':
+            #    cb.cp().AddSyst(cb, 'CR_lumi_uncorr_2017', 'lnN', ch.SystMap()(1.02))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_161718', 'lnN', ch.SystMap()(1.009))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_1718', 'lnN', ch.SystMap()(1.006))
+            #elif options.dataYear == '2018':
+            #    cb.cp().AddSyst(cb, 'CR_lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
+            #    cb.cp().AddSyst(cb, 'CR_lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
+
+            #cb.cp().AddSyst(cb, 'CR_xsec_tt', 'lnN', ch.SystMap('process')(['tt'], 1.044))
+            #cb.cp().AddSyst(cb, 'CR_xsec_ttX', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
+            #cb.cp().AddSyst(cb, 'CR_xsec_vv', 'lnN', ch.SystMap('process')(['vv'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_dy', 'lnN', ch.SystMap('process')(['DY'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_wjets', 'lnN', ch.SystMap('process')(['wJets'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_singleTop', 'lnN', ch.SystMap('process')(['singleTop'], 1.1))
+            #cb.cp().AddSyst(cb, 'CR_xsec_Other', 'lnN', ch.SystMap('process')(['other'], 1.1))
+
         # Import shapes from ROOT file
         cb.cp().backgrounds().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
         cb.cp().signals().ExtractShapes(file, '$BIN/$PROCESS', '$BIN/$PROCESS__$SYSTEMATIC')
@@ -447,8 +531,12 @@ text2workspace.py {datacard} -m {fake_mass} -o {workspace_root}
 echo combine -M AsymptoticLimits -n {name} {workspace_root} #--run blind #-v +2
 #combine -M AsymptoticLimits -n {name} {workspace_root} --run blind --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 #-v +2
 combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 #-v +2
+#combine -M AsymptoticLimits -n {name} {workspace_root} --rMin -1 --rMax 1 --rAbsAcc 0.0000005 --cminDefaultMinimizerStrategy 0 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2. #-v +2
 #combine -H AsymptoticLimits -M HybridNew -n {name} {workspace_root} --LHCmode LHC-limits --expectedFromGrid 0.5 #for ecpected, use 0.84 and 0.16
-""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
+
+combine -M MultiDimFit {name}_combine_workspace.root -n .NLLScan --rMin -0.5 --rMax 0.5 --algo grid --points 200
+python ../../plot1DScan.py higgsCombine.NLLScan.MultiDimFit.mH120.root -o single_scan_{year}_{signal}
+""".format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, fake_mass=fake_mass, year=options.dataYear, signal=signal, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_limits.sh')
         with open(script_file, 'w') as f:
             f.write(script)
@@ -472,6 +560,16 @@ combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 --parallel 50
 combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_impacts.json --rMin -20 --rMax 20
 plotImpacts.py -i {name}_{year}_impacts.json -o {name}_{year}_impacts --per-page 50
+
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 -t -1 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 -t -1 --parallel 50 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_expected_impacts.json --rMin -20 --rMax 20 -t -1
+#plotImpacts.py -i {name}_{year}_expected_impacts.json -o {name}_{year}_expected_impacts --per-page 50
+#
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doInitialFit --rMin -20 --rMax 20 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 --doFits --rMin -20 --rMax 20 --parallel 50 --setParameters rate_misID=1.,rate_misID_tt=1. --setParameterRanges rate_misID=0.,2.:rate_misID_tt=0.,2.
+#combineTool.py -M Impacts -d {name}_combine_workspace.root -m 125 -o {name}_{year}_impacts.json --rMin -20 --rMax 20
+#plotImpacts.py -i {name}_{year}_impacts.json -o {name}_{year}_impacts --per-page 50
 """.format(workspace_root=workspace_file, datacard=os.path.basename(datacard), name=output_prefix, year=options.dataYear, fake_mass=fake_mass, systematics=(0 if options.nosys else 1))
         script_file = os.path.join(output_dir, output_prefix + '_run_impacts.sh')
         with open(script_file, 'w') as f:
@@ -503,12 +601,21 @@ mv DNN_logx_logy.png DNN_{signal}_{year}_logx_logy.png
 def CMSNamingConvention(syst, options):
     syst_year = 'Y' + options.dataYear
     if '2016' in options.dataYear: syst_year = "Y2016"
+
     if syst not in correlatedSys:
         return syst_year + '_' + syst
     elif options.dataYear in syst:
         return syst_year + '_' + syst
     else:
         return syst
+
+    # postfit fully uncorrelate unc
+    #if syst not in correlatedSys:
+    #    return 'CR_' + syst_year + '_' + syst
+    #elif options.dataYear in syst:
+    #    return 'CR_' + syst_year + '_' + syst
+    #else:
+    #    return 'CR_' + syst
 
 if __name__ == '__main__':
     main()
