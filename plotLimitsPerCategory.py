@@ -20,7 +20,8 @@ options = parser.parse_args()
 postfix = ''
 print("options.printlimits" , options.printlimits)
 if options.printlimits:
-    options.category_order = ['161718_all', '1617_all', '1718_all']
+    #options.category_order = ['161718_all', '1617_all', '1718_all']
+    options.category_order = ['v2923_BPix']
     #options.category_order = ['1718_all']
     options.category_labels = options.category_order
     postfix = '_add'
@@ -33,7 +34,8 @@ ROOT.gROOT.SetBatch()
 #    Excluded couping ---> ExcBr: BR(t --> Hq) = Width(t --> Hq)* Khqt^2/TotalWidth = 0.19*Khqt^2/1.32158
 #    <--> BR(t --> Hq) < XsecExcl*0.19/(sigXsecDivK2 * 1.32158)
 
-signal_Xsec = {'st_lfv_cs':10.09,'st_lfv_ct':307.4,'st_lfv_cv':58.3,'st_lfv_uv':414.5,'st_lfv_ut':1925,'st_lfv_us':86.49}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+#signal_Xsec = {'st_lfv_cs':10.09,'st_lfv_ct':307.4,'st_lfv_cv':58.3,'st_lfv_uv':414.5,'st_lfv_ut':1925,'st_lfv_us':86.49}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
+signal_Xsec = {'st_lfv_us':113}  # for limit rescaling if the signal Xsec inseted in combine was not 1 pb
 
 def calcXsec(signal,limits):
     return list(np.array(limits) * signal_Xsec[signal])
@@ -247,7 +249,7 @@ for signal_folder in signal_folders:
         json.dump(dict_cat_limits, limit_json)
     print("%s written with limits inside"%json_limit_filepath)
 
-    #if options.doPlot and not options.printlimits:
-    #    from array import array
-    #    ROOT.gROOT.ProcessLine(".x setTDRStyle.C")
-    #    plot_limits(signal_folder, dict_cat_limits)
+    if options.doPlot and not options.printlimits:
+        from array import array
+        ROOT.gROOT.ProcessLine(".x setTDRStyle.C")
+        plot_limits(signal_folder, dict_cat_limits)

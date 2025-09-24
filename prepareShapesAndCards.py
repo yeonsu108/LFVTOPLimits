@@ -9,7 +9,8 @@ from collections import OrderedDict
 from subprocess import call
 import array
 
-from symmetrize import smoothing, symmetrize
+#TODO: this should be used
+#from symmetrize import smoothing, symmetrize
 
 # to prevent pyroot to hijack argparse we need to go around
 tmpargv = sys.argv[:] 
@@ -81,7 +82,8 @@ sysForSig.extend(scale_breakdown)
 sysForSig.extend(['pdf'+str(i) for i in range(1,101)])
 
 
-years = {'2016pre': 19502, '2016post': 16812, '2017': 41480, '2018':59832}
+#years = {'2016pre': 19502, '2016post': 16812, '2017': 41480, '2018':59832}
+years = {'v2023_BPix':95000}
 luminosity = years[options.dataYear]
 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
@@ -95,12 +97,12 @@ individual_discriminants = { # support regex (allow to avoid ambiguities if many
         }
 
 discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, name in 'individual_discriminants' dictionary above). Make sure the 'name of datacard' ends with '_categoryName (for plot step)
-    "DNN_st_lfv_cs" : [ (1, 'DNN')],
-    "DNN_st_lfv_ct" : [ (1, 'DNN')],
-    "DNN_st_lfv_cv" : [ (1, 'DNN')],
+    #"DNN_st_lfv_cs" : [ (1, 'DNN')],
+    #"DNN_st_lfv_ct" : [ (1, 'DNN')],
+    #"DNN_st_lfv_cv" : [ (1, 'DNN')],
     "DNN_st_lfv_us" : [ (1, 'DNN')],
-    "DNN_st_lfv_ut" : [ (1, 'DNN')],
-    "DNN_st_lfv_uv" : [ (1, 'DNN')],
+    #"DNN_st_lfv_ut" : [ (1, 'DNN')],
+    #"DNN_st_lfv_uv" : [ (1, 'DNN')],
     #key does matter when removeing qcd-relavant discriminant below
     }
 
@@ -108,22 +110,24 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
 
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
         # Note: no entries from, WJetsToLNu_HT0To100, WJetsToLNu_HT100To200, hist_ST_s
-        'tt': ['hist_TTToSemiLeptonic.root','hist_TTTo2L2Nu.root'],
-        'singleTop':['hist_ST_t_antitop_4f.root','hist_ST_t_top_4f.root','hist_ST_tW_antitop_5f.root','hist_ST_tW_top_5f.root'],
-        'other' : ['hist_TTToHadronic.root',
-                   'hist_WJetsToLNu_HT1200To2500.root', 'hist_WJetsToLNu_HT200To400.root', 'hist_WJetsToLNu_HT2500ToInf.root', 'hist_WJetsToLNu_HT400To600.root', 'hist_WJetsToLNu_HT600To800.root', 'hist_WJetsToLNu_HT800To1200.root',
-                   'hist_WW.root','hist_WZ.root','hist_ZZ.root',
-                   'hist_DYJetsToLL_M50_HT100to200.root','hist_DYJetsToLL_M50_HT1200to2500.root','hist_DYJetsToLL_M50_HT200to400.root','hist_DYJetsToLL_M50_HT2500toInf.root','hist_DYJetsToLL_M50_HT400to600.root','hist_DYJetsToLL_M50_HT600to800.root','hist_DYJetsToLL_M50_HT800to1200.root','hist_DYJetsToLL_M-10to50.root',
-                   'hist_TTWJetsToLNu.root','hist_TTZToLLNuNu.root','hist_TTZToQQ.root','hist_ttHTobb.root','hist_ttHToNonbb.root'],
+        'tt': ['hist_TTtoLNu2Q.root','hist_TTto2L2Nu.root'],
+        'singleTop':['hist_TBbarQ_t-channel_4fs.root', 'hist_TBbar_s-channel_4fs.root', 'hist_TQbarto2Q-t-channel.root', 'hist_TQbartoLNu-t-channel.root', 'hist_TbarQtoLNu-t-channel.root', 'hist_TbarBQ_t-channel_4fs.root', 'hist_TbarB_s-channel_4fs.root', 'hist_TbarQto2Q-t-channel.root'],
+        'other' : ['hist_TTto4Q.root',
+            'hist_DYto2L-4Jets_MLL-10to50.root', 'hist_DYto2L-4Jets_MLL-50.root',
+            'hist_TWminusto2L2Nu.root', 'hist_TWminusto4Q.root', 'hist_TWminustoLNu2Q.root',
+            'hist_TbarWplusto2L2Nu.root', 'hist_TbarWplusto4Q.root', 'hist_TbarWplustoLNu2Q.root',
+            'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root',
+            'hist_WtoLNu-2Jets.root'
+            ],
         # Signal
-        'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
-        'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TCMuTau_Tensor.root'],
-        'st_lfv_cv': ['hist_ST_LFV_TCMuTau_Vector.root','hist_TT_LFV_TCMuTau_Vector.root'],
-        'st_lfv_us': ['hist_ST_LFV_TUMuTau_Scalar.root','hist_TT_LFV_TUMuTau_Scalar.root'],
-        'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TUMuTau_Tensor.root'],
-        'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TUMuTau_Vector.root'],
+        #'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
+        #'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TCMuTau_Tensor.root'],
+        #'st_lfv_cv': ['hist_ST_LFV_TCMuTau_Vector.root','hist_TT_LFV_TCMuTau_Vector.root'],
+        'st_lfv_us': ['hist_ST_LFV_TUMuTau_Scalar.root'],#'hist_TT_LFV_TUMuTau_Scalar.root'],
+        #'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TUMuTau_Tensor.root'],
+        #'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TUMuTau_Vector.root'],
         # Data
-        'data_all' : ['hist_SingleMuon.root'],
+        'data_all' : ['hist_Muon.root'],
 
         ###################
         # Old definitions #
@@ -147,7 +151,8 @@ processes_mapping.pop('data_all')
 
 smTTlist = ['tt'] # for systematics affecting only SM tt
 #smTTlist = ['tt', 'misID_tt'] # for systematics affecting only SM tt
-lfvlist = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us'] 
+#lfvlist = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us'] 
+lfvlist = ['st_lfv_us']
 
 if options.applyxsec:
     # Read Xsec file
@@ -156,10 +161,11 @@ if options.applyxsec:
     if not xsec_data:
         print("Error loading the cross section file %s"%options.xsecfile)
         sys.exit(1)
-    
+
 def main():
     """Main function"""
-    signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
+    #signals = ['st_lfv_cs','st_lfv_ct','st_lfv_cv','st_lfv_uv','st_lfv_ut','st_lfv_us']
+    signals = ['st_lfv_us']
     backgrounds = ['tt', 'other' , 'singleTop']
     #backgrounds = ['tt', 'other' , 'singleTop', 'misID', 'misID_tt']
 
@@ -279,9 +285,10 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                         raise Exception("The regular expression used for category %r matches more than one histogram: %r and %r" % (category, nominal_name, histograms[category]))
                 histograms[category] = nominal_name
     print("Found the following systematics in rootfiles: ", systematics)
-    if options.sysToAvoid:
-        for sysToAvoid in options.sysToAvoid:
-            systematics.remove(sysToAvoid)
+    #TODO:
+    #if options.sysToAvoid:
+    #    for sysToAvoid in options.sysToAvoid:
+    #        systematics.remove(sysToAvoid)
 
     cms_systematics = [CMSNamingConvention(s,options) for s in systematics]
 
@@ -331,6 +338,7 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                             shapes[category][process][key] = merge_histograms(process, f, TH1_syst, dict_get(shapes[category][process], key))
                 f.Close()
 
+    #TODO: check binning of DNN score
     arr = array.array('d',[0.01, 1, 2, 5, 10, 30, 100])
     #postfit muon pt
     #arr = array.array('d',[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400])
@@ -386,8 +394,8 @@ def prepareFile(processes_map, categories_map, root_path, discriminant):
                     #h_nom.SetBinError(h_nom.GetNbinsX(), sqrt(pow(h_nom.GetBinError(h_nom.GetNbinsX()),2) + pow(h_nom.GetBinError(h_nom.GetNbinsX()+1),2)))
                     #h_nom.SetBinError(h_nom.GetNbinsX()+1, 0)
 
-                    hist_up_to_Write = symmetrize(hist_up, hist_dn, h_nom)
-                    hist_dn_to_Write = symmetrize(hist_dn, hist_up, h_nom)
+                    #hist_up_to_Write = symmetrize(hist_up, hist_dn, h_nom)
+                    #hist_dn_to_Write = symmetrize(hist_dn, hist_up, h_nom)
 
                     hist_up_to_Write.Write()
                     hist_dn_to_Write.Write()
@@ -463,6 +471,9 @@ def prepareShapes(backgrounds, signals, discriminant, discriminantName):
                 cb.cp().AddSyst(cb, 'lumi_uncorr_2018', 'lnN', ch.SystMap()(1.015))
                 cb.cp().AddSyst(cb, 'lumi_corr_161718', 'lnN', ch.SystMap()(1.02))
                 cb.cp().AddSyst(cb, 'lumi_corr_1718', 'lnN', ch.SystMap()(1.002))
+            #TODO: check right value
+            elif options.dataYear == 'v2023_BPix':
+                cb.cp().AddSyst(cb, 'lumi_2023BPix', 'lnN', ch.SystMap()(1.01))
 
             cb.cp().AddSyst(cb, 'xsec_tt', 'lnN', ch.SystMap('process')(['tt'], 1.044))
             cb.cp().AddSyst(cb, 'xsec_ttX', 'lnN', ch.SystMap('process')(['TTX'], 1.2))
