@@ -83,7 +83,14 @@ sysForSig.extend(['pdf'+str(i) for i in range(1,101)])
 
 
 #years = {'2016pre': 19502, '2016post': 16812, '2017': 41480, '2018':59832}
-years = {'v2023_BPix':95000}
+years = {
+    'v12_2022': 7980.4,
+    'v12_2022EE': 26671.7,
+    'v12_2023': 17794.0,
+    'v12_2023BPix': 9451.0,
+    'v15_2024': 109000.0,
+    'v2023_BPix': 95000 # kept for compatibility if needed
+}
 luminosity = years[options.dataYear]
 
 individual_discriminants = { # support regex (allow to avoid ambiguities if many histogram contains same patterns)
@@ -111,23 +118,23 @@ discriminants = { # 'name of datacard' : list of tuple with (dicriminant ID, nam
 processes_mapping = { # Dict with { key(human friendly name of your choice) : value(regex to find rootfile) }. Be carefull not to match too many files with the regex!
         # Note: no entries from, WJetsToLNu_HT0To100, WJetsToLNu_HT100To200, hist_ST_s
         'tt': ['hist_TTtoLNu2Q.root','hist_TTto2L2Nu.root'],
-        'singleTop':['hist_TBbarQ_t-channel_4fs.root', 'hist_TBbar_s-channel_4fs.root', 'hist_TQbarto2Q-t-channel.root', 'hist_TQbartoLNu-t-channel.root', 'hist_TbarQtoLNu-t-channel.root', 'hist_TbarBQ_t-channel_4fs.root', 'hist_TbarB_s-channel_4fs.root', 'hist_TbarQto2Q-t-channel.root'],
+        'singleTop':['hist_TBbarQtoLNu_t-channel.root', 'hist_TBbarto2Q_s-channel.root', 'hist_TBbartoLNu_s-channel.root', 'hist_TbarBQtoLNu_t-channel.root', 'hist_TbarBtoLNu_s-channel.root', 'hist_TWminusto2L2Nu.root', 'hist_TWminustoLNu2Q.root', 'hist_TbarWplusto2L2Nu.root', 'hist_TbarWplusto4Q.root', 'hist_TbarWplustoLNu2Q.root'],
         'other' : ['hist_TTto4Q.root',
-            'hist_DYto2L-4Jets_MLL-10to50.root', 'hist_DYto2L-4Jets_MLL-50.root',
-            'hist_TWminusto2L2Nu.root', 'hist_TWminusto4Q.root', 'hist_TWminustoLNu2Q.root',
-            'hist_TbarWplusto2L2Nu.root', 'hist_TbarWplusto4Q.root', 'hist_TbarWplustoLNu2Q.root',
+            'hist_DYto2Mu-2Jets_MLL-10-50.root', 'hist_DYto2Mu-2Jets_MLL-50.root', 'hist_DYto2Tau-2Jets_MLL-50.root',
+            'hist_DYto2E-2Jets_MLL-10-50.root', 'hist_DYto2E-2Jets_MLL-50.root',
             'hist_WW.root', 'hist_WZ.root', 'hist_ZZ.root',
-            'hist_WtoLNu-2Jets.root'
+            'hist_WtoLNu-4Jets_3J.root', 'hist_WtoLNu-4Jets_4J.root', 'hist_WtoMuNu-4Jets.root', 'hist_WtoENu-4Jets.root', 'hist_WtoTauNu-4Jets.root',
+            'hist_TTWtoQQ.root', 'hist_TTZToQQ.root', 'hist_ttHTo2B.root', 'hist_ttHToNonbb.root'
             ],
         # Signal
-        #'st_lfv_cs': ['hist_ST_LFV_TCMuTau_Scalar.root','hist_TT_LFV_TCMuTau_Scalar.root'],
-        #'st_lfv_ct': ['hist_ST_LFV_TCMuTau_Tensor.root','hist_TT_LFV_TCMuTau_Tensor.root'],
-        #'st_lfv_cv': ['hist_ST_LFV_TCMuTau_Vector.root','hist_TT_LFV_TCMuTau_Vector.root'],
-        'st_lfv_us': ['hist_ST_LFV_TUMuTau_Scalar.root'],#'hist_TT_LFV_TUMuTau_Scalar.root'],
-        #'st_lfv_ut': ['hist_ST_LFV_TUMuTau_Tensor.root','hist_TT_LFV_TUMuTau_Tensor.root'],
-        #'st_lfv_uv': ['hist_ST_LFV_TUMuTau_Vector.root','hist_TT_LFV_TUMuTau_Vector.root'],
+        'st_lfv_cs': ['hist_TCMuTau-LFV-Scalar.root', 'hist_TCEGamma-LFV-Scalar.root'],
+        'st_lfv_ct': ['hist_TCMuTau-LFV-Tensor.root', 'hist_TCEGamma-LFV-Tensor.root'],
+        'st_lfv_cv': ['hist_TCMuTau-LFV-Vector.root', 'hist_TCEGamma-LFV-Vector.root'],
+        'st_lfv_us': ['hist_TUMuTau-LFV-Scalar.root', 'hist_TUEGamma-LFV-Scalar.root'],
+        'st_lfv_ut': ['hist_TUMuTau-LFV-Tensor.root', 'hist_TUEGamma-LFV-Tensor.root'],
+        'st_lfv_uv': ['hist_TUMuTau-LFV-Vector.root', 'hist_TUEGamma-LFV-Vector.root'],
         # Data
-        'data_all' : ['hist_Muon.root'],
+        'data_all' : ['hist_Muon.root', 'hist_Egamma.root'],
 
         ###################
         # Old definitions #
